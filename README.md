@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Latex-Generator-AI
 
-## Getting Started
+This is a simple AI that generates LaTeX code for you. It is powered by Gemini AI made by Google.
 
-First, run the development server:
+## Goals (Problem and Solution)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Problem**: Writing LaTeX code is hard and time-consuming.
+2. **Solution**: Use AI to generate LaTeX code for you.
+3. **Goal**: Make it easy for students and researchers to write LaTeX code.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stacks
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- NextJS with Typescript
+- TailwindCSS
+- Shadcn UI
+- Gemini API
+- UploadThing
+- Vercel AI SDK
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Todos
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- [ ] Responsive Navbar
+- [ ] Darkmode toggle
+- [ ] Hero page with action button
+- [ ] Footer with developer name
