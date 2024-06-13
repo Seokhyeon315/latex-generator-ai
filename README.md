@@ -10,7 +10,8 @@ This is a simple AI that generates LaTeX code for you. It is powered by Gemini A
 
 ## Tech Stacks
 
-- NextJS with Typescript
+- NextJS
+- Typescript
 - TailwindCSS
 - Shadcn UI
 - Gemini API
@@ -21,10 +22,10 @@ This is a simple AI that generates LaTeX code for you. It is powered by Gemini A
 ## Todos
 
 - [ ] Darkmode toggle
-- [ ] Hero page with action button
-- [ ] Create Generator page
 - [ ] Implement Gemni API
-- [ ]
+- [ ] Summarize paper page
+- [ ] Features section on landing page
+- [ ] Build latex generator page with Gemini API
 
 ## Development history
 
@@ -36,5 +37,8 @@ Jun 3, 2024
 June 12, 2024
 
 - [x] Hero page with action button
-- [ ] Features section on landing page
-- [ ] Build latex generator page with Gemini API
+
+June 13, 2024
+
+- [x] Add Footer to `layout.tsx`
+- [x] Create LatexForm component

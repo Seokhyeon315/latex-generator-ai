@@ -1,4 +1,7 @@
+'use client'
+
 import React, { useEffect } from 'react';
+import Link from 'next/link';
 
 
 export default function Footer() {
@@ -21,7 +24,7 @@ export default function Footer() {
     return (<>
         <footer className={`flex flex-row p-4 ${scrolled ? 'visible' : 'hidden'}`}>
             <div className="flex-1 text-center py-2">
-                <p className="text-sm">&copy; 2024. Seokhyeon Byun. All rights reserved.</p>
+                <p className="text-sm">&copy; 2024. <Link href="https://www.seokhyeonbyun.com/" className='hover:underline'>Seokhyeon Byun</Link>. All rights reserved.</p>
             </div>
         </footer>
     </>)

@@ -1,7 +1,9 @@
+import LatexForm from "@/components/Latext-Form";
+
 export default function GeneratorPage() {
     return (
-        <div>
-            <h1>Generator Page</h1>
+        <div className="flex min-h-screen flex-col items-center">
+            <LatexForm />
         </div>
     )
 }
