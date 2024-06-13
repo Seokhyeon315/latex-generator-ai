@@ -16,10 +16,25 @@ This is a simple AI that generates LaTeX code for you. It is powered by Gemini A
 - Gemini API
 - UploadThing
 - Vercel AI SDK
+- LangChain
 
 ## Todos
 
-- [ ] Responsive Navbar
 - [ ] Darkmode toggle
 - [ ] Hero page with action button
-- [ ] Footer with developer name
+- [ ] Create Generator page
+- [ ] Implement Gemni API
+- [ ]
+
+## Development history
+
+Jun 3, 2024
+
+- [x] Responsive Navbar
+- [x] Footer with developer name
+
+June 12, 2024
+
+- [x] Hero page with action button
+- [ ] Features section on landing page
+- [ ] Build latex generator page with Gemini API
