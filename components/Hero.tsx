@@ -1,36 +1,36 @@
 'use client'
 
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Hero() {
-    const router = useRouter();
     return (
         <>
             {/* Hero */}
-            <div className="relative overflow-hidden py-24 lg:py-32">
+            <div className="relative overflow-hidden py-24 lg:py-28">
                 <div className="relative z-10">
                     <div className="container py-10 lg:py-16">
                         <div className="max-w-2xl text-center mx-auto">
-                            <p className="">Make your study easier</p>
+                            {/* <p className="">Make your study easier</p> */}
                             {/* Title */}
                             <div className="mt-5 max-w-2xl">
                                 <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-                                    AI-Powered Tool for Reasearch
+                                    AI-Powered formula finder with LATEX
                                 </h1>
                             </div>
                             {/* End Title */}
                             <div className="mt-5 max-w-3xl">
                                 <p className="text-xl text-muted-foreground">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                    Professional tools for students and researchers in one place.
                                 </p>
                             </div>
                             {/* Buttons */}
                             <div className="mt-8 gap-3 flex justify-center">
-                                <Button size={"lg"}
-                                    onClick={() => {
-                                        router.push('/generate');
-                                    }}>Get started</Button>
+
+                                <Link href="/search">
+                                    <Button size={"lg"}>Get started</Button>
+                                </Link>
+
                                 <Button size={"lg"} variant={"outline"}>
                                     Learn more
                                     {/* Click Learn more button will scroll down to features section */}

@@ -5,7 +5,7 @@ import { MobileNav } from '@/components/mobile-nav'
 
 const menuitems = [
     {
-        label: "Home",
+        label: "HOME",
         path: "/",
     },
     // {
@@ -13,8 +13,12 @@ const menuitems = [
     //     path: "/about",
     // },
     {
-        label: "Generate",
-        path: "/generate",
+        label: "FINDER",
+        path: "/search",
+    },
+    {
+        label: "UPLOAD",
+        path: "/upload",
     },
 ];
 
@@ -25,7 +29,7 @@ export function Navbar() {
                 <div className="flex w-full lg:w-auto items-center justify-between">
                     <a href="/" className="text-lg"
                     ><span className="font-bold text-slate-800">Pro</span><span
-                        className="pl-1 text-slate-500">Research</span>
+                        className="pl-1 text-slate-500">Formula</span>
                     </a>
                     <div className="block lg:hidden">
                         <MobileNav />

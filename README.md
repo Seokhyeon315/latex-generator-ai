@@ -1,12 +1,6 @@
-# Latex-Generator-AI
+# Pro Formula Project
 
-This is a simple AI that generates LaTeX code for you. It is powered by Gemini AI made by Google.
-
-## Goals (Problem and Solution)
-
-1. **Problem**: Writing LaTeX code is hard and time-consuming.
-2. **Solution**: Use AI to generate LaTeX code for you.
-3. **Goal**: Make it easy for students and researchers to write LaTeX code.
+This is a project that generates LaTeX code for you. It is powered by Gemini AI made by Google.
 
 ## Tech Stacks
 
