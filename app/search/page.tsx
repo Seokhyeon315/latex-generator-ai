@@ -1,12 +1,18 @@
-// This server component will call api to generate the latex code and display the result
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { FormulaSearch } from "@/components/FormulaSearch";
 
-import FormulaFinderForm from "@/components/FormulaFinderForm";
 
-export default function FinderPage() {
+export interface SearchPageProps extends React.ComponentProps<'div'> {
+    id?: string
+    input: string
+}
+
+export default async function SearchPage() {
+    const genAI = new GoogleGenerativeAI(
+        process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
+    )
 
     return (
-        <div className="flex min-h-screen flex-col items-center">
-            <FormulaFinderForm />
-        </div>
-    )
+        <FormulaSearch />
+    );
 }

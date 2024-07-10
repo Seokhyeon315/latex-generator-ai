@@ -15,7 +15,7 @@ export default function Hero() {
                             {/* Title */}
                             <div className="mt-5 max-w-2xl">
                                 <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-                                    AI-Powered formula finder with LATEX
+                                    AI-Powered formula search with LATEX
                                 </h1>
                             </div>
                             {/* End Title */}

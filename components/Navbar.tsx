@@ -5,19 +5,19 @@ import { MobileNav } from '@/components/mobile-nav'
 
 const menuitems = [
     {
-        label: "HOME",
+        label: "Home",
         path: "/",
     },
-    // {
-    //     label: "About",
-    //     path: "/about",
-    // },
     {
-        label: "FINDER",
+        label: "About",
+        path: "/about",
+    },
+    {
+        label: "Search",
         path: "/search",
     },
     {
-        label: "UPLOAD",
+        label: "Upload",
         path: "/upload",
     },
 ];
@@ -27,7 +27,7 @@ export function Navbar() {
         <div className="max-w-screen-xl mx-auto px-5">
             <header className="flex flex-col lg:flex-row justify-between items-center my-5">
                 <div className="flex w-full lg:w-auto items-center justify-between">
-                    <a href="/" className="text-lg"
+                    <a href="/" className="text-2xl"
                     ><span className="font-bold text-slate-800">Pro</span><span
                         className="pl-1 text-slate-500">Formula</span>
                     </a>
@@ -44,8 +44,8 @@ export function Navbar() {
                                 <li key={index}>
                                     <Link
                                         href={item.path}
-                                        className="flex lg:px-3 py-2 items-center text-gray-900">
-                                        <span> {item.label}</span>
+                                        className="flex lg:px-3 py-2 items-center text-base font-semibold text-gray-900">
+                                        <span className="hover:underline hover:underline-offset-2"> {item.label}</span>
                                     </Link>
                                 </li>
                             ))

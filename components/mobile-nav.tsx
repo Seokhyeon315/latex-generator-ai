@@ -37,19 +37,19 @@ export const MobileNav = () => {
                     >
                         Home
                     </MobileLink>
-                    {/* <MobileLink
+                    <MobileLink
                         onOpenChange={setOpen}
                         href="/about"
                         className="flex items-center"
                     >
                         About
-                    </MobileLink> */}
+                    </MobileLink>
                     <MobileLink
                         onOpenChange={setOpen}
                         href="/search"
                         className="flex items-center"
                     >
-                        Finder
+                        Search
                     </MobileLink>
                     <MobileLink
                         onOpenChange={setOpen}

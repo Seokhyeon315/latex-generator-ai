@@ -1,3 +1,6 @@
+// TODO:
+// 1. This page will use Gemini API Vision to recoginize the uploaded image and convert it to Latex code.
+
 export default function UploadPage() {
     return (
         <div>
