@@ -12,6 +12,9 @@ This is a project that generates LaTeX code for you. It is powered by Gemini AI 
 - UploadThing
 - Vercel AI SDK
 - LangChain
+- [Drizzle ORM](https://orm.drizzle.team/)
+- [Lucia Auth](https://lucia-auth.com/)
+- [Turso](https://turso.tech/pricing)
 
 ## Todos
 

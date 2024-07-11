@@ -13,6 +13,7 @@ export default async function SearchPage() {
     )
 
     return (
+        // This will be envelped in AIProvider defined in actions.tsx
         <FormulaSearch />
     );
 }
