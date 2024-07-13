@@ -51,13 +51,6 @@ export const MobileNav = () => {
                     >
                         Search
                     </MobileLink>
-                    <MobileLink
-                        onOpenChange={setOpen}
-                        href="/upload"
-                        className="flex items-center"
-                    >
-                        Upload
-                    </MobileLink>
 
                 </div>
             </SheetContent>

@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+
 import { FormulaSearch } from "@/components/FormulaSearch";
 
 
@@ -8,9 +8,7 @@ export interface SearchPageProps extends React.ComponentProps<'div'> {
 }
 
 export default async function SearchPage() {
-    const genAI = new GoogleGenerativeAI(
-        process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
-    )
+
 
     return (
         // This will be envelped in AIProvider defined in actions.tsx

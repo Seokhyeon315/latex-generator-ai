@@ -16,10 +16,6 @@ const menuitems = [
         label: "Search",
         path: "/search",
     },
-    {
-        label: "Upload",
-        path: "/upload",
-    },
 ];
 
 export function Navbar() {

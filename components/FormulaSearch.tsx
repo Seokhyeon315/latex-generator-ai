@@ -21,7 +21,7 @@ export function FormulaSearch({ id }: SearchProps) {
                             Formula Search
                         </h1>
                         <p className="mt-3 text-xl text-muted-foreground">
-                            Search the equation or formula name to get Latex form quickly
+                            Search the formula name or upload image of equations to get Latex form quickly!
                         </p>
                         <div className="mt-7 sm:mt-12 mx-auto max-w-xl relative">
                             <SearchForm
@@ -33,7 +33,7 @@ export function FormulaSearch({ id }: SearchProps) {
                 </div>
             </div>
 
-            {/* Ouput Display here */}
+            {/* Ouput Display panel here */}
         </div >
     );
 }
