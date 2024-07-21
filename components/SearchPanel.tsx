@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { SearchForm } from "@/components/search-form";
 
-export interface SearchProps extends React.ComponentProps<'div'> {
+export interface SearchPanelProps extends React.ComponentProps<'div'> {
     id?: string
-
 }
 
-export function FormulaSearch({ id }: SearchProps) {
-
+export function SearchPanel({ id }: SearchPanelProps) {
     const [input, setInput] = useState("");
+    const [result, setResult] = useState<{ renderedFormula: string; latexCode: string } | null>(null);
 
     return (
         <div className="flex min-h-screen flex-col items-center">
@@ -27,13 +26,26 @@ export function FormulaSearch({ id }: SearchProps) {
                             <SearchForm
                                 id={id}
                                 input={input}
-                                setInput={setInput} />
+                                setInput={setInput}
+                                setResult={setResult} />
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Ouput Display panel here */}
-        </div >
+            {/* Output Display panel here */}
+            {result && (
+                <div className="mt-4 p-3 border bg-background rounded-lg shadow-lg">
+                    <div>
+                        <strong>Rendered Formula:</strong>
+                        <div>{result.renderedFormula}</div>
+                    </div>
+                    <div>
+                        <strong>LaTeX Code:</strong>
+                        <div>{result.latexCode}</div>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 }

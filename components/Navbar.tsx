@@ -20,7 +20,7 @@ const menuitems = [
 
 export function Navbar() {
     return (
-        <div className="max-w-screen-xl mx-auto px-5">
+        <div className="max-w-screen-xl mx-auto p-4">
             <header className="flex flex-col lg:flex-row justify-between items-center my-5">
                 <div className="flex w-full lg:w-auto items-center justify-between">
                     <a href="/" className="text-2xl"
