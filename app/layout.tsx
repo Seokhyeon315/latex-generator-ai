@@ -23,11 +23,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(
-        "min-h-screen bg-background font-sans antialiased",
+        'font-sans antialiased',
         fontSans.variable
       )}>
         <Navbar />
-        {children}
+        <div className="flex flex-col min-h-screen">
+          {children}
+        </div>
         <Footer />
       </body>
     </html>

@@ -20,7 +20,7 @@ export const MobileNav = () => {
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-                <Button variant="outline" className="w-10 px-0 md:hidden" >
+                <Button variant="outline" className="w-10 px-0 lg:hidden" >
                     <Menu className="w-5 h-5" />
                     <span className="sr-only">Toggle Theme</span>
                 </Button>
@@ -29,27 +29,34 @@ export const MobileNav = () => {
             <SheetContent side="right">
                 {/* Logo here */}
 
-                <div className="flex flex-col pl-3 gap-4 mt-7 pt-4">
+                <div className="flex flex-col pb-2 pl-3 gap-4 mt-7 pt-4">
                     <MobileLink
                         onOpenChange={setOpen}
                         href="/"
-                        className="flex items-center"
+                        className="flex items-center hover:underline"
                     >
                         Home
                     </MobileLink>
                     <MobileLink
                         onOpenChange={setOpen}
                         href="/about"
-                        className="flex items-center"
+                        className="flex items-center hover:underline"
                     >
                         About
                     </MobileLink>
                     <MobileLink
                         onOpenChange={setOpen}
                         href="/search"
-                        className="flex items-center"
+                        className="flex items-center hover:underline"
                     >
                         Search
+                    </MobileLink>
+                    <MobileLink
+                        onOpenChange={setOpen}
+                        href="/convert"
+                        className="flex items-center hover:underline"
+                    >
+                        Convert
                     </MobileLink>
 
                 </div>

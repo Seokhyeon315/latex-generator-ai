@@ -16,16 +16,21 @@ const menuitems = [
         label: "Search",
         path: "/search",
     },
+    {
+        label: "Convert",
+        path: "/convert",
+    },
 ];
 
 export function Navbar() {
     return (
         <div className="max-w-screen-xl mx-auto p-4">
-            <header className="flex flex-col lg:flex-row justify-between items-center my-5">
+            <header className="flex flex-col md:flex-row justify-between items-center my-5">
                 <div className="flex w-full lg:w-auto items-center justify-between">
                     <a href="/" className="text-2xl"
-                    ><span className="font-bold text-slate-800">Pro</span><span
-                        className="pl-1 text-slate-500">Formula</span>
+                    >
+                        <span className="font-bold text-slate-800">Pro</span>
+                        <span className="pl-1 text-slate-500">Formula</span>
                     </a>
                     <div className="block lg:hidden">
                         <MobileNav />
@@ -33,7 +38,7 @@ export function Navbar() {
                 </div>
 
                 {/* For larger screen */}
-                <nav className="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">
+                <nav className="hidden w-full lg:w-auto lg-2 lg:flex lg:mt-0">
                     <ul className="flex flex-col lg:flex-row lg:gap-3">
                         {
                             menuitems.map((item, index) => (

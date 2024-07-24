@@ -3,11 +3,8 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-interface HeroProps {
-    scrollToDescription: () => void;
-}
 
-export default function Hero({ scrollToDescription }: HeroProps) {
+export default function Hero() {
     return (
         <>
             {/* Hero */}
@@ -34,8 +31,10 @@ export default function Hero({ scrollToDescription }: HeroProps) {
                                     <Button size={"lg"}>Get started</Button>
                                 </Link>
 
-                                <Button size={"lg"} variant={"outline"} onClick={scrollToDescription}>
-                                    Learn more
+                                <Button size={"lg"} variant={"outline"}>
+                                    <Link href="/about">
+                                        Learn more
+                                    </Link>
                                 </Button>
                             </div>
                             {/* End Buttons */}

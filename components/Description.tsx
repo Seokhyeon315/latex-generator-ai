@@ -1,95 +1,114 @@
 import {
-    BookOpenIcon,
-    ChevronRightIcon,
-    MessagesSquareIcon,
+    BrainCogIcon,
+    PackageIcon,
     ThumbsUpIcon,
+    TrophyIcon,
+    UsersIcon,
+    ZapIcon,
 } from "lucide-react";
 
 export default function DescriptionSection() {
     return (
         <>
-            <div className="container p-24 lg:p-28">
-                {/* Grid */}
-                <div className="grid md:grid-cols-2 gap-12">
-                    <div className="lg:w-3/4">
-                        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-                            Collaborative tools to design better user experience
-                        </h2>
-                        <p className="mt-3 text-muted-foreground">
-                            We help businesses bring ideas to life in the digital world, by
-                            designing and implementing the technology tools that they need to
-                            win.
-                        </p>
-                        <p className="mt-5">
-                            <a
-                                className="inline-flex items-center gap-x-1 group font-medium hover:underline underline-offset-4 "
-                                href="#"
-                            >
-                                Contact sales to learn more
-                                <ChevronRightIcon className="flex-shrink-0 w-4 h-4 transition ease-in-out group-hover:translate-x-1" />
-                            </a>
-                        </p>
+            {/* Icon Blocks */}
+            <div className="container py-18 lg:py-24">
+                <div className="max-w-4xl mx-auto">
+                    {/* Grid */}
+                    <div className="grid px-4 md:grid-cols-2 gap-12 lg:gap-24">
+                        <div className="space-y-6 lg:space-y-10">
+                            {/* Icon Block */}
+                            <div className="flex">
+                                <BrainCogIcon className="flex-shrink-0 mt-2 h-8 w-8" />
+                                <div className="ms-5 sm:ms-8">
+                                    <h3 className="text-base sm:text-lg font-semibold">
+                                        Creative minds
+                                    </h3>
+                                    <p className="mt-1 text-muted-foreground">
+                                        We choose our teams carefully. Our people are the secret to
+                                        great work.
+                                    </p>
+                                </div>
+                            </div>
+                            {/* End Icon Block */}
+                            {/* Icon Block */}
+                            <div className="flex">
+                                <PackageIcon className="flex-shrink-0 mt-2 h-8 w-8" />
+                                <div className="ms-5 sm:ms-8">
+                                    <h3 className="text-base sm:text-lg font-semibold">
+                                        Effortless updates
+                                    </h3>
+                                    <p className="mt-1 text-muted-foreground">
+                                        Benefit from automatic updates to all boards any time you
+                                        need to make a change to your website.
+                                    </p>
+                                </div>
+                            </div>
+                            {/* End Icon Block */}
+                            {/* Icon Block */}
+                            <div className="flex">
+                                <ZapIcon className="flex-shrink-0 mt-2 h-8 w-8" />
+                                <div className="ms-5 sm:ms-8">
+                                    <h3 className="text-base sm:text-lg font-semibold">
+                                        Strong empathy
+                                    </h3>
+                                    <p className="mt-1 text-muted-foreground">
+                                        We&apos;ve user tested our own process by shipping over 1k
+                                        products for clients.
+                                    </p>
+                                </div>
+                            </div>
+                            {/* End Icon Block */}
+                        </div>
+                        {/* End Col */}
+                        <div className="space-y-6 lg:space-y-10">
+                            {/* Icon Block */}
+                            <div className="flex">
+                                <TrophyIcon className="flex-shrink-0 mt-2 h-8 w-8" />
+                                <div className="ms-5 sm:ms-8">
+                                    <h3 className="text-base sm:text-lg font-semibold">
+                                        Conquer the best
+                                    </h3>
+                                    <p className="mt-1 text-muted-foreground">
+                                        We stay lean and help your product do one thing well.
+                                    </p>
+                                </div>
+                            </div>
+                            {/* End Icon Block */}
+                            {/* Icon Block */}
+                            <div className="flex">
+                                <UsersIcon className="flex-shrink-0 mt-2 h-8 w-8" />
+                                <div className="ms-5 sm:ms-8">
+                                    <h3 className="text-base sm:text-lg font-semibold">
+                                        Designing for people
+                                    </h3>
+                                    <p className="mt-1 text-muted-foreground">
+                                        We actively pursue the right balance between functionality
+                                        and aesthetics, creating delightful experiences.
+                                    </p>
+                                </div>
+                            </div>
+                            {/* End Icon Block */}
+                            {/* Icon Block */}
+                            <div className="flex">
+                                <ThumbsUpIcon className="flex-shrink-0 mt-2 h-8 w-8" />
+                                <div className="ms-5 sm:ms-8">
+                                    <h3 className="text-base sm:text-lg font-semibold">
+                                        Simple and affordable
+                                    </h3>
+                                    <p className="mt-1 text-muted-foreground">
+                                        From boarding passes to movie tickets, there&apos;s pretty
+                                        much nothing you can&apos;t do.
+                                    </p>
+                                </div>
+                            </div>
+                            {/* End Icon Block */}
+                        </div>
+                        {/* End Col */}
                     </div>
-                    {/* End Col */}
-                    <div className="space-y-6 lg:space-y-10">
-                        {/* Icon Block */}
-                        <div className="flex">
-                            {/* Icon */}
-                            <span className="flex-shrink-0 inline-flex justify-center items-center w-[46px] h-[46px] rounded-full border bg-primary text-primary-foreground">
-                                <BookOpenIcon className="flex-shrink-0 w-5 h-5" />
-                            </span>
-                            <div className="ms-5 sm:ms-8">
-                                <h3 className="text-base sm:text-lg font-semibold">
-                                    Industry-leading documentation
-                                </h3>
-                                <p className="mt-1 text-muted-foreground">
-                                    Our documentation and extensive Client libraries contain
-                                    everything a business needs to build a custom integration in a
-                                    fraction of the time.
-                                </p>
-                            </div>
-                        </div>
-                        {/* End Icon Block */}
-                        {/* Icon Block */}
-                        <div className="flex">
-                            {/* Icon */}
-                            <span className="flex-shrink-0 inline-flex justify-center items-center w-[46px] h-[46px] rounded-full border  bg-primary text-primary-foreground">
-                                <MessagesSquareIcon className="flex-shrink-0 w-5 h-5" />
-                            </span>
-                            <div className="ms-5 sm:ms-8">
-                                <h3 className="text-base sm:text-lg font-semibold">
-                                    Developer community support
-                                </h3>
-                                <p className="mt-1 text-muted-foreground">
-                                    We actively contribute to open-source projects—giving back to
-                                    the community through development, patches, and sponsorships.
-                                </p>
-                            </div>
-                        </div>
-                        {/* End Icon Block */}
-                        {/* Icon Block */}
-                        <div className="flex">
-                            {/* Icon */}
-                            <span className="flex-shrink-0 inline-flex justify-center items-center w-[46px] h-[46px] rounded-full border bg-primary text-primary-foreground">
-                                <ThumbsUpIcon className="flex-shrink-0 w-5 h-5" />
-                            </span>
-                            <div className="ms-5 sm:ms-8">
-                                <h3 className="text-base sm:text-lg font-semibold">
-                                    Simple and affordable
-                                </h3>
-                                <p className="mt-1 text-muted-foreground">
-                                    From boarding passes to movie tickets, there&apos;s pretty
-                                    much nothing you can&apos;t do.
-                                </p>
-                            </div>
-                        </div>
-                        {/* End Icon Block */}
-                    </div>
-                    {/* End Col */}
+                    {/* End Grid */}
                 </div>
-                {/* End Grid */}
             </div>
-
+            {/* End Icon Blocks */}
         </>
     );
 }
