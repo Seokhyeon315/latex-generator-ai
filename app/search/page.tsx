@@ -12,7 +12,7 @@ export default function SearchPage() {
 
 
     return (
-        <AI initialAIState={{ searchId: id }}>
+        <AI>
             <Search id={id} />
         </AI>
 

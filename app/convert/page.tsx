@@ -3,6 +3,10 @@
 import { Paperclip } from "lucide-react";
 
 
+export const metadata = {
+    title: 'Convert Formula'
+}
+
 
 export default function ConvertPage() {
     return (

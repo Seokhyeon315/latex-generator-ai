@@ -1,7 +1,6 @@
 'use client';
 
 import type { AI } from '@/lib/actions'
-import { SearchForm } from "@/components/search-form";
 import { useAIState, useActions, useUIState } from 'ai/rsc'
 import { Card } from './ui/card';
 
@@ -9,7 +8,7 @@ export interface SearchPanelProps extends React.ComponentProps<'div'> {
     id?: string
 }
 
-export function SearchPanel({ id }: SearchPanelProps) {
+export function MultiStepSearchPanel({ id }: SearchPanelProps) {
     const [aiState] = useAIState()
     const [messages, setMessages] = useUIState<typeof AI>()
 

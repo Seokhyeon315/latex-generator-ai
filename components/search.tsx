@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { Card } from './ui/card';
-import { SearchPanel } from './SearchPanel';
-import { SearchForm } from './search-form';
+import { MultiStepSearchPanel } from '@/components/MultiSearchPanel';
+import { DirectSearchForm } from '@/components/direct-search-form';
 import { Button } from './ui/button';
 
 export interface SearchProps extends React.ComponentProps<'div'> {
@@ -25,7 +25,7 @@ export function Search({ id }: SearchProps) {
                         Formula Search
                     </h1>
                     <p className="mt-3 text-xl text-gray-600">
-                        Search the formula name to get LaTeX form quickly!
+                        Find a formula and get its LaTeX code quickly!
                     </p>
                 </div>
 
@@ -58,8 +58,8 @@ export function Search({ id }: SearchProps) {
                         </div>
                     )}
 
-                    {selectedStatus === 'known' && <SearchForm id={id} />}
-                    {selectedStatus === 'help' && <SearchPanel id={id} />}
+                    {selectedStatus === 'known' && <DirectSearchForm id={id} />}
+                    {selectedStatus === 'help' && <MultiStepSearchPanel id={id} />}
                 </div>
             </div>
         </div>
