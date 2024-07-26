@@ -1,8 +1,7 @@
-'use client'
+'use client';
 
-import { cn } from "@/lib/utils"
-import React from "react"
-
+import { cn } from "@/lib/utils";
+import React from "react";
 
 export function IconSpinner({ className, ...props }: React.ComponentProps<'svg'>) {
     return (
@@ -18,7 +17,6 @@ export function IconSpinner({ className, ...props }: React.ComponentProps<'svg'>
     )
 }
 
-
 export function IconCheck({ className, ...props }: React.ComponentProps<'svg'>) {
     return (
         <svg
@@ -33,12 +31,7 @@ export function IconCheck({ className, ...props }: React.ComponentProps<'svg'>) 
     )
 }
 
-
 export function IconCopy({ className, ...props }: React.ComponentProps<'svg'>) {
-    function cn(arg0: string, className: string | undefined): string | undefined {
-        throw new Error("Function not implemented.")
-    }
-
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

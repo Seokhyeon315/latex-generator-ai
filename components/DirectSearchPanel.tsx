@@ -6,10 +6,12 @@ import { readStreamableValue, useActions } from 'ai/rsc';
 import { Button } from "@/components/ui/button";
 import { SearchIcon } from "lucide-react";
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
-import FormulaRenderer from '@/components/FormulaRenderer';
+import { FormulaRenderer, ExplanationRenderer } from '@/components/FormulaRenderer';
 import { IconSpinner } from './ui/icons';
+import { CopyToClipboard } from '@/components/copy-to-clipboard';
 
-interface SearchFormProps {
+
+interface DirectSearchPanelProps {
     id?: string;
 }
 
@@ -24,7 +26,7 @@ interface PartialObject {
     }[];
 }
 
-export function DirectSearchPanel({ id }: SearchFormProps) {
+export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
     const [input, setInput] = React.useState<string>('');
     const inputRef = React.useRef<HTMLTextAreaElement>(null);
     const [response, setResponse] = React.useState<PartialObject[]>([]);
@@ -38,23 +40,6 @@ export function DirectSearchPanel({ id }: SearchFormProps) {
             inputRef.current.focus();
         }
     }, []);
-
-    const parseUsageText = (text: string) => {
-        return text.split('\\n').map((line, i) => {
-            if (line.startsWith('* ')) {
-                const content = line.substring(2).split('**');
-                return (
-                    <div key={i} className="ml-4 list-disc">
-                        {content.map((part, index) => (
-                            index % 2 === 1 ? <strong key={index}>{part}</strong> : <span key={index}>{part}</span>
-                        ))}
-                    </div>
-                );
-            } else {
-                return <p key={i}>{line}</p>;
-            }
-        });
-    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -107,7 +92,7 @@ export function DirectSearchPanel({ id }: SearchFormProps) {
                     </div>
                 ) : response.length > 0 ? (
                     <div className="flex h-fit items-center justify-center mt-4 pb-6">
-                        <div className="max-h-[600px] w-full overflow-y-auto">
+                        <div className="mt-4 max-h-[700px] w-full overflow-y-auto">
                             {response.map((line, i) => (
                                 <div key={i} className="bg-white p-6 rounded-lg shadow-md mb-4">
                                     <div className="mb-4">
@@ -119,27 +104,25 @@ export function DirectSearchPanel({ id }: SearchFormProps) {
                                         <p className="text-lg text-gray-700">{line.formulas[0].description}</p>
                                     </div>
                                     <div className="mb-4">
-                                        <h3 className="text-2xl font-bold mb-1">Usage:</h3>
-                                        <div className="text-lg text-gray-700">
-                                            {parseUsageText(line.formulas[0].usage)}
-                                        </div>
-                                    </div>
-                                    <div className="mb-4">
                                         <h3 className="text-2xl font-bold mb-1">Rendered Formula:</h3>
                                         <div className="bg-gray-100 p-4 rounded-lg">
                                             <FormulaRenderer formula={line.formulas[0].renderedFormula} />
                                         </div>
                                     </div>
+
                                     <div className="mb-4">
-                                        <h3 className="text-2xl font-bold mb-1">Explanation:</h3>
-                                        <div className="p-2 text-lg text-gray-700">
-                                            {parseUsageText(line.formulas[0].explanation)}
+                                        <div className="bg-gray-100 p-4 rounded-lg">
+                                            <ExplanationRenderer explanation={line.formulas[0].explanation} usage={line.formulas[0].usage} />
                                         </div>
                                     </div>
+
                                     <div>
                                         <h3 className="text-2xl font-bold mb-1">LaTeX Code:</h3>
-                                        <div className="bg-gray-100 p-4 rounded-lg">
-                                            <pre className="overflow-x-auto">{line.formulas[0].latexCode}</pre>
+                                        <div className="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+                                            <pre className="overflow-x-auto">
+                                                {line.formulas[0].latexCode}
+                                            </pre>
+                                            <CopyToClipboard text={line.formulas[0].latexCode} />
                                         </div>
                                     </div>
                                 </div>
@@ -147,9 +130,7 @@ export function DirectSearchPanel({ id }: SearchFormProps) {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex h-fit items-center justify-center mt-4 pb-6">
-                        Please Enter a Formula Name
-                    </div>
+                    null
                 )}
 
                 <div className="grid gap-4 sm:pb-4">

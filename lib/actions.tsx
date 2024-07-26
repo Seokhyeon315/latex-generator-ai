@@ -30,21 +30,20 @@ const formulaSchema = z.object({
             formulaName: z.string().describe('The name of the formula or equation.'),
             description: z.string().describe('A detailed description of the formula or equation.'),
             usage: z.string().describe('The usage or application of the formula or equation. Ensure completeness and specificity.'),
-            renderedFormula: z.string().describe('The rendered version of the formula or equation.'),
-            explanation: z.string().describe('Provide a detailed explanation of each symbol in the formula, including both LHS and RHS. Ensure the response is in a human-readable format and include the units of each symbol if applicable.'),
-            latexCode: z.string().describe('The LaTeX code representation of the formula or equation.'),
+            renderedFormula: z.string().describe('The human-readable rendered version of the formula or equation. Avoid using LaTeX or any other syntax.'),
+            explanation: z.string().describe('Provide a detailed explanation of each symbol in the formula, including both LHS (Left-hand-side) and RHS (Right-hand-side). Ensure the response is in a human-readable format and include the units of each symbol if applicable. Use plain text with LaTeX syntax wrapped in $.'),
+            latexCode: z.string().describe('The LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.'),
         })
     ),
 });
 
 
-
 async function directSearchAction(userInput: string) {
-    'use server'
+    'use server';
 
     const objectStream = createStreamableValue();
 
-    ; (async () => {
+    (async () => {
         try {
             const { partialObjectStream } = await streamObject({
                 model: google('models/gemini-1.5-pro'),
@@ -54,17 +53,25 @@ async function directSearchAction(userInput: string) {
                 1. **Formula Name**: Provide the name of the formula or equation.
                 2. **Description**: Offer a detailed description of the formula or equation.
                 3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts.
-                4. **Rendered Formula**: Provide the human-readable rendered version of the formula or equation. Avoid using LaTeX or any other syntax.
-                5. **Explanation of Symbols**: Provide a detailed explanation of each symbol in the formula, covering both the left-hand side (LHS) and right-hand side (RHS). Ensure the response is in a human-readable format and avoid using LaTeX syntax.
-                6. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation.
+                4. **Rendered Formula**: Provide the human-readable rendered version of the formula or equation. This should include subscripts for any integral bounds. Avoid using LaTeX or any other syntax.
+                5. **Explanation of Symbols**: Provide a detailed explanation of each symbol in the formula, covering both the left-hand side (LHS) and right-hand side (RHS). Ensure the response is in a human-readable format. For symbols, use plain text with LaTeX syntax wrapped in $. Do not escape characters unless necessary.
+                6. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
                 
-                Only respond to queries that are relevant to these fields. If user input is not formula name, saying "Please try again."`,
+                Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`,
                 prompt: userInput,
                 schema: formulaSchema,
             });
             let foundValidData = false;
             for await (const partialObject of partialObjectStream) {
                 if (formulaSchema.safeParse(partialObject).success) {
+                    // Ensure LaTeX code is formatted correctly
+                    if (partialObject.formulas) {
+                        partialObject.formulas.forEach(formula => {
+                            if (formula && formula.latexCode) {
+                                formula.latexCode = formula.latexCode.replace(/\\\\/g, '\\');
+                            }
+                        });
+                    }
                     foundValidData = true;
                     objectStream.update(partialObject);
                     console.log(partialObject);
@@ -86,14 +93,36 @@ async function directSearchAction(userInput: string) {
 
     })();
 
-    return { object: objectStream.value }
-
+    return { object: objectStream.value };
 }
 
 
 // Convert Image to Latex code action
 async function imageToLatexAction(imageBase64: string) {
     'use server'
+
+    const aiState = getMutableAIState()
+    const spinnerStream = createStreamableUI(null)
+    const messageStream = createStreamableUI(null)
+    const uiStream = createStreamableUI()
+
+
+    uiStream.update(
+        <div>
+            Image convert processing...
+        </div>
+    )
+
+        ; (async () => {
+            try {
+                // If else statement to check if the image is a valid base64 string
+            } catch (error) {
+                console.log(error)
+            }
+
+        })()
+
+
 
 }
 
