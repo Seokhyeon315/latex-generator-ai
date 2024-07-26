@@ -1,6 +1,6 @@
 import { AI } from "@/lib/actions";
 import React from "react";
-import { DirectSearchForm } from '@/components/direct-search-form';
+import { DirectSearchPanel } from '@/components/DirectSearchPanel';
 
 
 export default function DirectSearchPage() {
@@ -9,12 +9,13 @@ export default function DirectSearchPage() {
             <div className="group w-full overflow-auto">
                 <div className="flex flex-col items-center ">
                     <h1 className="text-3xl font-semibold">Direct Search</h1>
-
                 </div>
-                <DirectSearchForm />
+                {/* Empty screen here */}
 
+
+
+                <DirectSearchPanel />
             </div>
-
         </AI>
     );
 }

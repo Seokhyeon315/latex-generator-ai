@@ -1,11 +1,11 @@
 import React from 'react'
 
-export function EmptyScreen() {
+export function EmptyDirectScreen() {
     return (
         <div className="mx-auto max-w-2xl px-4">
             <div className="flex flex-col gap-2 rounded-2xl bg-zinc-50 sm:p-8 p-4 text-sm sm:text-base">
                 <h1 className="text-2xl sm:text-3xl tracking-tight font-semibold max-w-fit inline-block">
-                    Welcome to Pro Formula
+                    Instruction of Direct Search
                 </h1>
                 <p className="leading-normal text-zinc-900">
                     This is an open source AI chatbot app template built with{' '}

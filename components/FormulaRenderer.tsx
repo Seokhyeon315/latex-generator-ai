@@ -1,7 +1,5 @@
 import React from 'react';
 import katex from 'katex';
-import Latex from 'react-latex-next'
-
 import 'katex/dist/katex.min.css';
 
 const FormulaRenderer = ({ formula }: { formula: string }) => {
@@ -15,7 +13,7 @@ const FormulaRenderer = ({ formula }: { formula: string }) => {
 
     return (
         <div className="text-center">
-            <Latex>{html}</Latex>
+            <span dangerouslySetInnerHTML={{ __html: html }} className="text-2xl" />
         </div>
     );
 };
