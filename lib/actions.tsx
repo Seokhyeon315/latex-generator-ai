@@ -5,7 +5,7 @@
 'use server'
 
 import { google } from '@ai-sdk/google'
-import { streamText } from 'ai'
+import { streamObject, streamText } from 'ai'
 import {
     createAI,
     createStreamableUI,
@@ -15,39 +15,57 @@ import {
 } from 'ai/rsc'
 import { nanoid } from './utils';
 import { z } from 'zod';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 async function directSearchAction(userInput: string) {
     'use server'
 
-    const textStream = createStreamableValue('');
+    const objectStream = createStreamableValue();
 
     ; (async () => {
         try {
-            const result = await streamText({
+            const { partialObjectStream } = await streamObject({
                 model: google('models/gemini-1.5-pro'),
                 temperature: 0,
-                system: `\You are an AI specialized in providing equations and formulas 
-                    in the fields of mathematics, engineering, and science. 
-                    When a user provides the name of an equation or formula, respond with the rendered version of the equation or formula and its corresponding LaTeX code. Do not respond to any queries that are not relevant to these fields`,
-                prompt: `Give me the rendered version of ${userInput} and its corresponding Latex code.`,
-            })
+                system: `You are an AI specialized in providing detailed information on equations and formulas in the fields of mathematics, engineering, and science. 
+                When a user provides the name of an equation or formula, respond with the following:
+                1. **Formula Name**: The name of the formula or equation.
+                2. **Description**: A detailed description of the formula or equation.
+                3. **Usage**: The application or usage of the formula or equation.
+                4. **Explanation**: An explanation of each symbol in the formula, covering both the left-hand side (LHS) and right-hand side (RHS).
+                5. **LaTeX Code**: The LaTeX code representation of the formula or equation.
 
-            for await (const textPart of result.textStream) {
-                textStream.update(textPart)
-                console.log(textPart);
+                Do not respond to any queries that are not relevant to these fields.`,
+                prompt: userInput,
+                schema: z.object({
+                    formulas: z.array(
+                        z.object({
+                            formulaName: z.string().describe('The name of the formula or equation.'),
+                            description: z.string().describe(`A detailed description of the formula or equation with given ${userInput}`),
+                            usuage: z.string().describe(`The usage or application of the formula or equation with given ${userInput}`),
+                            renderedFormula: z.string().describe(`The rendered version of the formula or equation with given ${userInput}`),
+                            where: z.string().describe(`Explanation of each symbol in the formula, including both LHS and RHS.`),
+                            latexCode: z.string().describe(`The LaTeX code representation of the formula or equation with given ${userInput}`),
+                        }),
+                    ),
+                }),
+            });
+
+            for await (const partialObject of partialObjectStream) {
+                objectStream.update(partialObject)
+                console.log(partialObject);
             }
 
-            textStream.done()
+            objectStream.done()
 
         } catch (e) {
             console.error(e)
-            textStream.error(e)
+            objectStream.error(e)
         }
 
     })();
 
-    return { output: textStream.value }
+    return { object: objectStream.value }
 
 }
 
@@ -113,7 +131,6 @@ export type AIState = Array<{
 export type UIState = Array<{
     id: string;
     display: ReactNode;
-    // toolInvocations?: ToolInvocation[];
 }>;
 
 

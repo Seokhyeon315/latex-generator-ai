@@ -2,6 +2,7 @@
 import { AI } from "@/lib/actions";
 import { Search } from '@/components/search'
 import { nanoid } from "@/lib/utils";
+import React from "react";
 
 export const metadata = {
     title: 'Formula Search'
@@ -12,9 +13,6 @@ export default function SearchPage() {
 
 
     return (
-        <AI>
-            <Search id={id} />
-        </AI>
-
+        <Search id={id} />
     );
 }

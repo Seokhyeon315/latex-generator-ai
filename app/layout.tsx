@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import 'katex/dist/katex.min.css';
 import { Inter as FontSans } from "next/font/google"
 import "@/styles/globals.css"
 import { cn } from "@/lib/utils"
