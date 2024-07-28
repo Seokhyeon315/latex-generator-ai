@@ -38,9 +38,6 @@ dependencies:
   '@tailwindcss/typography':
     specifier: ^0.5.13
     version: 0.5.13(tailwindcss@3.4.7)
-  '@traptitech/markdown-it-katex':
-    specifier: ^3.6.0
-    version: 3.6.0
   ai:
     specifier: ^3.2.36
     version: 3.2.36(react@18.3.1)(svelte@4.2.18)(vue@3.4.34)(zod@3.23.8)
@@ -1976,12 +1973,6 @@ packages:
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.4.7
-    dev: false
-
-  /@traptitech/markdown-it-katex@3.6.0:
-    resolution: {integrity: sha512-CnJzTWxsgLGXFdSrWRaGz7GZ1kUUi8g3E9HzJmeveX1YwVJavrKYqysktfHZQsujdnRqV5O7g8FPKEA/aeTkOQ==}
-    dependencies:
-      katex: 0.16.11
     dev: false
 
   /@tybys/wasm-util@0.8.3:

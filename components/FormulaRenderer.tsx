@@ -20,10 +20,11 @@ export const FormulaRenderer: React.FC<FormulaRendererProps> = ({ formula }) => 
         const sanitizedText = DOMPurify.sanitize(formula);
         sanitizedHtml = (
             <ReactMarkdown
-                children={sanitizedText}
                 remarkPlugins={[remarkMath]}
                 rehypePlugins={[rehypeKatex, rehypeRaw]} // Use rehype-raw to process raw HTML within Markdown
-            />
+            >
+                {sanitizedText}
+            </ReactMarkdown>
         );
     } catch (error) {
         console.error('Error rendering LaTeX formula:', error);

@@ -7,13 +7,7 @@ export default function DirectSearchPage() {
     return (
         <AI>
             <div className="group w-full overflow-auto">
-                {/* <div className="flex flex-col items-center ">
-                    <h1 className="text-3xl font-semibold">Direct Search</h1>
-                </div> */}
                 {/* Empty screen here includes title, instructions, examples */}
-
-
-
                 <DirectSearchPanel />
             </div>
         </AI>

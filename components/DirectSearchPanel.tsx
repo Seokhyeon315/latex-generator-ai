@@ -94,7 +94,9 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
                     </div>
                 ) : response.length > 0 ? (
                     <div className="flex h-fit items-center justify-center mt-4 pb-6">
-                        <div className="space-x-2 mt-4 max-h-screen lg:max-h-[600px] xl:max-h-[800px] w-full overflow-y-auto">
+                        <div className="space-x-2 mt-4 max-h-[75vh] lg:max-h-[80vh] w-full overflow-y-auto">
+
+
                             {response.map((line, i) => (
                                 <div key={i} className="bg-white p-6 rounded-lg shadow-md mb-4">
                                     <div className="mb-4">
@@ -145,10 +147,13 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
                             <Textarea
                                 ref={inputRef}
                                 name="search"
+                                rows={1}
+                                maxRows={1}
                                 className="h-full w-full min-h-[60px] bg-transparent placeholder:text-zinc-900 resize-none px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
                                 spellCheck={false}
                                 autoComplete="off"
                                 autoCorrect="off"
+                                autoFocus
                                 required
                                 onKeyDown={onKeyDown}
                                 value={input}

@@ -20,7 +20,7 @@ const md = markdownit({
 // Function to render KaTeX within Markdown
 function renderKatex(content: string) {
     // Replace block math first to avoid conflict with inline math
-    content = content.replace(/\$\$([^$]+)\$\$/g, (_, equation) => {
+    content = content.replace(/\$\$(.+?)\$\$/g, (_, equation) => {
         return katex.renderToString(equation, {
             throwOnError: false,
             displayMode: true
@@ -39,7 +39,7 @@ function renderKatex(content: string) {
 
 const MarkdownRender = ({ text }: Props) => {
     // Replace escaped newlines with actual newlines
-    const formattedText = text.replace(/\\n/g, '\n');
+    const formattedText = text.replace(/\\n/g, '\n').replace(/\\\\/g, '\\');
 
     // Render the Markdown content using markdown-it
     let htmlContent = md.render(formattedText);

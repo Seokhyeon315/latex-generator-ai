@@ -1,8 +1,5 @@
+import 'server-only'
 
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable @next/next/no-img-element */
-// import 'server-only'
-'use server'
 
 import { google } from '@ai-sdk/google'
 import { streamObject, streamText } from 'ai'
@@ -46,10 +43,11 @@ const formulaSchema = z.object({
     ),
 });
 
-
+// Use the streamObject function to get the formula or equation
 async function directSearchAction(userInput: string) {
     'use server';
 
+    let streamClosed = false;
     const objectStream = createStreamableValue();
 
     (async () => {
@@ -74,8 +72,10 @@ async function directSearchAction(userInput: string) {
                         });
                     }
                     foundValidData = true;
-                    objectStream.update(partialObject);
-                    console.log(partialObject);
+                    if (!streamClosed) {
+                        objectStream.update(partialObject);
+                        console.log(partialObject);
+                    }
                 }
             }
 
@@ -83,18 +83,29 @@ async function directSearchAction(userInput: string) {
                 objectStream.update({ error: 'Invalid input. Please try again. Make sure to type the name of a formula.' });
             }
 
-            objectStream.done();
+
 
         } catch (e) {
             console.error(e);
             objectStream.error(e);
             objectStream.update({ error: 'An unexpected error occurred. Please try again.' });
 
+        } finally {
+            if (!streamClosed) {
+                objectStream.done();
+                streamClosed = true;
+            }
         }
 
     })();
 
     return { object: objectStream.value };
+}
+
+
+// Use the streamText function with tool calling
+async function FormulaSearchAction(input: string) {
+
 }
 
 
