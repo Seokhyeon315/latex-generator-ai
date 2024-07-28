@@ -11,10 +11,6 @@ export default function Home() {
       {/* Hero section */}
       <Hero />
 
-      {/* Descriptions */}
-
-      <DescriptionSection />
-
 
       {/* Features section with more details */}
     </main>

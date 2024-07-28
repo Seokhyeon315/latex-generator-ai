@@ -24,14 +24,23 @@ const genAI = new GoogleGenerativeAI(
     process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
 )
 
+const systemMessage = `You are an AI specialized in providing detailed information on equations or formulas or theorem in the fields of mathematics, engineering, and science.
+                When a user provides the name of an equation or formula, respond with the following:
+                1. **Formula Name**: Provide the name of the formula or equation or theorem.
+                2. **Description**: Offer a detailed description of the formula or equation. Ensure single backslashes for LaTeX commands.
+                3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts.
+                4. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
+                5. **Explanation of Symbols**: Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds. Ensure single backslashes for LaTeX commands.
+                
+                Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`;
+
 const formulaSchema = z.object({
     formulas: z.array(
         z.object({
             formulaName: z.string().describe('The name of the formula or equation.'),
             description: z.string().describe('A detailed description of the formula or equation.'),
             usage: z.string().describe('The usage or application of the formula or equation. Ensure completeness and specificity.'),
-            renderedFormula: z.string().describe('The human-readable rendered version of the formula or equation. Avoid using LaTeX or any other syntax.'),
-            explanation: z.string().describe('Provide a detailed explanation of each symbol in the formula, including both LHS (Left-hand-side) and RHS (Right-hand-side). Ensure the response is in a human-readable format and include the units of each symbol if applicable. Use plain text with LaTeX syntax wrapped in $.'),
+            explanation: z.string().describe(`Provide a detailed explanation of each symbol in the latex code, including both LHS (Left-hand-side) and RHS (Right-hand-side).`),
             latexCode: z.string().describe('The LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.'),
         })
     ),
@@ -48,18 +57,10 @@ async function directSearchAction(userInput: string) {
             const { partialObjectStream } = await streamObject({
                 model: google('models/gemini-1.5-pro'),
                 temperature: 0,
-                system: `You are an AI specialized in providing detailed information on equations and formulas in the fields of mathematics, engineering, and science.
-                When a user provides the name of an equation or formula, respond with the following:
-                1. **Formula Name**: Provide the name of the formula or equation.
-                2. **Description**: Offer a detailed description of the formula or equation.
-                3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts.
-                4. **Rendered Formula**: Provide the human-readable rendered version of the formula or equation. This should include subscripts for any integral bounds. Avoid using LaTeX or any other syntax.
-                5. **Explanation of Symbols**: Provide a detailed explanation of each symbol in the formula, covering both the left-hand side (LHS) and right-hand side (RHS). Ensure the response is in a human-readable format. For symbols, use plain text with LaTeX syntax wrapped in $. Do not escape characters unless necessary.
-                6. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
-                
-                Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`,
+                system: systemMessage,
                 prompt: userInput,
                 schema: formulaSchema,
+
             });
             let foundValidData = false;
             for await (const partialObject of partialObjectStream) {

@@ -12,6 +12,8 @@ const fontSans = FontSans({
   variable: "--font-sans",
 })
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Pro Formula",
   description: "Pro Formula is a tool that helps you to find the formula of any equation. You can search the equation name or upload an image of your formula with Latex form quickly.",
@@ -29,9 +31,11 @@ export default function RootLayout({
         fontSans.variable
       )}>
         <Toaster position="top-center" />
-        <Navbar />
-        <div className="flex flex-col min-h-screen px-4">
-          {children}
+
+        <div className="flex flex-col min-h-screen">
+
+          <Navbar />
+          <main className="flex flex-col flex-1">{children}</main>
         </div>
         <Footer />
       </body>

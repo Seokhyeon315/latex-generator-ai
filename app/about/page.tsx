@@ -44,10 +44,10 @@ export default function AboutPage() {
                                 <FileSpreadsheet className="flex-shrink-0 mt-2 h-6 w-6" />
                                 <div className="ms-5 sm:ms-8">
                                     <h3 className="text-base sm:text-lg font-semibold">
-                                        Your own formulasheets
+                                        Convert handwritten formulas to Latex format
                                     </h3>
                                     <p className="mt-1 text-muted-foreground">
-                                        For signed-in users, you can create your own formulasheets and save your favorite formulas based on your search.
+                                        Just attach the image of the handwritten formula, and you will get the LATEX format of the formula quickly. The image you attach won't be stored in the server.
                                     </p>
                                 </div>
                             </div>

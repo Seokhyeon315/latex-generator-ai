@@ -24,37 +24,35 @@ const menuitems = [
 
 export function Navbar() {
     return (
-        <div className="sticky top-0 z-50 max-w-screen-xl mx-auto p-4">
-            <header className="flex flex-col md:flex-row justify-between items-center my-5">
-                <div className="flex w-full lg:w-auto items-center justify-between">
-                    <a href="/" className="text-2xl"
-                    >
-                        <span className="font-bold text-slate-800">Pro</span>
-                        <span className="pl-1 text-slate-500">Formula</span>
-                    </a>
-                    <div className="block lg:hidden">
-                        <MobileNav />
-                    </div>
-                </div>
+        <header className="sticky top-0 z-50 flex justify-between w-full h-16 px-4 shrink-0 bg-gradient-to-b from-background/10 via-background/50 to-background/80 backdrop-blur-xl">
+            <div className="flex items-center">
+                <Link href="/" className="text-2xl pl-2 lg:pl-6"
+                >
+                    <span className="font-bold text-slate-800">Pro</span>
+                    <span className="pl-1 text-slate-500">Formula</span>
+                </Link>
+            </div>
 
-                {/* For larger screen */}
-                <nav className="hidden w-full lg:w-auto lg-2 lg:flex lg:mt-0">
-                    <ul className="flex flex-col lg:flex-row lg:gap-3">
-                        {
-                            menuitems.map((item, index) => (
-                                <li key={index}>
-                                    <Link
-                                        href={item.path}
-                                        className="flex lg:px-3 py-2 items-center text-base font-semibold text-gray-900">
-                                        <span className="hover:underline hover:underline-offset-2"> {item.label}</span>
-                                    </Link>
-                                </li>
-                            ))
-                        }
-                    </ul>
-                </nav>
-            </header>
-        </div>
+            {/* For larger screen */}
+            <nav className="hidden lg:flex lg:items-center lg:justify-end lg:gap-2 lg:pr-8">
+                <ul className="flex flex-col lg:flex-row lg:gap-3">
+                    {
+                        menuitems.map((item, index) => (
+                            <li key={index}>
+                                <Link
+                                    href={item.path}
+                                    className="flex lg:px-3 py-2 items-center text-base font-semibold text-gray-900">
+                                    <span className="hover:underline hover:underline-offset-2"> {item.label}</span>
+                                </Link>
+                            </li>
+                        ))
+                    }
+                </ul>
+            </nav>
+            <div className="block mt-3 lg:hidden">
+                <MobileNav />
+            </div>
+        </header>
 
     )
 }

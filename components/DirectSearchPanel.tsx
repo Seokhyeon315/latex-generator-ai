@@ -6,9 +6,11 @@ import { readStreamableValue, useActions } from 'ai/rsc';
 import { Button } from "@/components/ui/button";
 import { SearchIcon } from "lucide-react";
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
-import { FormulaRenderer, ExplanationRenderer } from '@/components/FormulaRenderer';
+import { FormulaRenderer } from '@/components/FormulaRenderer';
 import { IconSpinner } from './ui/icons';
 import { CopyToClipboard } from '@/components/copy-to-clipboard';
+import MarkdownRender from '@/components/markdown-render';
+
 
 
 interface DirectSearchPanelProps {
@@ -35,6 +37,8 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const { directSearchAction } = useActions();
 
+
+
     React.useEffect(() => {
         if (inputRef.current) {
             inputRef.current.focus();
@@ -49,9 +53,7 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
         setResponse([]);
         setError(null);
 
-        if (!value) {
-            return;
-        }
+        if (!value) return;
         setIsLoading(true); // Set loading state to true when form submission starts
 
         try {
@@ -79,11 +81,11 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
     };
 
     return (
-        <div className='fixed inset-x-0 bg-white/90 bottom-0 w-full duration-300 ease-in-out'>
+        <div className='fixed inset-x-0 bg-white/90 bottom-1 w-full duration-300 ease-in-out'>
             <div className="mx-auto sm:max-w-2xl sm:px-4">
                 {/* Output Display */}
                 {isLoading ? (
-                    <div className="flex h-fit items-center justify-center mt-4 pb-6">
+                    <div className="flex h-screen items-center justify-center mt-4 pb-6">
                         <IconSpinner />
                     </div>
                 ) : error ? (
@@ -92,27 +94,31 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
                     </div>
                 ) : response.length > 0 ? (
                     <div className="flex h-fit items-center justify-center mt-4 pb-6">
-                        <div className="mt-4 max-h-[700px] w-full overflow-y-auto">
+                        <div className="space-x-2 mt-4 max-h-screen lg:max-h-[600px] xl:max-h-[800px] w-full overflow-y-auto">
                             {response.map((line, i) => (
                                 <div key={i} className="bg-white p-6 rounded-lg shadow-md mb-4">
                                     <div className="mb-4">
-                                        <h3 className="text-2xl font-bold mb-1">Formula Name:</h3>
-                                        <p className="text-lg text-gray-700">{line.formulas[0].formulaName}</p>
+                                        <h3 className="text-2xl font-bold mb-1">{line.formulas[0].formulaName}</h3>
                                     </div>
                                     <div className="mb-4">
-                                        <h3 className="text-2xl font-bold mb-1">Description:</h3>
-                                        <p className="text-lg text-gray-700">{line.formulas[0].description}</p>
-                                    </div>
-                                    <div className="mb-4">
-                                        <h3 className="text-2xl font-bold mb-1">Rendered Formula:</h3>
                                         <div className="bg-gray-100 p-4 rounded-lg">
-                                            <FormulaRenderer formula={line.formulas[0].renderedFormula} />
+                                            <FormulaRenderer formula={line.formulas[0].latexCode} />
                                         </div>
+                                        <p className="pt-2 text-lg text-gray-700">{line.formulas[0].description}</p>
                                     </div>
 
                                     <div className="mb-4">
                                         <div className="bg-gray-100 p-4 rounded-lg">
-                                            <ExplanationRenderer explanation={line.formulas[0].explanation} usage={line.formulas[0].usage} />
+                                            <h3 className="text-2xl font-bold mb-1">Explanation</h3>
+                                            <MarkdownRender text={line.formulas[0].explanation} />
+
+                                        </div>
+                                    </div>
+                                    <div className="mb-4">
+                                        <div className="bg-gray-100 p-4 rounded-lg">
+                                            <h3 className="text-2xl font-bold mb-1">Usuage</h3>
+                                            <MarkdownRender text={line.formulas[0].usage} />
+
                                         </div>
                                     </div>
 
@@ -146,7 +152,7 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
                                 required
                                 onKeyDown={onKeyDown}
                                 value={input}
-                                placeholder="Type the name of a formula or equation..."
+                                placeholder="Type the name of a formula or theorem."
                                 onChange={e => setInput(e.target.value)}
                             />
                             <div className="absolute right-4 top-[13px] sm:right-4">
@@ -158,6 +164,8 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
                     </form>
                 </div>
             </div>
+
         </div>
+
     );
 }
