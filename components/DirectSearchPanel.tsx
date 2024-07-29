@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { SearchIcon } from "lucide-react";
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 import { FormulaRenderer } from '@/components/FormulaRenderer';
-import { IconSpinner } from './ui/icons';
 import { CopyToClipboard } from '@/components/copy-to-clipboard';
 import MarkdownRender from '@/components/markdown-render';
 import { Loading } from '@/components/loading';
@@ -86,7 +85,7 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
             <div className="mx-auto sm:max-w-2xl sm:px-4">
                 {/* Output Display */}
                 {isLoading ? (
-                    <div className="flex h-screen items-center justify-center mt-2 pb-6">
+                    <div className="flex h-screen items-center justify-center text-xl mt-2 pb-6">
                         <Loading isLoading={isLoading} />
                     </div>
                 ) : error ? (
@@ -113,15 +112,13 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
                                     <div className="mb-4">
                                         <div className="bg-gray-100 p-4 rounded-lg">
                                             <h3 className="text-2xl font-bold mb-1">Explanation</h3>
-                                            <MarkdownRender text={line.formulas[0].explanation} />
-
+                                            <MarkdownRender content={line.formulas[0].explanation} />
                                         </div>
                                     </div>
                                     <div className="mb-4">
                                         <div className="bg-gray-100 p-4 rounded-lg">
                                             <h3 className="text-2xl font-bold mb-1">Usuage</h3>
-                                            <MarkdownRender text={line.formulas[0].usage} />
-
+                                            <MarkdownRender content={line.formulas[0].usage} />
                                         </div>
                                     </div>
 

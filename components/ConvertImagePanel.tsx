@@ -5,11 +5,16 @@ import * as React from 'react'
 import { Button } from "@/components/ui/button";
 import { Paperclip } from "lucide-react";
 import { toast } from 'sonner';
+import { useActions, useUIState } from 'ai/rsc';
+import { type AI } from '@/lib/actions'
 
 
 export default function ConvertPagePanel() {
-
     const fileRef = React.useRef<HTMLInputElement>(null)
+    const { imageToLatexAction } = useActions()
+    const [latexCode, setLatexCode] = useUIState<typeof AI>()
+
+
     return (
         // This will be enveloped in AIProvider defined in actions.tsx
 
@@ -22,10 +27,7 @@ export default function ConvertPagePanel() {
                     Attach your handwritten formulas to get Latex code quickly!
                 </p>
                 <div className="mt-7 sm:mt-12 mx-auto max-w-xl relative">
-                    <form
-                        onSubmit={() => { }}
-                    >
-
+                    <form>
                         <input
                             type="file"
                             className="hidden"
@@ -38,6 +40,28 @@ export default function ConvertPagePanel() {
                                 }
 
                                 const file = event.target.files[0]
+                                if (file.type.startsWith('video/')) {
+                                    // Show Invalid file type
+                                } else {
+                                    const reader = new FileReader()
+                                    reader.readAsDataURL(file)
+                                    reader.onloadend = async () => {
+                                        const base64String = reader.result
+                                        // Call server action
+                                        const response = await imageToLatexAction(base64String)
+
+                                        if (response.error) {
+                                            toast.error(response.error)
+                                        } else {
+                                            setLatexCode(currentLatex => [
+                                                ...currentLatex,
+                                                response
+                                            ])
+                                        }
+
+                                    }
+
+                                }
 
 
                             }}
@@ -58,6 +82,20 @@ export default function ConvertPagePanel() {
                         </div>
                     </form>
                 </div>
+
+                {/* Latex code output display below */}
+                {latexCode && (
+                    <div className="mt-12">
+                        <h2 className="text-2xl font-bold">Latex code:</h2>
+                        <div className="mt-4">
+                            {latexCode.map((code, index) => (
+                                <div key={index}>
+                                    <p className="text-lg">{code.display}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div >
         </div >
 

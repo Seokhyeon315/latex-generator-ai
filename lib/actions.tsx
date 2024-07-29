@@ -23,11 +23,12 @@ const genAI = new GoogleGenerativeAI(
 
 const systemMessage = `You are an AI specialized in providing detailed information on equations or formulas or theorem in the fields of mathematics, engineering, and science.
                 When a user provides the name of an equation or formula, respond with the following:
+
                 1. **Formula Name**: Provide the name of the formula or equation or theorem.
-                2. **Description**: Offer a detailed description of the formula or equation. Ensure single backslashes for LaTeX commands.
+                2. **Description**: Offer a detailed description of the formula or equation.
                 3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts. Ensure single backslashes for LaTeX commands.
                 4. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
-                5. **Explanation of Symbols**: Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds. Ensure single backslashes for LaTeX commands.
+                5. **Explanation of Symbols**: Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds. Wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
                 
                 Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`;
 
@@ -112,7 +113,6 @@ async function imageToLatexAction(imageBase64: string) {
     const messageStream = createStreamableUI(null)
     const uiStream = createStreamableUI()
 
-
     uiStream.update(
         <div>
             Image convert processing...
@@ -121,12 +121,51 @@ async function imageToLatexAction(imageBase64: string) {
 
         ; (async () => {
             try {
+                let text = ''
                 // If else statement to check if the image is a valid base64 string
+                const imageData = imageBase64.split(',')[1]
+
+                const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' })
+                const prompt = 'Convert the formulas in the image to LaTeX code.'
+                const image = {
+                    inlineData: {
+                        data: imageData,
+                        mimeType: 'image/png'
+                    }
+                }
+
+                const result = await model.generateContent([prompt, image])
+                text = result.response.text()
+                console.log(text)
+
+                spinnerStream.done(null)
+                messageStream.done(null)
+
+                uiStream.done(
+                    <div>Processing done.</div>
+                )
+
+                aiState.done({
+                    ...aiState.get(),
+                    interactions: [text]
+                })
+
             } catch (error) {
                 console.log(error)
+                uiStream.error(error)
+                spinnerStream.error(error)
+                messageStream.error(error)
+                aiState.done([]);
             }
 
         })()
+
+    return {
+        id: nanoid(),
+        attachments: uiStream.value,
+        spinner: spinnerStream.value,
+        display: messageStream.value
+    }
 
 
 
@@ -188,13 +227,15 @@ async function multiSearchAction(content: string) {
 // Define the AI state and UI state types
 export type AIState = Array<{
     id?: string;
-    name?: 'getFormula' | 'getLatex';
+    // name?: 'getFormula' | 'getLatex';
     content: string;
+    latexCode?: string;
 }>;
 
 export type UIState = Array<{
     id: string;
     display: ReactNode;
+    attachments?: React.ReactNode
 }>;
 
 
