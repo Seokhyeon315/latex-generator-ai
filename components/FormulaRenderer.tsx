@@ -1,4 +1,3 @@
-// components/FormulaRenderer.tsx
 'use client';
 
 import React from 'react';
@@ -8,12 +7,14 @@ import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
 import DOMPurify from 'dompurify';
 import 'katex/dist/katex.min.css'; // Import KaTeX CSS for styling
+import { cn } from '@/lib/utils';
 
 interface FormulaRendererProps {
     formula: string;
+    className?: string;
 }
 
-export const FormulaRenderer: React.FC<FormulaRendererProps> = ({ formula }) => {
+export const FormulaRenderer = ({ formula, className }: FormulaRendererProps) => {
     let sanitizedHtml;
     try {
         // Sanitize the input to prevent XSS attacks
@@ -32,10 +33,8 @@ export const FormulaRenderer: React.FC<FormulaRendererProps> = ({ formula }) => 
     }
 
     return (
-        <div className="text-center">
-            <span className="text-xl">
-                {sanitizedHtml}
-            </span>
+        <div className={cn('text-center text-lg', className)}>
+            {sanitizedHtml}
         </div>
     );
 };

@@ -105,72 +105,71 @@ async function directSearchAction(userInput: string) {
 
 
 // Convert Image to Latex code action
+// Convert Image to Latex code action
 async function imageToLatexAction(imageBase64: string) {
-    'use server'
+    'use server';
 
-    const aiState = getMutableAIState()
-    const spinnerStream = createStreamableUI(null)
-    const messageStream = createStreamableUI(null)
-    const uiStream = createStreamableUI()
+    const aiState = getMutableAIState();
+    const spinnerStream = createStreamableUI(null);
+    const messageStream = createStreamableUI(null);
+    const uiStream = createStreamableUI();
 
     uiStream.update(
-        <div>
-            Image convert processing...
-        </div>
-    )
+        <div>Image convert processing...</div>
+    );
 
-        ; (async () => {
-            try {
-                let text = ''
-                // If else statement to check if the image is a valid base64 string
-                const imageData = imageBase64.split(',')[1]
+    try {
+        const imageData = imageBase64.split(',')[1];
+        // console.log('Base64 image data:', imageData); // Added log
 
-                const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' })
-                const prompt = 'Convert the formulas in the image to LaTeX code.'
-                const image = {
-                    inlineData: {
-                        data: imageData,
-                        mimeType: 'image/png'
-                    }
-                }
+        const model = genAI.getGenerativeModel({
+            model: 'gemini-1.5-pro',
+            systemInstruction: `Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
+            The LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
+            `,
 
-                const result = await model.generateContent([prompt, image])
-                text = result.response.text()
-                console.log(text)
+        });
 
-                spinnerStream.done(null)
-                messageStream.done(null)
-
-                uiStream.done(
-                    <div>Processing done.</div>
-                )
-
-                aiState.done({
-                    ...aiState.get(),
-                    interactions: [text]
-                })
-
-            } catch (error) {
-                console.log(error)
-                uiStream.error(error)
-                spinnerStream.error(error)
-                messageStream.error(error)
-                aiState.done([]);
+        const prompt = 'Convert the formulas in the image to LaTeX code.';
+        const image = {
+            inlineData: {
+                data: imageData,
+                mimeType: 'image/png'
             }
+        };
 
-        })()
+        const result = await model.generateContent([prompt, image]);
+        const text = await result.response.text(); // Await result text
+        console.log('Generated LaTeX code:', text); // Added log
 
-    return {
-        id: nanoid(),
-        attachments: uiStream.value,
-        spinner: spinnerStream.value,
-        display: messageStream.value
+        spinnerStream.done(null);
+        messageStream.done(null);
+
+        uiStream.done(
+            <div>Processing done.</div>
+        );
+
+        aiState.done({
+            ...aiState.get(),
+            interactions: [{ content: text }]
+        });
+
+        return {
+            id: nanoid(),
+            display: text
+        };
+    } catch (error) {
+        console.error('Error processing image:', error); // Improved log
+        uiStream.error(error);
+        spinnerStream.error(error);
+        messageStream.error(error);
+        aiState.done([]);
+
+        return {
+            error: 'Failed to process the image. Please try again.'
+        };
     }
-
-
-
 }
-
 
 
 // Use the streamText function with tool calling (maybe with Langchain)
