@@ -56,9 +56,6 @@ dependencies:
   framer-motion:
     specifier: ^11.3.17
     version: 11.3.17(react-dom@18.3.1)(react@18.3.1)
-  katex:
-    specifier: ^0.16.11
-    version: 0.16.11
   langchain:
     specifier: ^0.2.11
     version: 0.2.11(@langchain/google-genai@0.0.23)

@@ -6,7 +6,6 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
 import DOMPurify from 'dompurify';
-import 'katex/dist/katex.min.css'; // Import KaTeX CSS for styling
 import { cn } from '@/lib/utils';
 
 interface FormulaRendererProps {

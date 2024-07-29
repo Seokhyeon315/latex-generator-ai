@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
 import 'katex/dist/katex.min.css';
-import { Inter as FontSans } from "next/font/google"
+import { Manrope } from 'next/font/google'
 import "@/styles/globals.css"
 import { cn } from "@/lib/utils"
 import { Navbar } from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from '@/components/ui/sonner'
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
+const fontHeading = Manrope({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-heading',
+})
+
+const fontBody = Manrope({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-body',
 })
 
 export const dynamic = 'force-dynamic'
@@ -17,6 +24,12 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: "Pro Formula",
   description: "Pro Formula is a tool that helps you to find the formula of any equation. You can search the equation name or upload an image of your formula with Latex form quickly.",
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png'
+  },
+
 };
 
 export default function RootLayout({
@@ -27,8 +40,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(
-        'font-sans antialiased',
-        fontSans.variable
+        'antialiased',
+        fontHeading.variable,
+        fontBody.variable,
+
       )}>
         <Toaster position="top-center" />
 

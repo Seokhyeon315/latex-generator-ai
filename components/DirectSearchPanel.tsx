@@ -111,19 +111,19 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
 
                                     <div className="mb-4">
                                         <div className="bg-gray-100 p-4 rounded-lg">
-                                            <h3 className="text-2xl font-bold mb-1">Explanation</h3>
+                                            <h3 className="text-lg font-bold mb-1">Explanation</h3>
                                             <MarkdownRender content={line.formulas[0].explanation} />
                                         </div>
                                     </div>
                                     <div className="mb-4">
                                         <div className="bg-gray-100 p-4 rounded-lg">
-                                            <h3 className="text-2xl font-bold mb-1">Usuage</h3>
+                                            <h3 className="text-lg font-bold mb-1">Usuage</h3>
                                             <MarkdownRender content={line.formulas[0].usage} />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <h3 className="text-2xl font-bold mb-1">LaTeX Code:</h3>
+                                        <h3 className="text-lg font-bold mb-1">LaTeX Code:</h3>
                                         <div className="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
                                             <pre className="overflow-x-auto">
                                                 {line.formulas[0].latexCode}

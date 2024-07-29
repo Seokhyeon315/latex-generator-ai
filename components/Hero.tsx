@@ -7,29 +7,30 @@ import { SVGProps } from "react"
 
 export default function HeroSection() {
     return (
-        <div className="py-20 lg:py-24 flex flex-col items-center justify-center min-h-screen bg-white">
+        <div className="py-20 lg:py-24 px-4 flex flex-col items-center justify-center min-h-screen bg-white">
             <section className="text-center w-full max-w-4xl">
                 <h1 className="text-4xl font-bold text-gray-900 md:text-5xl">
-                    AI-Powered formula search with LATEX
+                    AI-Powered Formula Search with LATEX
                 </h1>
                 <p className="mt-4 text-lg text-gray-500">
                     Professional tools for students and researchers in one place.
                 </p>
                 <div className="mt-8 flex justify-center space-x-4">
                     <Link href="/search">
-                        <Button size={"lg"}>Get started</Button>
+                        <Button size={"lg"} className="text-lg">Get started</Button>
                     </Link>
-                    <Button className="px-6 py-3" variant="outline">
-                        <Link href="/about">
+
+                    <Link href="/about">
+                        <Button className="text-lg" size={'lg'} variant="outline">
                             Learn more
-                        </Link>
-                    </Button>
+                        </Button>
+                    </Link>
                 </div>
             </section>
             <section className="w-full max-w-6xl px-4 py-12 mt-12 bg-white">
                 <h2 className="text-3xl font-bold text-center text-gray-900 md:text-4xl">Why This Website Fits for You</h2>
                 <p className="mt-4 text-center text-gray-500">
-                    Discover the benefits and features that make our website the perfect choice for you.
+                    Discover the benefits and features that make this website the perfect choice for you.
                 </p>
                 <div className="grid gap-8 mt-8 md:grid-cols-2 lg:grid-cols-3">
                     <Card className="p-6 text-center bg-gray-50 rounded-lg shadow-md">

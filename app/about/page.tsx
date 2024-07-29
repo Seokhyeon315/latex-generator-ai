@@ -8,10 +8,10 @@ export default function AboutPage() {
                     <div className="grid gap-12">
                         <div>
                             <h2 className="text-3xl font-bold lg:text-4xl">The Vision</h2>
-                            <p className="mt-2 text-muted-foreground">
+                            <p className="mt-2 text-base lg:text-lg">
                                 Numerous principles and formulas discovered by humans throughout history have been written in paper books or stored online as digital data, and people who have studied the knowledge have an advantage in searching and accessing such formulas. However, because the human brain has limitations in remembering all the information, artificial intelligence has been rising technology to learn the knowledge and help humans.
                             </p>
-                            <p className="mt-4 text-muted-foreground">
+                            <p className="mt-4 text-base lg:text-lg">
                                 Although there are many equations or formulas other than mathematics and science, I wanted to focus on helping students and researchers in engineering or science fields. With a chance to participate in &apos;The Google Gemini API Competition&apos;, I wanted to build a website to provide services such as searching formulas, and getting latex for equations easily, ultimately reducing the time used to search formulas and digitize these formulas.
                             </p>
                         </div>
