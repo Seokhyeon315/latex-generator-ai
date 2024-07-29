@@ -10,7 +10,7 @@ import { FormulaRenderer } from '@/components/FormulaRenderer';
 import { IconSpinner } from './ui/icons';
 import { CopyToClipboard } from '@/components/copy-to-clipboard';
 import MarkdownRender from '@/components/markdown-render';
-
+import { Loading } from '@/components/loading';
 
 
 interface DirectSearchPanelProps {
@@ -36,6 +36,7 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
     const [error, setError] = React.useState<string | null>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const { directSearchAction } = useActions();
+
 
 
 
@@ -85,8 +86,8 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
             <div className="mx-auto sm:max-w-2xl sm:px-4">
                 {/* Output Display */}
                 {isLoading ? (
-                    <div className="flex h-screen items-center justify-center mt-4 pb-6">
-                        <IconSpinner />
+                    <div className="flex h-screen items-center justify-center mt-2 pb-6">
+                        <Loading isLoading={isLoading} />
                     </div>
                 ) : error ? (
                     <div className="flex h-fit items-center justify-center mt-4 pb-6 text-red-500">
@@ -159,6 +160,7 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
                                 value={input}
                                 placeholder="Type the name of a formula or theorem."
                                 onChange={e => setInput(e.target.value)}
+                                disabled={isLoading}
                             />
                             <div className="absolute right-4 top-[13px] sm:right-4">
                                 <Button size="icon" type='submit' disabled={input === ''}>

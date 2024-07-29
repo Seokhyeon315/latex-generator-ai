@@ -7,7 +7,7 @@ import {
     ZapIcon,
 } from "lucide-react";
 
-export default function DescriptionSection() {
+export default function ExclusiveSection() {
     return (
         <>
             {/* Icon Blocks */}
