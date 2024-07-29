@@ -7,7 +7,6 @@ import {
     createAI,
     createStreamableUI,
     getMutableAIState,
-    getAIState,
     createStreamableValue
 } from 'ai/rsc'
 import { nanoid } from './utils';
