@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 import 'katex/dist/katex.min.css';
-import { Manrope } from 'next/font/google'
+import { Nunito } from 'next/font/google';
 import "@/styles/globals.css"
 import { cn } from "@/lib/utils"
 import { Navbar } from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from '@/components/ui/sonner'
 
-const fontHeading = Manrope({
+const fontHeading = Nunito({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-heading',
-})
+});
 
-const fontBody = Manrope({
+const fontBody = Nunito({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-body',
-})
+});
 
 export const dynamic = 'force-dynamic'
 
@@ -43,7 +43,6 @@ export default function RootLayout({
         'antialiased',
         fontHeading.variable,
         fontBody.variable,
-
       )}>
         <Toaster position="top-center" />
 

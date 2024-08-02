@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import React from "react";
+import { spinner } from '@/components/spinner'
 
 
 export function IconSpinner({ className, ...props }: React.ComponentProps<'svg'>) {
@@ -43,5 +44,19 @@ export function IconCopy({ className, ...props }: React.ComponentProps<'svg'>) {
         >
             <path d="M216 32H88a8 8 0 0 0-8 8v40H40a8 8 0 0 0-8 8v128a8 8 0 0 0 8 8h128a8 8 0 0 0 8-8v-40h40a8 8 0 0 0 8-8V40a8 8 0 0 0-8-8Zm-56 176H48V96h112Zm48-48h-32V88a8 8 0 0 0-8-8H96V48h112Z" />
         </svg>
+    )
+}
+
+
+export function SpinnerMessage() {
+    return (
+        <div className="group relative flex items-start md:-ml-12">
+            <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
+                <img className="size-6" src="/images/gemini.png" alt="gemini logo" />
+            </div>
+            <div className="ml-4 h-[24px] flex flex-row items-center flex-1 space-y-2 overflow-hidden px-1">
+                {spinner}
+            </div>
+        </div>
     )
 }

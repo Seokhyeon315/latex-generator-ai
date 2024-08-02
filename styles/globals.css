@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    --font-heading-size: 16px;
+    --font-body-size: 14px;
+
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -73,4 +76,10 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+h1,
+h2,
+h3 {
+  font-size: 20px;
 }

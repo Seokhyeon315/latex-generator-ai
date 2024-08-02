@@ -32,7 +32,7 @@ export const FormulaRenderer = ({ formula, className }: FormulaRendererProps) =>
     }
 
     return (
-        <div className={cn('text-center text-lg', className)}>
+        <div className={cn(' text-lg', className)}>
             {sanitizedHtml}
         </div>
     );
