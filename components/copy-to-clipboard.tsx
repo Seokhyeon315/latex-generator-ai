@@ -3,8 +3,14 @@
 import React, { useState } from 'react';
 import { IconCheck, IconCopy } from './ui/icons';
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils';
 
-export function CopyToClipboard({ text }: { text: string }) {
+interface Props {
+    text: string;
+    className?: string;
+}
+
+export function CopyToClipboard({ text, className }: Props) {
     const [isCopied, setIsCopied] = useState(false);
 
     const copyToClipboard = async (text: string) => {
@@ -25,7 +31,7 @@ export function CopyToClipboard({ text }: { text: string }) {
                 copyToClipboard(text);
                 toast.success('Copied to clipboard');
             }}
-            className="ml-4"
+            className={cn(className, 'ml-4')}
         >
             {isCopied ? <IconCheck /> : <IconCopy />}
         </button>

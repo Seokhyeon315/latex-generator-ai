@@ -67,20 +67,20 @@ export default function ConvertPagePanel() {
     };
 
     return (
-        <div className="py-12 lg:py-18">
-            <div className="mx-auto sm:max-w-2xl sm:px-4">
-                <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-                    Convert Image to LaTeX code
+        <div className="flex flex-col items-center py-12 lg:py-18 min-h-screen">
+            <div className="bg-white shadow-lg rounded-lg max-w-2xl w-full mx-auto p-8 sm:p-12">
+                <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
+                    Convert Image to LaTeX Code
                 </h1>
-                <p className="mt-3 text-xl text-muted-foreground">
-                    Attach your handwritten equations and get digitalized version with LaTeX code!
+                <p className="text-lg text-gray-600 text-center mb-8">
+                    Upload your handwritten equations to get a digital LaTeX version!
                 </p>
-                <div className="grid gap-4 sm:pb-4">
+                <div className="space-y-6">
                     <form onSubmit={(e) => {
                         e.preventDefault();
-                        setResults('')
+                        setResults('');
                         if (!results) return;
-                    }}>
+                    }} className="space-y-4">
                         <input
                             type="file"
                             className="hidden"
@@ -88,58 +88,51 @@ export default function ConvertPagePanel() {
                             ref={fileRef}
                             onChange={handleFileChange}
                         />
-                        <div className="flex flex-row gap-4 bg-gray-50 px-4 py-2 rounded-full">
+                        <div className="flex items-center gap-4 bg-gray-100 px-4 py-3 rounded-lg">
                             <Button
                                 variant="outline"
                                 size="icon"
                                 onClick={() => fileRef.current?.click()}
+                                className="hover:bg-gray-200"
                             >
                                 <Paperclip />
                             </Button>
-                            <p className="p-2">Click the icon to attach the image</p>
-                            {fileName && (
-                                <p className="p-2 underline">File "{fileName}" is attached.</p>
-                            )}
+                            <span className="text-gray-700">
+                                {fileName ? `File "${fileName}" is attached.` : 'Click the icon to attach the image'}
+                            </span>
                         </div>
-                        <p className='my-2'>For the best result, the image should contain neat handwriting if possible.</p>
+                        <p className="text-sm text-gray-500 italic">
+                            Tip: For the best result, ensure the image contains neat handwriting.
+                        </p>
                         <Button
                             variant="default"
                             onClick={handleConvert}
                             disabled={isLoading}
-                            className='text-lg'
+                            className="w-full py-3 bg-gray-600 text-white hover:bg-gray-700 transition duration-200"
                         >
-                            Convert
+                            {isLoading ? 'Converting...' : 'Convert'}
                         </Button>
                     </form>
 
                     {isLoading ? (
-                        <div className="flex items-center justify-center">
+                        <div className="flex items-center justify-center mt-2">
                             <Loading isLoading={isLoading} />
-                        </div>) : error ? (
-                            <div className="flex h-fit items-center justify-center mt-4 pb-6 text-red-500">
-                                {error}
+                        </div>
+                    ) : error ? (
+                        <div className="flex items-center justify-center mt-6 text-red-500">
+                            {error}
+                        </div>
+                    ) : results.length > 0 ? (
+                        <div className="mt-6">
+                            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Conversion Result:</h2>
+                            <div className="relative bg-gray-50 p-4 rounded-lg">
+                                <CopyToClipboard text={results} className="absolute top-2 right-2 border border-gray-600 p-2 rounded" />
+                                <pre className="whitespace-pre-wrap mt-8 text-gray-700">
+                                    <MarkdownRender content={results} />
+                                </pre>
                             </div>
-                        ) : results.length > 0 ? (
-                            <div>
-                                {/* Ouput display */}
-                                {results && (
-                                    <div className="mt-4">
-                                        <h2 className="text-2xl font-semibold">Conversion Result:</h2>
-                                        <div className="relative mt-2 p-4 bg-gray-100 rounded-lg">
-                                            {/* Positioned copy button at the top right */}
-                                            <div className="absolute top-0 right-0 m-2 text-lg">
-                                                <CopyToClipboard text={results} />
-                                            </div>
-                                            <pre className="whitespace-pre-wrap mt-8">
-                                                <MarkdownRender content={results} />
-                                            </pre>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        ) : (null)
-                    }
-
+                        </div>
+                    ) : null}
                 </div>
             </div>
         </div>

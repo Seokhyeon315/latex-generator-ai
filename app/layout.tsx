@@ -23,7 +23,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: "Pro Formula",
-  description: "Pro Formula is a tool that helps you to find the formula of any equation. You can search the equation name or upload an image of your formula with Latex form quickly.",
+  description: "Pro Formula is a tool that helps you to find the formula of any equation. You can search the equation name or upload an image of your formula with Latex form quickly. All the provided features are powered by Google Gemini API.",
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon-16x16.png',

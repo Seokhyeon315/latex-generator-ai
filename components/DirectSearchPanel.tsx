@@ -10,11 +10,7 @@ import { FormulaRenderer } from '@/components/FormulaRenderer';
 import { CopyToClipboard } from '@/components/copy-to-clipboard';
 import MarkdownRender from '@/components/markdown-render';
 import { Loading } from '@/components/loading';
-
-
-interface DirectSearchPanelProps {
-    id?: string;
-}
+import { EmptyDirectScreen } from '@/components/empty-direct-screen';
 
 interface PartialObject {
     formulas: {
@@ -27,7 +23,7 @@ interface PartialObject {
     }[];
 }
 
-export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
+export function DirectSearchPanel() {
     const [input, setInput] = React.useState<string>('');
     const inputRef = React.useRef<HTMLTextAreaElement>(null);
     const [response, setResponse] = React.useState<PartialObject[]>([]);
@@ -35,9 +31,6 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
     const [error, setError] = React.useState<string | null>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const { directSearchAction } = useActions();
-
-
-
 
     React.useEffect(() => {
         if (inputRef.current) {
@@ -136,7 +129,9 @@ export function DirectSearchPanel({ id }: DirectSearchPanelProps) {
                         </div>
                     </div>
                 ) : (
-                    null
+                    <div className='flex h-screen items-center justify-center mt-4 pb-6'>
+                        <EmptyDirectScreen />
+                    </div>
                 )}
 
                 <div className="grid gap-4 sm:pb-4">

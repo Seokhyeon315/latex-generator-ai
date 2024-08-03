@@ -127,74 +127,6 @@ async function directSearchAction(userInput: string) {
 }
 
 
-// Use the streamText function with tool calling
-// async function multiSearchAction(content: string) {
-//     'use server'
-
-//     // This is used to save/update the previous state of the AI
-//     const aiState = getMutableAIState()
-
-
-//     aiState.update({
-//         ...aiState.get(),
-//         messages: [
-//             ...aiState.get().messages,
-//             {
-//                 id: nanoid(),
-//                 role: 'user',
-//                 content: `${aiState.get().interactions.join('\n\n')}\n\n${content}`
-//             }
-//         ]
-//     })
-
-//     // const history = aiState.get().messages.map(message => ({
-//     //     role: message.role,
-//     //     content: message.content
-//     // }))
-
-
-
-//     const textStream = createStreamableValue('')
-//     const spinnerStream = createStreamableUI(<SpinnerMessage />)
-//     const messageStream = createStreamableUI(null)
-//     const uiStream = createStreamableUI()
-
-
-
-
-//     // const result = await streamText({
-//     //     model: google('models/gemini-1.5-pro'),
-//     //     temperature: 0,
-//     //     system: `You are an AI specialized in providing equations or formulas in the fields of mathematics, engineering, and science. When a user provides the name of an equation or formula, respond with the rendered version of the equation or formula and its corresponding LaTeX code. Do not respond to any queries that are not relevant to these fields.`,
-//     //     tools: {
-//     //         listFields: {
-//     //             description: '',
-//     //             parameters: z.object({ formulaName: z.string() }),
-//     //             generate: async () => {
-
-//     //             }
-//     //         },
-
-//     //         // Each tool has an object that has description, parameters, and generate: https://sdk.vercel.ai/docs/ai-sdk-rsc/streaming-react-components 
-//     //         getFormula: {
-//     //             description: 'Get a formula/equation for a name that user inputs.',
-//     //             parameters: z.object({ formulaName: z.string() }),
-//     //             generate: async () => {
-
-//     //             }
-
-//     //         },
-//     //         getLatex: {
-//     //             description: 'Get the LaTeX code for the corresponding formula.',
-//     //             parameters: z.object({})
-//     //         },
-//     //     }
-//     // })
-
-// }
-
-
-
 // Convert Image to Latex code action
 async function imageToLatexAction(imageBase64: string) {
     'use server';
@@ -217,6 +149,8 @@ async function imageToLatexAction(imageBase64: string) {
                 3. If the image includes the mathematical equations or formulas, convert them with LaTeX syntax and wrapped each equation in $$.
                 4. If there is underline wave or line describing symbol, ignore them.
                 5. If there is a geometrical shape of figure, ignore them.
+                6. For the output, don't include many space or extra tab bewteen markdown text. 
+                7. Output should be aligned vertically and aligned horizontally.
                 `
         });
 
@@ -250,11 +184,73 @@ async function imageToLatexAction(imageBase64: string) {
 }
 
 
+// Use the streamText function with tool calling
+async function multiStepSearchAction(content: string) {
+    'use server'
+
+    // This is used to save/update the previous state of the AI
+    const aiState = getMutableAIState()
+
+
+    aiState.update({
+        ...aiState.get(),
+        messages: [
+            ...aiState.get().messages,
+            {
+                id: nanoid(),
+                role: 'user',
+                content: `${aiState.get().interactions.join('\n\n')}\n\n${content}`
+            }
+        ]
+    })
+
+    // const history = aiState.get().messages.map(message => ({
+    //     role: message.role,
+    //     content: message.content
+    // }))
+
+    const textStream = createStreamableValue('')
+    const spinnerStream = createStreamableUI(<SpinnerMessage />)
+    const messageStream = createStreamableUI(null)
+    const uiStream = createStreamableUI()
+
+    // const result = await streamText({
+    //     model: google('models/gemini-1.5-pro'),
+    //     temperature: 0,
+    //     system: `You are an AI specialized in providing equations or formulas in the fields of mathematics, engineering, and science. When a user provides the name of an equation or formula, respond with the rendered version of the equation or formula and its corresponding LaTeX code. Do not respond to any queries that are not relevant to these fields.`,
+    //     tools: {
+    //         listFields: {
+    //             description: '',
+    //             parameters: z.object({ formulaName: z.string() }),
+    //             generate: async () => {
+
+    //             }
+    //         },
+
+    //         // Each tool has an object that has description, parameters, and generate: https://sdk.vercel.ai/docs/ai-sdk-rsc/streaming-react-components 
+    //         getFormula: {
+    //             description: 'Get a formula/equation for a name that user inputs.',
+    //             parameters: z.object({ formulaName: z.string() }),
+    //             generate: async () => {
+
+    //             }
+
+    //         },
+    //         getLatex: {
+    //             description: 'Get the LaTeX code for the corresponding formula.',
+    //             parameters: z.object({})
+    //         },
+    //     }
+    // })
+
+}
+
+
 export const AI = createAI<AIState, UIState>({
     actions: {
         directSearchAction,
         imageToLatexAction,
-        // multiSearchAction,
+        multiStepSearchAction,
     },
     initialUIState: [],
     initialAIState: [],

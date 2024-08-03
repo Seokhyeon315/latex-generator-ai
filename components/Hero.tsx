@@ -37,7 +37,7 @@ export default function HeroSection() {
                         <UserIcon className="w-12 h-12 mx-auto text-blue-500" />
                         <h3 className="mt-4 text-xl font-semibold text-gray-900">User-Friendly Interface</h3>
                         <p className="mt-2 text-gray-500">
-                            Our website is designed with a focus on simplicity and ease of use, ensuring a seamless experience for all
+                            The website is designed with a focus on simplicity and ease of use, ensuring a seamless experience for all
                             users.
                         </p>
                     </Card>

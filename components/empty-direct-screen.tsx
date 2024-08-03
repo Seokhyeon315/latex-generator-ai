@@ -2,33 +2,24 @@ import React from 'react'
 
 export function EmptyDirectScreen() {
     return (
-        <div className="mx-auto max-w-2xl px-4">
-            <div className="flex flex-col gap-2 rounded-2xl bg-zinc-50 sm:p-8 p-4 text-sm sm:text-base">
-                <h1 className="text-2xl sm:text-3xl tracking-tight font-semibold max-w-fit inline-block">
-                    Instruction of Direct Search
-                </h1>
-                <p className="leading-normal text-zinc-900">
-                    This is an open source AI chatbot app template built with{' '}
-                    <a href="https://nextjs.org">Next.js</a>, the{' '}
-                    <a href="https://sdk.vercel.ai">
-                        Vercel AI SDK
-                    </a>
-                    , and{' '}
-                    <a href="https://ai.google.dev">
-                        Google Gemini
-                    </a>
-                    .
-                </p>
-                <p className="leading-normal text-zinc-900">
-                    It uses{' '}
-                    <a href="https://vercel.com/blog/ai-sdk-3-generative-ui">
-                        React Server Components
-                    </a>{' '}
-                    with function calling to mix both text with generative UI responses
-                    from Gemini. The UI state is synced through the AI SDK so the model is
-                    always aware of your stateful interactions as they happen in the
-                    browser.
-                </p>
+        <div className="mx-auto max-w-2xl px-4 ">
+            <div className="flex flex-col gap-2 rounded-2xl bg-white p-8 shadow-md text-base">
+                <h1 className="text-3xl font-semibold text-gray-800 mb-4">Direct Search Guide</h1>
+
+                <div className="leading-relaxed text-gray-700">
+                    <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h2 className="text-xl font-bold text-gray-800 mb-2">How to Use:</h2>
+                        <ol className="list-decimal list-inside space-y-2">
+                            <li>Enter the name of the formula, equation, or theorem in the search bar.</li>
+                            <li>Press the search button or hit Enter to initiate the search.</li>
+                            <li>Review the output, which includes the formula name, description, rendered version, usage, and LaTeX code.</li>
+                            <li>Use the copy button to save the LaTeX code to your clipboard if needed.</li>
+                        </ol>
+                    </div>
+                    <p className="mt-4 text-gray-600 italic">
+                        Note: Ensure you have a specific formula name for the best results. General queries may not return accurate results.
+                    </p>
+                </div>
             </div>
         </div>
     )
