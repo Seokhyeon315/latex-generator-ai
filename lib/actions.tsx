@@ -141,6 +141,9 @@ async function imageToLatexAction(imageBase64: string) {
             generationConfig: {
                 temperature: 0
             },
+            safetySettings: [
+
+            ],
             systemInstruction: `You are an AI assitant specialized in digitalizing handwritten paper, especially in mathematical, science, and engineering. 
     
                 You must follow the instructions:
