@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useActions } from 'ai/rsc';
 
 interface ListFieldsProps {
     summary: {
@@ -13,9 +14,26 @@ interface ListFieldsProps {
 // Component to display each field's information
 export const ListFields = ({ summary }: ListFieldsProps) => {
     const { fieldName, description, useCases } = summary;
+    const { multiStepSearchAction } = useActions();
+
+    const handleFieldClick = async () => {
+        try {
+            // Trigger the server action with the field's information
+            await multiStepSearchAction({
+                fieldName,
+                description,
+                useCases,
+            });
+        } catch (error) {
+            console.error('Error triggering server action:', error);
+        }
+    };
 
     return (
-        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6 transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in">
+        <div
+            className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6 transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in cursor-pointer"
+            onClick={handleFieldClick} // Attach click handler
+        >
             <div className="grid gap-6 sm:grid-cols-3">
                 <div className="flex flex-col">
                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">

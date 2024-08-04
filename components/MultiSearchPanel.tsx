@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import { GiMaterialsScience, GiBigGear } from 'react-icons/gi';
 import { BiMath } from 'react-icons/bi';
-
-// Import field data from category-fields.tsx
+import { EmptyMultistepScreen } from '@/components/empty-multistep-screen';
 import { mathFields, scienceFields, engineeringFields } from '../lib/category-fields';
 import { ListFields } from './list-fields';
 
@@ -15,6 +15,7 @@ export interface SearchPanelProps extends React.ComponentProps<'div'> {
 export function MultiStepSearchPanel({ id }: SearchPanelProps) {
     const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
     const [isClicked, setIsClicked] = React.useState<boolean>(false);
+    const router = useRouter();
 
     // Sample categories for display
     const categories = [
@@ -29,10 +30,16 @@ export function MultiStepSearchPanel({ id }: SearchPanelProps) {
         setIsClicked(true);
     };
 
-    // Reset the selection
+    // Reset the selection and refresh the page
     const resetSelection = () => {
         setSelectedCategory(null);
         setIsClicked(false);
+
+        // Use router to go back and then refresh
+        router.refresh();
+        setTimeout(() => {
+            window.location.reload();
+        }, 100);
     };
 
     // Determine which fields to display based on the selected category
@@ -66,7 +73,6 @@ export function MultiStepSearchPanel({ id }: SearchPanelProps) {
                             onClick={() => !isClicked && handleCategorySelect(category.name)}
                         >
                             <div className="flex flex-col items-center justify-center transition-opacity duration-500">
-                                {/* Conditionally render icon */}
                                 {!isClicked && (
                                     <div className="text-4xl sm:text-5xl mb-2">
                                         {category.icon}
@@ -81,12 +87,14 @@ export function MultiStepSearchPanel({ id }: SearchPanelProps) {
                 </div>
 
                 {/* Output panel here: Display fields of the selected category */}
-                {isClicked && (
+                {isClicked ? (
                     <div className="mx-auto sm:max-w-2xl sm:px-4 mt-6">
                         {getFieldsForCategory().map((field) => (
                             <ListFields key={field.id} summary={field} />
                         ))}
                     </div>
+                ) : (
+                    <EmptyMultistepScreen />
                 )}
             </div>
         </div>

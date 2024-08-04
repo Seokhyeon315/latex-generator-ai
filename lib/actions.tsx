@@ -216,7 +216,7 @@ async function multiStepSearchAction(content: string) {
     const result = await streamText({
         model: google('models/gemini-1.5-pro'),
         temperature: 0,
-        system: `You are an AI specialized in providing equations or formulas in the fields of mathematics, engineering, and science. When a user provides the name of an equation or formula, respond with the rendered version of the equation or formula and its corresponding LaTeX code. Do not respond to any queries that are not relevant to these fields.`,
+        system: `You are an AI specialized in providing equations, formulas or theorem in the fields of mathematics, engineering, and science. When a user provides the name of an equation or formula, respond with the rendered version of the equation or formula and its corresponding LaTeX code. Do not respond to any queries that are not relevant to these fields.`,
         tools: {
             showFields: {
                 description: 'List the fields of mathematics, engineering, and science',
@@ -230,19 +230,6 @@ async function multiStepSearchAction(content: string) {
                 }
             },
 
-            // // Each tool has an object that has description, parameters, and generate: https://sdk.vercel.ai/docs/ai-sdk-rsc/streaming-react-components 
-            // getFormula: {
-            //     description: 'Get a formula/equation for a name that user inputs.',
-            //     parameters: z.object({ formulaName: z.string() }),
-            //     generate: async () => {
-
-            //     }
-
-            // },
-            // getLatex: {
-            //     description: 'Get the LaTeX code for the corresponding formula.',
-            //     parameters: z.object({})
-            // },
         },
         messages: [...history]
     })
