@@ -4,10 +4,11 @@ import * as React from 'react';
 import { Button } from "@/components/ui/button";
 import { Paperclip } from "lucide-react";
 import { toast } from 'sonner';
-import { useActions } from 'ai/rsc';
+import { useActions, useUIState } from 'ai/rsc';
 import MarkdownRender from '@/components/markdown-render';
 import { CopyToClipboard } from '@/components/copy-to-clipboard';
 import { Loading } from './loading';
+import { AI } from '@/lib/actions';
 
 export default function ConvertPagePanel() {
     // State declarations
@@ -15,7 +16,7 @@ export default function ConvertPagePanel() {
     const [fileName, setFileName] = React.useState<string | null>(null);
     const [error, setError] = React.useState<string | null>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [base64String, setBase64String] = React.useState<string | null>(null);
+    const [base64String, setBase64String] = React.useState<string>();
 
     // References
     const fileRef = React.useRef<HTMLInputElement>(null);
@@ -36,10 +37,12 @@ export default function ConvertPagePanel() {
         // Check if the file type is an image
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setBase64String(reader.result as string);
-            };
             reader.readAsDataURL(file);
+
+            reader.onloadend = () => {
+                setBase64String(reader.result as string)
+            };
+
         } else {
             toast.error('Invalid file type. Please attach an image file.');
         }
@@ -59,7 +62,6 @@ export default function ConvertPagePanel() {
             const response = await imageToLatexAction(base64String);
             setResults(response.display);
         } catch (e) {
-            console.error(e);
             setError('An unexpected error occurred. Please try again.');
         } finally {
             setIsLoading(false);
@@ -125,7 +127,7 @@ export default function ConvertPagePanel() {
                     ) : results.length > 0 ? (
                         <div className="mt-6">
                             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Conversion Result:</h2>
-                            <div className="relative bg-gray-50 p-4 rounded-lg">
+                            <div className="relative overflow-x-hidden bg-gray-50 p-4 rounded-lg">
                                 <CopyToClipboard text={results} className="absolute top-2 right-2 border border-gray-600 p-2 rounded" />
                                 <pre className="whitespace-pre-wrap mt-8 text-gray-700">
                                     <MarkdownRender content={results} />

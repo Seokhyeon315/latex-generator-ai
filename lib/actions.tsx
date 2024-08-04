@@ -37,6 +37,7 @@ export type AIState = Array<{
 export type UIState = Array<{
     id: string;
     display: React.ReactNode;
+
 }>;
 
 
@@ -139,11 +140,8 @@ async function imageToLatexAction(imageBase64: string) {
         const model = genAI.getGenerativeModel({
             model: 'gemini-1.5-pro',
             generationConfig: {
-                temperature: 0
+                temperature: 0,
             },
-            safetySettings: [
-
-            ],
             systemInstruction: `You are an AI assitant specialized in digitalizing handwritten paper, especially in mathematical, science, and engineering. 
     
                 You must follow the instructions:
@@ -162,7 +160,7 @@ async function imageToLatexAction(imageBase64: string) {
         const image = {
             inlineData: {
                 data: imageData,
-                mimeType: 'image/png'
+                mimeType: 'image/png',
             }
         };
 
@@ -170,7 +168,7 @@ async function imageToLatexAction(imageBase64: string) {
         const result = await model.generateContent([prompt, image]);
 
         // Parse and return the response text
-        const text = await result.response.text();
+        const text = result.response.text();
         console.log(text);
 
         return {
@@ -191,9 +189,7 @@ async function imageToLatexAction(imageBase64: string) {
 async function multiStepSearchAction(content: string) {
     'use server'
 
-    // This is used to save/update the previous state of the AI
     const aiState = getMutableAIState()
-
 
     aiState.update({
         ...aiState.get(),
@@ -207,44 +203,49 @@ async function multiStepSearchAction(content: string) {
         ]
     })
 
-    // const history = aiState.get().messages.map(message => ({
-    //     role: message.role,
-    //     content: message.content
-    // }))
+    const history = aiState.get().messages.map(({ message }: { message: any }) => ({
+        role: message.role,
+        content: message.content
+    }))
 
     const textStream = createStreamableValue('')
     const spinnerStream = createStreamableUI(<SpinnerMessage />)
     const messageStream = createStreamableUI(null)
     const uiStream = createStreamableUI()
 
-    // const result = await streamText({
-    //     model: google('models/gemini-1.5-pro'),
-    //     temperature: 0,
-    //     system: `You are an AI specialized in providing equations or formulas in the fields of mathematics, engineering, and science. When a user provides the name of an equation or formula, respond with the rendered version of the equation or formula and its corresponding LaTeX code. Do not respond to any queries that are not relevant to these fields.`,
-    //     tools: {
-    //         listFields: {
-    //             description: '',
-    //             parameters: z.object({ formulaName: z.string() }),
-    //             generate: async () => {
+    const result = await streamText({
+        model: google('models/gemini-1.5-pro'),
+        temperature: 0,
+        system: `You are an AI specialized in providing equations or formulas in the fields of mathematics, engineering, and science. When a user provides the name of an equation or formula, respond with the rendered version of the equation or formula and its corresponding LaTeX code. Do not respond to any queries that are not relevant to these fields.`,
+        tools: {
+            showFields: {
+                description: 'List the fields of mathematics, engineering, and science',
+                parameters: z.object({
+                    fieldName: z.string(),
+                    description: z.string(),
+                    useCases: z.array(z.string())
+                }),
+                generate: async () => {
 
-    //             }
-    //         },
+                }
+            },
 
-    //         // Each tool has an object that has description, parameters, and generate: https://sdk.vercel.ai/docs/ai-sdk-rsc/streaming-react-components 
-    //         getFormula: {
-    //             description: 'Get a formula/equation for a name that user inputs.',
-    //             parameters: z.object({ formulaName: z.string() }),
-    //             generate: async () => {
+            // // Each tool has an object that has description, parameters, and generate: https://sdk.vercel.ai/docs/ai-sdk-rsc/streaming-react-components 
+            // getFormula: {
+            //     description: 'Get a formula/equation for a name that user inputs.',
+            //     parameters: z.object({ formulaName: z.string() }),
+            //     generate: async () => {
 
-    //             }
+            //     }
 
-    //         },
-    //         getLatex: {
-    //             description: 'Get the LaTeX code for the corresponding formula.',
-    //             parameters: z.object({})
-    //         },
-    //     }
-    // })
+            // },
+            // getLatex: {
+            //     description: 'Get the LaTeX code for the corresponding formula.',
+            //     parameters: z.object({})
+            // },
+        },
+        messages: [...history]
+    })
 
 }
 

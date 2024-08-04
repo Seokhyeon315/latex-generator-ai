@@ -29,7 +29,7 @@ export const MobileNav = () => {
             <SheetContent side="right">
                 {/* Logo here */}
 
-                <div className="flex flex-col pb-2 pl-3 gap-4 mt-7 pt-4">
+                <div className="flex flex-col pb-2 pl-3 gap-4 mt-7 pt-4 text-xl">
                     <MobileLink
                         onOpenChange={setOpen}
                         href="/"
@@ -61,6 +61,7 @@ export const MobileNav = () => {
 
                 </div>
             </SheetContent>
+
         </Sheet>
 
 
