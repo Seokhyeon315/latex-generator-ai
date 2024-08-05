@@ -1,18 +1,21 @@
 import 'server-only'
 
 import { google } from '@ai-sdk/google'
-import { streamObject, streamText } from 'ai'
+import { streamObject, streamText, ToolInvocation } from 'ai'
 import {
     createAI,
     createStreamableUI,
     getMutableAIState,
-    createStreamableValue
+    createStreamableValue,
+    streamUI
 } from 'ai/rsc'
 import { nanoid } from './utils';
 import { z } from 'zod';
 import * as React from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { SpinnerMessage } from '@/components/ui/icons';
+import { BotCard, BotMessage } from '@/components/message';
+import { ListFormulas } from '@/components/multistep-search/list-formulas';
 
 export type Message = {
     role: 'user' | 'assistant' | 'system' | 'function' | 'data' | 'tool'
@@ -28,33 +31,24 @@ export type Message = {
 // Define the AI state and UI state types
 export type AIState = Array<{
     id?: string;
+    role: 'user' | 'assistant' | 'system';
+    toolName?: 'showFormulas' | 'showTheorems';
     interactions?: string[];
-    messages: Message[];
+    messages?: Message[];
     content: string;
-    latexCode?: string;
 }>;
 
 export type UIState = Array<{
     id: string;
+    role: 'user' | 'assistant';
     display: React.ReactNode;
-
+    toolInvocations?: ToolInvocation[];
 }>;
 
 
 const genAI = new GoogleGenerativeAI(
     process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
 )
-
-const systemMessage = `You are an AI specialized in providing detailed information on equations or formulas or theorem in the fields of mathematics, engineering, and science.
-                When a user provides the name of an equation or formula, respond with the following:
-
-                1. **Formula Name**: Provide the name of the formula or equation or theorem.
-                2. **Description**: Offer a detailed description of the formula or equation.
-                3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts. Ensure single backslashes for LaTeX commands.
-                4. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
-                5. **Explanation of Symbols**: Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds. Wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
-                
-                Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`;
 
 const formulaSchema = z.object({
     formulas: z.array(
@@ -80,7 +74,16 @@ async function directSearchAction(userInput: string) {
             const { partialObjectStream } = await streamObject({
                 model: google('models/gemini-1.5-pro'),
                 temperature: 0,
-                system: systemMessage,
+                system: `You are an AI specialized in providing detailed information on equations or formulas or theorem in the fields of mathematics, engineering, and science.
+                When a user provides the name of an equation or formula, respond with the following:
+
+                1. **Formula Name**: Provide the name of the formula or equation or theorem.
+                2. **Description**: Offer a detailed description of the formula or equation.
+                3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts. Ensure single backslashes for LaTeX commands.
+                4. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
+                5. **Explanation of Symbols**: Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds. Wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
+                
+                Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`,
                 prompt: userInput,
                 schema: formulaSchema,
 
@@ -186,54 +189,61 @@ async function imageToLatexAction(imageBase64: string) {
 
 
 // Use the streamText function with tool calling
-async function multiStepSearchAction(content: string) {
+async function multiStepSearchAction(input: string) {
     'use server'
 
-    const aiState = getMutableAIState()
+    const history = getMutableAIState<typeof AI>();
+    history.update([
+        ...history.get(),
+        {
+            role: 'user',
+            content: input,
+        },
+    ]);
 
-    aiState.update({
-        ...aiState.get(),
-        messages: [
-            ...aiState.get().messages,
-            {
-                id: nanoid(),
-                role: 'user',
-                content: `${aiState.get().interactions.join('\n\n')}\n\n${content}`
-            }
-        ]
-    })
 
-    const history = aiState.get().messages.map(({ message }: { message: any }) => ({
-        role: message.role,
-        content: message.content
-    }))
 
-    const textStream = createStreamableValue('')
-    const spinnerStream = createStreamableUI(<SpinnerMessage />)
-    const messageStream = createStreamableUI(null)
-    const uiStream = createStreamableUI()
-
-    const result = await streamText({
+    const ui = await streamUI({
         model: google('models/gemini-1.5-pro'),
         temperature: 0,
-        system: `You are an AI specialized in providing equations, formulas or theorem in the fields of mathematics, engineering, and science. When a user provides the name of an equation or formula, respond with the rendered version of the equation or formula and its corresponding LaTeX code. Do not respond to any queries that are not relevant to these fields.`,
+        system: `You are an AI specialized in providing equations, formulas or theorem in the fields of mathematics, engineering, and science.
+                    You must follow the instructions:
+                    1. You always provide the response based on the fact not hallucinated. 
+                    2. You never provide a response that is not related to the fields of mathematics, engineering, and science.
+                    3. Your ouput must be Markdown syntax.
+                    4. For mathematical equation, it should be wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
+                    `,
+        prompt: input,
         tools: {
-            showFields: {
-                description: 'List the fields of mathematics, engineering, and science',
+            // Show all the formulas or equations based on the selected category and field.
+            showFormulas: {
+                description: 'List the 10 formulas or equations of field in selected category.',
                 parameters: z.object({
-                    fieldName: z.string(),
-                    description: z.string(),
-                    useCases: z.array(z.string())
+                    // Each formula or equation is described by a name, a description and a LaTeX code.
+                    formulaName: z.string(),
+                    description: z.string().describe('Provide a detailed description of the formula or equation.'),
+                    latexCode: z.string().describe('Provide the LaTeX code representation of the formula or equation.')
                 }),
-                generate: async () => {
+                // generate: async function* ({ formulaName }) {
+                //     yield ``;
+                // }
 
-                }
             },
+            // showTheorem: {
+            //     description: 'List 10 theorems based on the selected category and field.',
+            //     parameters: z.object({
+            //         name: z.string(),
+            //         description: z.string()
+            //         latexCode: z.string().describe('')
+            //     })
+            // },
+
 
         },
-        messages: [...history]
+
     })
 
+    return ui.value
 }
 
 

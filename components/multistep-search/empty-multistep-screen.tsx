@@ -2,7 +2,7 @@ import React from 'react'
 
 export function EmptyMultistepScreen() {
     return (
-        <div className="mx-auto max-w-xl px-4">
+        <div className="mx-auto max-w-2xl px-4">
             <div className="flex flex-col gap-4 rounded-lg bg-white p-6 shadow-lg text-base">
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
                     Multistep Search Guide

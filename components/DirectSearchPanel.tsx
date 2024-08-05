@@ -66,7 +66,7 @@ export function DirectSearchPanel() {
                 setError('Invalid input. Please try again. Make sure to type the name of a formula.');
             }
         } catch (e) {
-            console.log(e);
+            // console.log(e);
             setError('An unexpected error occurred. Please try again.');
         } finally {
             setIsLoading(false); // Set loading state to false when form submission completes

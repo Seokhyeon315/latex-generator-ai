@@ -1,4 +1,4 @@
-import { MultiStepSearchPanel } from '@/components/MultiSearchPanel';
+import { MultiStepSearchPanel } from '@/components/multistep-search/MultiSearchPanel';
 import { AI } from "@/lib/actions";
 import React from "react";
 

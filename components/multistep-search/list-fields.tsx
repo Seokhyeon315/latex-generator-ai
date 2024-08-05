@@ -1,7 +1,10 @@
 'use client';
 
+import { AI } from '@/lib/actions';
+import { useActions, useUIState } from 'ai/rsc';
+import { nanoid } from 'nanoid';
 import React from 'react';
-import { useActions } from 'ai/rsc';
+import { MultiStepOuput } from '@/components/multistep-search/multistep-ouput';
 
 interface ListFieldsProps {
     summary: {
@@ -9,32 +12,23 @@ interface ListFieldsProps {
         description: string;
         useCases: string[];
     };
+    category: string; // New prop to receive the selected category
 }
 
 // Component to display each field's information
-export const ListFields = ({ summary }: ListFieldsProps) => {
+export const ListFields = ({ summary, category }: ListFieldsProps) => {
     const { fieldName, description, useCases } = summary;
+    const [_, setMessages] = useUIState<typeof AI>();
     const { multiStepSearchAction } = useActions();
 
-    const handleFieldClick = async () => {
-        try {
-            // Trigger the server action with the field's information
-            await multiStepSearchAction({
-                fieldName,
-                description,
-                useCases,
-            });
-        } catch (error) {
-            console.error('Error triggering server action:', error);
-        }
-    };
+    // The list of fields will disappear or roll up to "See All Fields" after the user selects a field.
+    // Once the user selects the field, there will be UI asking if the user wants to see a list of theorems or equations.
 
     return (
-        <div
-            className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6 transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in cursor-pointer"
-            onClick={handleFieldClick} // Attach click handler
-        >
-            <div className="grid gap-6 sm:grid-cols-3">
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6 transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in ">
+            {/* Responsive grid: stack on small screens, columns on large */}
+            <div className="grid gap-6 lg:grid-cols-3 flex-col lg:flex-row">
+                {/* Field Section */}
                 <div className="flex flex-col">
                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                         Field
@@ -43,6 +37,7 @@ export const ListFields = ({ summary }: ListFieldsProps) => {
                         {fieldName}
                     </span>
                 </div>
+                {/* Description Section */}
                 <div className="flex flex-col">
                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                         Description
@@ -51,6 +46,7 @@ export const ListFields = ({ summary }: ListFieldsProps) => {
                         {description}
                     </span>
                 </div>
+                {/* Applications Section */}
                 <div className="flex flex-col">
                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                         Applications
@@ -78,6 +74,30 @@ export const ListFields = ({ summary }: ListFieldsProps) => {
                     </ul>
                 </div>
             </div>
+
+            {/* Horizontal line */}
+            <hr className="my-4" />
+
+            {/* Options at the footer */}
+            <div className="flex justify-center space-x-2 mt-4">
+                <button
+                    className="w-full sm:w-auto bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-800 hover:shadow-lg hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 active:scale-95"
+                    onClick={() => {
+                        console.log("Show Formulas for:", fieldName); // Placeholder for future action
+                    }}
+                >
+                    Show Formulas
+                </button>
+                <button
+                    className="w-full sm:w-auto bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-800 hover:shadow-lg hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 active:scale-95"
+                    onClick={() => {
+                        console.log("Show Theorems for:", fieldName); // Placeholder for future action
+                    }}
+                >
+                    Show Theorems
+                </button>
+            </div>
+
         </div>
     );
 };

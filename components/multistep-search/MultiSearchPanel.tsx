@@ -4,8 +4,9 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { GiMaterialsScience, GiBigGear } from 'react-icons/gi';
 import { BiMath } from 'react-icons/bi';
-import { EmptyMultistepScreen } from '@/components/empty-multistep-screen';
-import { mathFields, scienceFields, engineeringFields } from '../lib/category-fields';
+import { BackToTopButton } from '@/components/back-to-top';
+import { EmptyMultistepScreen } from '@/components/multistep-search/empty-multistep-screen';
+import { mathFields, scienceFields, engineeringFields } from '@/lib/category-fields';
 import { ListFields } from './list-fields';
 
 export interface SearchPanelProps extends React.ComponentProps<'div'> {
@@ -78,7 +79,7 @@ export function MultiStepSearchPanel({ id }: SearchPanelProps) {
                                         {category.icon}
                                     </div>
                                 )}
-                                <div className={`text-md sm:text-lg font-medium ${isClicked ? 'text-xl' : ''}`}>
+                                <div className={`text-md sm:text-lg font-medium ${isClicked ? 'text-lg' : ''}`}>
                                     {category.name}
                                 </div>
                             </div>
@@ -86,17 +87,19 @@ export function MultiStepSearchPanel({ id }: SearchPanelProps) {
                     ))}
                 </div>
 
-                {/* Output panel here: Display fields of the selected category */}
+                {/* Display list of fields of the selected category */}
                 {isClicked ? (
                     <div className="mx-auto sm:max-w-2xl sm:px-4 mt-6">
                         {getFieldsForCategory().map((field) => (
-                            <ListFields key={field.id} summary={field} />
+                            <ListFields key={field.id} summary={field} category={selectedCategory || ''} />
                         ))}
+                        {/* If there is response, replace ListFields to MultiStepOuput */}
                     </div>
                 ) : (
                     <EmptyMultistepScreen />
                 )}
             </div>
+            <BackToTopButton />
         </div>
     );
 }

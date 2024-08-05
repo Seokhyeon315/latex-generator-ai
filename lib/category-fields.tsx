@@ -4,9 +4,9 @@ const mathFields = [
         fieldName: 'Linear Algebra',
         description: 'Studies vectors, matrices, and linear transformations.',
         useCases: [
-            'Graphics & image processing',
-            'Machine learning',
-            'Cryptography',
+            'Computer graphics and animation',
+            'Machine learning algorithms',
+            'Quantum computing advancements',
         ]
     },
     {
@@ -14,9 +14,9 @@ const mathFields = [
         fieldName: 'Calculus',
         description: 'Focuses on derivatives and integrals for change analysis.',
         useCases: [
-            'Physics modeling',
-            'Engineering calculations',
-            'Economics optimization',
+            'Modeling physical phenomena in physics',
+            'Optimizing engineering designs',
+            'Financial market predictions',
         ]
     },
     {
@@ -24,9 +24,9 @@ const mathFields = [
         fieldName: 'Statistics',
         description: 'Involves data collection, analysis, and interpretation.',
         useCases: [
-            'Market research',
-            'Risk assessment',
-            'Sports analytics',
+            'Data-driven decision making in business',
+            'Predictive analytics in healthcare',
+            'Machine learning model evaluation',
         ]
     },
     {
@@ -34,9 +34,9 @@ const mathFields = [
         fieldName: 'Trigonometry',
         description: 'Studies relationships between triangle angles and sides.',
         useCases: [
-            'Navigation systems',
-            'Architecture design',
-            'Signal processing',
+            '3D modeling in computer graphics',
+            'Acoustic engineering and sound design',
+            'Satellite navigation systems',
         ]
     },
     {
@@ -44,9 +44,9 @@ const mathFields = [
         fieldName: 'Differential Equations',
         description: 'Models change with functions and derivatives.',
         useCases: [
-            'Weather prediction',
-            'Engineering simulations',
-            'Chemical kinetics',
+            'Predicting disease spread in epidemiology',
+            'Modeling electrical circuits',
+            'Simulating natural processes in climate science',
         ]
     },
     {
@@ -54,9 +54,9 @@ const mathFields = [
         fieldName: 'Complex Analysis',
         description: 'Analyzes functions of complex numbers.',
         useCases: [
-            'Signal processing',
-            'Fluid dynamics',
-            'Quantum mechanics',
+            'Signal processing in telecommunications',
+            'Understanding fluid flows in aerodynamics',
+            'Quantum mechanics and field theory',
         ]
     },
     {
@@ -64,9 +64,9 @@ const mathFields = [
         fieldName: 'Vector Calculus',
         description: 'Deals with vector fields and operations.',
         useCases: [
-            'Electromagnetic analysis',
-            'Fluid flow',
-            'Aerodynamics',
+            'Analyzing electromagnetic fields',
+            'Simulating airflow over wings',
+            'Modeling forces in mechanical systems',
         ]
     },
     {
@@ -74,9 +74,9 @@ const mathFields = [
         fieldName: 'Game Theory',
         description: 'Studies strategic decision-making models.',
         useCases: [
-            'Economic strategies',
-            'Political decisions',
-            'Evolutionary biology',
+            'Designing auction algorithms in economics',
+            'Modeling competitive strategies in business',
+            'Optimizing network security protocols',
         ]
     },
 ];
@@ -87,9 +87,9 @@ const scienceFields = [
         fieldName: 'Physics',
         description: 'Studies matter, energy, and their interactions.',
         useCases: [
-            'Telecommunications',
-            'Medical imaging',
-            'Space exploration',
+            'Developing renewable energy technologies',
+            'Advancements in quantum computing',
+            'Medical technologies like MRI and PET scans',
         ]
     },
     {
@@ -97,9 +97,9 @@ const scienceFields = [
         fieldName: 'Chemistry',
         description: 'Explores substances and their transformations.',
         useCases: [
-            'Pharmaceuticals',
-            'Material synthesis',
-            'Pollution analysis',
+            'Development of sustainable materials',
+            'Pharmaceutical drug design',
+            'Nanotechnology and materials science',
         ]
     },
     {
@@ -107,9 +107,9 @@ const scienceFields = [
         fieldName: 'Biology',
         description: 'Examines living organisms and life processes.',
         useCases: [
-            'Medical research',
-            'Genetic engineering',
-            'Conservation',
+            'Genomic research and personalized medicine',
+            'Biotechnology and synthetic biology',
+            'Conservation efforts and biodiversity studies',
         ]
     },
     {
@@ -117,9 +117,9 @@ const scienceFields = [
         fieldName: 'Astronomy',
         description: 'Studies celestial bodies and the universe.',
         useCases: [
-            'Galaxy studies',
-            'Exoplanet discovery',
-            'Space missions',
+            'Detection of exoplanets and astrobiology',
+            'Cosmology and the study of dark matter',
+            'Development of space exploration technologies',
         ]
     },
     {
@@ -127,9 +127,9 @@ const scienceFields = [
         fieldName: 'Earth Science',
         description: 'Analyzes Earth’s structure and processes.',
         useCases: [
-            'Disaster prediction',
-            'Climate studies',
-            'Resource management',
+            'Climate change modeling and analysis',
+            'Natural disaster prediction and management',
+            'Resource exploration and sustainable mining',
         ]
     },
     {
@@ -137,9 +137,9 @@ const scienceFields = [
         fieldName: 'Environmental Science',
         description: 'Focuses on human-environment interactions.',
         useCases: [
-            'Waste management',
-            'Pollution control',
-            'Ecosystem restoration',
+            'Sustainable agriculture and food systems',
+            'Renewable energy and waste management',
+            'Conservation and ecosystem restoration',
         ]
     },
     {
@@ -147,9 +147,9 @@ const scienceFields = [
         fieldName: 'Material Science',
         description: 'Studies properties of materials.',
         useCases: [
-            'Aerospace materials',
-            'Electronics',
-            'Medical implants',
+            'Development of advanced composites',
+            'Biocompatible materials for medical use',
+            'Innovative materials for electronics',
         ]
     },
 ];
@@ -160,9 +160,9 @@ const engineeringFields = [
         fieldName: 'Mechanical Engineering',
         description: 'Designs mechanical systems and machines.',
         useCases: [
-            'Automotive design',
-            'HVAC systems',
-            'Industrial machinery',
+            'Robotics and automation systems',
+            'Renewable energy technologies',
+            'Advanced manufacturing processes',
         ]
     },
     {
@@ -170,9 +170,9 @@ const engineeringFields = [
         fieldName: 'Aerospace Engineering',
         description: 'Focuses on aircraft and spacecraft design.',
         useCases: [
-            'Aircraft design',
-            'Satellite development',
-            'Aerodynamics',
+            'Designing next-generation aircraft',
+            'Satellite technology and space exploration',
+            'Development of hypersonic vehicles',
         ]
     },
     {
@@ -180,9 +180,9 @@ const engineeringFields = [
         fieldName: 'Electrical Engineering',
         description: 'Studies electricity and electronics.',
         useCases: [
-            'Power grids',
-            'Communication systems',
-            'Consumer electronics',
+            'Development of smart grid technologies',
+            'Design of integrated circuits and chips',
+            'Advancements in wireless communication',
         ]
     },
     {
@@ -190,9 +190,9 @@ const engineeringFields = [
         fieldName: 'Computer Science',
         description: 'Studies computation and software design.',
         useCases: [
-            'Software development',
-            'Database management',
-            'Cybersecurity',
+            'Artificial intelligence and machine learning',
+            'Blockchain and distributed systems',
+            'Cybersecurity and data protection',
         ]
     },
     {
@@ -200,9 +200,9 @@ const engineeringFields = [
         fieldName: 'Civil Engineering',
         description: 'Designs and constructs infrastructure.',
         useCases: [
-            'Building design',
-            'Transportation systems',
-            'Water management',
+            'Sustainable urban planning and development',
+            'Smart city infrastructure and IoT integration',
+            'Disaster-resilient building design',
         ]
     },
     {
@@ -210,9 +210,9 @@ const engineeringFields = [
         fieldName: 'Chemical Engineering',
         description: 'Designs chemical processes and products.',
         useCases: [
-            'Pharmaceuticals',
-            'Energy solutions',
-            'Food technologies',
+            'Renewable energy solutions',
+            'Biochemical process development',
+            'Advanced materials manufacturing',
         ]
     },
     {
@@ -220,9 +220,9 @@ const engineeringFields = [
         fieldName: 'Biomedical Engineering',
         description: 'Develops healthcare technologies.',
         useCases: [
-            'Imaging devices',
-            'Prosthetics',
-            'Diagnostics',
+            'Development of wearable health monitors',
+            'Tissue engineering and regenerative medicine',
+            'Design of advanced prosthetics',
         ]
     },
     {
@@ -230,9 +230,9 @@ const engineeringFields = [
         fieldName: 'Industrial Engineering',
         description: 'Optimizes processes and systems.',
         useCases: [
-            'Manufacturing',
-            'Supply chains',
-            'Quality control',
+            'Efficiency improvement in manufacturing',
+            'Supply chain optimization',
+            'Process automation and robotics',
         ]
     },
     {
@@ -240,9 +240,9 @@ const engineeringFields = [
         fieldName: 'Nuclear Engineering',
         description: 'Studies nuclear processes and applications.',
         useCases: [
-            'Nuclear plants',
-            'Cancer treatment',
-            'Waste management',
+            'Development of fusion energy technology',
+            'Nuclear waste management solutions',
+            'Radiation therapy advancements in medicine',
         ]
     },
     {
@@ -250,9 +250,9 @@ const engineeringFields = [
         fieldName: 'Computer Engineering',
         description: 'Integrates hardware and software systems.',
         useCases: [
-            'Microprocessors',
-            'IoT devices',
-            'Integration solutions',
+            'Design of embedded systems for IoT',
+            'Development of computer hardware',
+            'Artificial intelligence hardware solutions',
         ]
     }
 ];
