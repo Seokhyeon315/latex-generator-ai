@@ -4,7 +4,6 @@ import { useActions, useUIState } from 'ai/rsc';
 import { nanoid } from 'nanoid';
 import React from 'react';
 import { readStreamableValue } from 'ai/rsc';
-import { MultiStepOuput } from '@/components/multistep-search/multistep-ouput';
 import { toast } from 'sonner';
 import { AI, UIState } from '@/lib/actions';
 
@@ -43,14 +42,14 @@ export const ListFields = ({ summary, category, setLoading, setSelectedField }: 
         }
 
         // Update messages with the new content
-        setMessages((currentMessages) => [
-            ...currentMessages,
-            {
-                id: nanoid(),
-                role: 'assistant',
-                content: fullMessage,
-            },
-        ]);
+        // setMessages((currentMessages) => [
+        //     ...currentMessages,
+        //     {
+        //         id: nanoid(),
+        //         role: 'assistant',
+        //         content: fullMessage,
+        //     },
+        // ]);
 
         setLoading(false); // Stop loading
     };
