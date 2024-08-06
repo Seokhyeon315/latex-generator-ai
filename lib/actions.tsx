@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { google } from '@ai-sdk/google'
-import { streamObject, streamText, ToolInvocation } from 'ai'
+import { CoreMessage, streamObject, streamText, ToolInvocation } from 'ai'
 import {
     createAI,
     createStreamableUI,
@@ -16,17 +16,19 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { SpinnerMessage } from '@/components/ui/icons';
 import { BotCard, BotMessage } from '@/components/message';
 import { ListFormulas } from '@/components/multistep-search/list-formulas';
+import { Loading } from '@/components/loading';
 
-export type Message = {
-    role: 'user' | 'assistant' | 'system' | 'function' | 'data' | 'tool'
-    content: string
-    id?: string
-    name?: string
-    display?: {
-        name: string
-        props: Record<string, any>
-    }
-}
+// export type Message = {
+//     role: 'user' | 'assistant' | 'system' | 'function' | 'data' | 'tool'
+//     content: string
+//     id?: string
+//     name?: string
+//     display?: {
+//         name: string
+//         props: Record<string, any>
+//     }
+// }
+
 
 // Define the AI state and UI state types
 export type AIState = Array<{
@@ -34,14 +36,15 @@ export type AIState = Array<{
     role: 'user' | 'assistant' | 'system';
     toolName?: 'showFormulas' | 'showTheorems';
     interactions?: string[];
-    messages?: Message[];
     content: string;
 }>;
 
+// Define the UIState type similarly
 export type UIState = Array<{
-    id: string;
+    id?: string;
     role: 'user' | 'assistant';
-    display: React.ReactNode;
+    content: string; // Ensure this exists to hold the text content
+    display?: React.ReactNode;
     toolInvocations?: ToolInvocation[];
 }>;
 
@@ -80,7 +83,6 @@ async function directSearchAction(userInput: string) {
                 1. **Formula Name**: Provide the name of the formula or equation or theorem.
                 2. **Description**: Offer a detailed description of the formula or equation.
                 3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts. Ensure single backslashes for LaTeX commands.
-                4. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
                 5. **Explanation of Symbols**: Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds. Wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
                 
                 Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`,
@@ -191,69 +193,42 @@ async function imageToLatexAction(imageBase64: string) {
 // Use the streamText function with tool calling
 async function multiStepSearchAction(input: string) {
     'use server'
+    const stream = createStreamableValue('');
 
-    const history = getMutableAIState<typeof AI>();
-    history.update([
-        ...history.get(),
-        {
-            role: 'user',
-            content: input,
-        },
-    ]);
+    ; (async () => {
+        const { textStream } = await streamText({
+            model: google('models/gemini-1.5-pro'),
+            system: `You are an AI specialized in providing equations, formulas or theorem in the fields of mathematics, engineering, and science.
 
-
-
-    const ui = await streamUI({
-        model: google('models/gemini-1.5-pro'),
-        temperature: 0,
-        system: `You are an AI specialized in providing equations, formulas or theorem in the fields of mathematics, engineering, and science.
                     You must follow the instructions:
                     1. You always provide the response based on the fact not hallucinated. 
                     2. You never provide a response that is not related to the fields of mathematics, engineering, and science.
-                    3. Your ouput must be Markdown syntax.
-                    4. For mathematical equation, it should be wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
-                    `,
-        prompt: input,
-        tools: {
-            // Show all the formulas or equations based on the selected category and field.
-            showFormulas: {
-                description: 'List the 10 formulas or equations of field in selected category.',
-                parameters: z.object({
-                    // Each formula or equation is described by a name, a description and a LaTeX code.
-                    formulaName: z.string(),
-                    description: z.string().describe('Provide a detailed description of the formula or equation.'),
-                    latexCode: z.string().describe('Provide the LaTeX code representation of the formula or equation.')
-                }),
-                // generate: async function* ({ formulaName }) {
-                //     yield ``;
-                // }
+                    3. Your ouput must be Markdown syntax and it must include name, description, and LaTeX code.
+                    4. For mathematical equation, it should be wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.`,
+            temperature: 0,
+            prompt: input,
+        });
+        for await (const delta of textStream) {
+            stream.update(delta)
+        }
 
-            },
-            // showTheorem: {
-            //     description: 'List 10 theorems based on the selected category and field.',
-            //     parameters: z.object({
-            //         name: z.string(),
-            //         description: z.string()
-            //         latexCode: z.string().describe('')
-            //     })
-            // },
+        stream.done();
+        //console.log(stream.value)
 
+    })();
 
-        },
+    return { output: stream.value }
 
-    })
-
-    return ui.value
 }
 
 
-export const AI = createAI<AIState, UIState>({
+export const AI = createAI({
     actions: {
         directSearchAction,
         imageToLatexAction,
         multiStepSearchAction,
     },
-    initialUIState: [],
-    initialAIState: [],
+    initialUIState: [] as UIState,
+    initialAIState: [] as AIState,
 })
 

@@ -1,10 +1,12 @@
 'use client';
 
-import { AI } from '@/lib/actions';
 import { useActions, useUIState } from 'ai/rsc';
 import { nanoid } from 'nanoid';
 import React from 'react';
+import { readStreamableValue } from 'ai/rsc';
 import { MultiStepOuput } from '@/components/multistep-search/multistep-ouput';
+import { toast } from 'sonner';
+import { AI, UIState } from '@/lib/actions';
 
 interface ListFieldsProps {
     summary: {
@@ -12,17 +14,46 @@ interface ListFieldsProps {
         description: string;
         useCases: string[];
     };
-    category: string; // New prop to receive the selected category
+    category: string;
+    setLoading: (loading: boolean) => void;
+    setSelectedField: (field: string | null) => void;
 }
 
 // Component to display each field's information
-export const ListFields = ({ summary, category }: ListFieldsProps) => {
+export const ListFields = ({ summary, category, setLoading, setSelectedField }: ListFieldsProps) => {
     const { fieldName, description, useCases } = summary;
-    const [_, setMessages] = useUIState<typeof AI>();
+    const [messages, setMessages] = useUIState<typeof AI>(); // Ensure correct typing
     const { multiStepSearchAction } = useActions();
 
-    // The list of fields will disappear or roll up to "See All Fields" after the user selects a field.
-    // Once the user selects the field, there will be UI asking if the user wants to see a list of theorems or equations.
+    // Handle button clicks
+    const handleButtonClick = async (action: 'formulas' | 'theorems') => {
+        setLoading(true); // Start loading
+        setSelectedField(fieldName); // Set selected field
+
+        const prompt = action === 'formulas'
+            ? `Give me the list of 10 formulas or equations of ${fieldName} in ${category}`
+            : `Give me the list of 10 laws or theorems of ${fieldName} in ${category}`;
+
+        const { output } = await multiStepSearchAction(prompt);
+
+        // Process the output stream
+        let fullMessage = '';
+        for await (const delta of readStreamableValue(output)) {
+            fullMessage += delta;
+        }
+
+        // Update messages with the new content
+        setMessages((currentMessages) => [
+            ...currentMessages,
+            {
+                id: nanoid(),
+                role: 'assistant',
+                content: fullMessage,
+            },
+        ]);
+
+        setLoading(false); // Stop loading
+    };
 
     return (
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6 transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in ">
@@ -82,22 +113,17 @@ export const ListFields = ({ summary, category }: ListFieldsProps) => {
             <div className="flex justify-center space-x-2 mt-4">
                 <button
                     className="w-full sm:w-auto bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-800 hover:shadow-lg hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 active:scale-95"
-                    onClick={() => {
-                        console.log("Show Formulas for:", fieldName); // Placeholder for future action
-                    }}
+                    onClick={() => handleButtonClick('formulas')}
                 >
                     Show Formulas
                 </button>
                 <button
                     className="w-full sm:w-auto bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-800 hover:shadow-lg hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 active:scale-95"
-                    onClick={() => {
-                        console.log("Show Theorems for:", fieldName); // Placeholder for future action
-                    }}
+                    onClick={() => handleButtonClick('theorems')}
                 >
                     Show Theorems
                 </button>
             </div>
-
         </div>
     );
 };

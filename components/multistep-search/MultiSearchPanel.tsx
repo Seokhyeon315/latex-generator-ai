@@ -5,18 +5,27 @@ import { useRouter } from 'next/navigation';
 import { GiMaterialsScience, GiBigGear } from 'react-icons/gi';
 import { BiMath } from 'react-icons/bi';
 import { BackToTopButton } from '@/components/back-to-top';
+import { MultiStepOuput } from './multistep-ouput';
 import { EmptyMultistepScreen } from '@/components/multistep-search/empty-multistep-screen';
 import { mathFields, scienceFields, engineeringFields } from '@/lib/category-fields';
 import { ListFields } from './list-fields';
+import { useUIState } from 'ai/rsc';
+import { AI } from '@/lib/actions';
+import { Loading } from '../loading';
 
-export interface SearchPanelProps extends React.ComponentProps<'div'> {
+export interface MultiStepPanelProps {
     id?: string;
+    input: string;
+    setInput: (value: string) => void;
 }
 
-export function MultiStepSearchPanel({ id }: SearchPanelProps) {
+export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
     const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
+    const [selectedField, setSelectedField] = React.useState<string | null>(null);
     const [isClicked, setIsClicked] = React.useState<boolean>(false);
+    const [loading, setLoading] = React.useState<boolean>(false);
     const router = useRouter();
+    const [messages, setMessages] = useUIState<typeof AI>(); // Ensure messages is initialized correctly
 
     // Sample categories for display
     const categories = [
@@ -34,9 +43,9 @@ export function MultiStepSearchPanel({ id }: SearchPanelProps) {
     // Reset the selection and refresh the page
     const resetSelection = () => {
         setSelectedCategory(null);
+        setSelectedField(null);
         setIsClicked(false);
-
-        // Use router to go back and then refresh
+        setMessages([]); // Clear messages
         router.refresh();
         setTimeout(() => {
             window.location.reload();
@@ -87,16 +96,32 @@ export function MultiStepSearchPanel({ id }: SearchPanelProps) {
                     ))}
                 </div>
 
-                {/* Display list of fields of the selected category */}
-                {isClicked ? (
+                {/* Display list of fields of the selected category or output */}
+                {isClicked && !messages.length ? (
                     <div className="mx-auto sm:max-w-2xl sm:px-4 mt-6">
-                        {getFieldsForCategory().map((field) => (
-                            <ListFields key={field.id} summary={field} category={selectedCategory || ''} />
-                        ))}
-                        {/* If there is response, replace ListFields to MultiStepOuput */}
+                        {loading ? (
+                            <div className="text-center text-gray-600">
+                                <Loading isLoading={loading} />
+                            </div>
+                        ) : (
+                            getFieldsForCategory().map((field) => (
+                                <ListFields
+                                    key={field.id}
+                                    summary={field}
+                                    category={selectedCategory || ''}
+                                    setLoading={setLoading}
+                                    setSelectedField={setSelectedField}
+                                />
+                            ))
+                        )}
                     </div>
                 ) : (
-                    <EmptyMultistepScreen />
+                    !isClicked && <EmptyMultistepScreen /> // Ensure EmptyMultistepScreen only shows initially
+                )}
+
+                {/* If there is a response, replace ListFields with MultiStepOuput */}
+                {messages.length > 0 && selectedField && (
+                    <MultiStepOuput messages={messages} />
                 )}
             </div>
             <BackToTopButton />
