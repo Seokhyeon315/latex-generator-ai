@@ -303,7 +303,7 @@ const engineeringFields = [
             'Development of hypersonic vehicles',
         ],
         topics: [
-            'Aerodynamics',
+            'Fluid and Aerodynamics',
             'Propulsion Systems',
             'Flight Mechanics',
             'Spacecraft Design',

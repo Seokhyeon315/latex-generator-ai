@@ -2,22 +2,13 @@ import 'server-only'
 
 import * as React from 'react';
 import { google } from '@ai-sdk/google'
-import { CoreMessage, generateObject, streamObject, streamText, ToolInvocation } from 'ai'
-import {
-    createAI,
-    createStreamableUI,
-    getMutableAIState,
-    createStreamableValue,
-    streamUI
-} from 'ai/rsc'
+import { generateObject, streamObject, } from 'ai'
+import { createAI, createStreamableValue } from 'ai/rsc'
 import { nanoid } from './utils';
 import { z } from 'zod';
 import { GoogleAIFileManager } from '@google/generative-ai/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { SpinnerMessage } from '@/components/ui/icons';
-import { Loading } from '@/components/loading';
-import { Chat } from './types';
-import { BotMessage } from '@/components/message';
+
 
 
 export type Message = {
@@ -194,30 +185,26 @@ async function submitInputAction(content: string) {
     const { object } = await generateObject({
         model: google('models/gemini-1.5-pro'),
         temperature: 0,
-        system: `You are specialized in providing detailed information on equations or formulas or theorem in the fields of mathematics, engineering, and science.
+        prompt: content,
+        system: `You are an AI specialized in providing detailed information on equations or formulas or theorem based on user's query: ${content}.
                
-                You must follow the instructions:
-                1. **Formula Name**: Provide the name of the formula or equation or theorem.
-                2. **Description**: Offer a detailed description of the formula or equation or theorem.
-                3. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
+        You must follow the instructions:
+            1. **Name**: Provide the name of the formula, equation or theorem.
+            2. **Description**: Provide a detailed description of the formula or equation or theorem in Markdown syntax.
+            3. **latexCode**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode, with single backslashes for LaTeX commands.
+            4. Don't include any HTML tags in your response. 
+            5. If there is no equations or formulas with respect to ${content}, then show laws or thoery. 
                 
-                Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`,
-        prompt: content, // passed from frontend
+               `,
+
         schema: z.object({
             formulas: z.array(
                 z.object({
-                    name: z.string().describe('Name of a formula or equation or theorems based on selected topic, field, and category.'),
-                    description: z.string().describe('Explanation of fomula or equation.'),
-                    latexCode: z.string().describe('The LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.')
+                    name: z.string().describe(`Name of a formula, equation or theorems based on ${content}`),
+                    description: z.string().describe('Specific detailed explanation of fomula, equation, or theorem.'),
+                    latexCode: z.string().describe('The LaTeX code representation of the formula, equation or theorem, wrapped in $$ for display math mode with ONLY single backslash.')
                 })
             ),
-            // theorems: z.array(
-            //     z.object({
-            //         name: z.string().describe('Name of a theorem based on selected topic, field, and category.'),
-            //         description: z.string().describe('Explanation of theorem.'),
-            //         latexCode: z.string().describe('The LaTeX code representation of the theorem wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.')
-            //     })
-            // )
 
         })
 

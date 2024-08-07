@@ -2,22 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import React from "react";
-import { spinner } from '@/components/spinner'
 
-
-export function IconSpinner({ className, ...props }: React.ComponentProps<'svg'>) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 256 256"
-            fill="currentColor"
-            className={cn('size-12 animate-spin', className)}
-            {...props}
-        >
-            <path d="M232 128a104 104 0 0 1-208 0c0-41 23.81-78.36 60.66-95.27a8 8 0 0 1 6.68 14.54C60.15 61.59 40 93.27 40 128a88 88 0 0 0 176 0c0-34.73-20.15-66.41-51.34-80.73a8 8 0 0 1 6.68-14.54C208.19 49.64 232 87 232 128Z" />
-        </svg>
-    )
-}
 
 export function IconCheck({ className, ...props }: React.ComponentProps<'svg'>) {
     return (
@@ -48,15 +33,82 @@ export function IconCopy({ className, ...props }: React.ComponentProps<'svg'>) {
 }
 
 
-export function SpinnerMessage() {
+
+export function Responsive({ className, ...props }: React.ComponentProps<'svg'>) {
     return (
-        <div className="group relative flex items-start md:-ml-12">
-            <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
-                <img className="size-6" src="/images/gemini.png" alt="gemini logo" />
-            </div>
-            <div className="ml-4 h-[24px] flex flex-row items-center flex-1 space-y-2 overflow-hidden px-1">
-                {spinner}
-            </div>
-        </div>
+        <svg
+            {...props}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={cn('size-4', className)}>
+            <path d="M18 8V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h8" />
+            <path d="M10 19v-3.96 3.15" /><path d="M7 19h5" />
+            <rect width="6" height="10" x="16" y="12" rx="2" /></svg>
+
+    )
+}
+
+export function Search({ className, ...props }: React.ComponentProps<'svg'>) {
+    return (
+        <svg
+            {...props}
+
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            className={cn('size-4', className)}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            troke-width="2"
+            strokeLinecap="round"
+            strokeLinejoin="round" >
+            <path d="M3 7V5a2 2 0 0 1 2-2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" /><path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" /><circle cx="12" cy="12" r="3" /><path d="m16 16-1.9-1.9" /></svg>
+    )
+}
+
+export function Sparkle({ className, ...props }: React.ComponentProps<'svg'>) {
+    return (
+        <svg
+            {...props}
+            className={cn('size-4', className)}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round">
+            <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+        </svg>
+    )
+}
+
+
+export function UserIcon({ className, ...props }: React.ComponentProps<'svg'>) {
+    return (
+        <svg
+            {...props}
+            className={cn('size-4', className)}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><polyline points="16 11 18 13 22 9" />
+        </svg>
     )
 }

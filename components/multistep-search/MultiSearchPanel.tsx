@@ -10,6 +10,8 @@ import { mathFields, scienceFields, engineeringFields } from '@/lib/category-fie
 import { ListFields } from './list-fields';
 import { useUIState } from 'ai/rsc';
 import { Loading } from '../loading';
+import { Output } from './output'; // Import the Output component
+
 
 export interface MultiStepPanelProps {
     id?: string;
@@ -23,6 +25,9 @@ export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
     const [loading, setLoading] = React.useState<boolean>(false);
     const router = useRouter();
     const [messages, setMessages] = useUIState();
+
+    const [selectedTopic, setSelectedTopic] = React.useState<string | null>(null); // Track selected topic
+    const [selectedField, setSelectedField] = React.useState<string | null>(null); // Track selected field
 
     const categories = [
         { name: 'Math', icon: <BiMath /> },
@@ -94,20 +99,23 @@ export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
                 <div className="mx-auto sm:max-w-2xl sm:px-4 mt-6">
                     {/* Output of server response */}
                     {loading ? (
-                        <Loading isLoading={true} /> // Set isLoading to true to indicate loading
+                        <div className='h-screen items-center justify-center pb-6'>
+                            <Loading isLoading={loading} />
+                        </div>
+
                     ) : (
-                        messages && messages.length > 0 && ( // Check if there are messages
-                            <div>
-                                {messages.map((message: any, index: any) => (
-                                    <div key={index} className="mb-4 p-4 bg-white rounded-lg shadow-md">
-                                        <h2 className="text-lg font-semibold mb-2">{message.name}</h2>
-                                        <p className="text-gray-700 mb-2">{message.description}</p>
-                                        <div className="p-4 bg-gray-100 rounded">
-                                            <code className="text-sm text-gray-900">{message.latexCode}</code>
-                                        </div>
-                                    </div>
-                                ))}
+                        messages && messages.length > 0 && selectedTopic && selectedField && (
+                            <div className='flex h-fit items-center justify-center mt-4 pb-6'>
+                                <div className=''>
+                                    <Output
+                                        messages={messages}
+                                        topic={selectedTopic}
+                                        fieldName={selectedField}
+                                    />
+                                </div>
+
                             </div>
+
                         )
                     )}
 
@@ -120,6 +128,8 @@ export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
                                         summary={field}
                                         category={selectedCategory || ''}
                                         setLoading={setLoading} // Pass setLoading to manage loading state
+                                        setSelectedTopic={setSelectedTopic} // Pass setSelectedTopic
+                                        setSelectedField={setSelectedField} // Pass setSelectedField
                                     />
                                 ))
                             ) : (

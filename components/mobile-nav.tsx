@@ -26,7 +26,7 @@ export const MobileNav = () => {
                 </Button>
             </SheetTrigger>
 
-            <SheetContent side="right">
+            <SheetContent side="right" aria-describedby="Mobile-size sidebar">
                 {/* Logo here */}
 
                 <div className="flex flex-col pb-2 pl-3 gap-4 mt-7 pt-4 text-xl">

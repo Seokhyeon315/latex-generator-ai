@@ -8,17 +8,28 @@ interface ListTopicsProps {
     field: string;
     topics: string[];
     setLoading: (loading: boolean) => void;
+    setSelectedTopic: (topic: string) => void;
+    setSelectedField: (field: string) => void;
 }
 
-export const ListTopics: React.FC<ListTopicsProps> = ({ category, field, topics, setLoading }) => {
-    const submitInputAction = useActions().submitInputAction; // Corrected to use destructuring properly
+export const ListTopics: React.FC<ListTopicsProps> = ({
+    category,
+    field,
+    topics,
+    setLoading,
+    setSelectedTopic,
+    setSelectedField,
+}) => {
+    const submitInputAction = useActions().submitInputAction;
     const [_, setMessages] = useUIState();
 
     const handleTopicClick = async (topic: string) => {
-        setLoading(true); // Start loading when a topic is clicked
+        setLoading(true);
+        setSelectedTopic(topic); // Set the selected topic
+        setSelectedField(field); // Set the selected field
         try {
             const { formulas } = await submitInputAction(
-                `Give me the list of 10 formulas, equations, or theorems of ${topic}, ${field}, in the category of ${category}.`
+                `Give me the list of 5 formulas, equations, or theorems based on ${topic}, ${field}, in the category of ${category}.`
             );
 
             // Add received formulas to the message state
@@ -33,7 +44,7 @@ export const ListTopics: React.FC<ListTopicsProps> = ({ category, field, topics,
         } catch (error) {
             console.log(error);
         } finally {
-            setLoading(false); // Stop loading after the response
+            setLoading(false);
         }
     };
 

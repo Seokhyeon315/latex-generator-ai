@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ListTopics } from '@/components/multistep-search/list-topics'; // Import the ListTopics component
+import { ListTopics } from '@/components/multistep-search/list-topics';
 
 interface ListFieldsProps {
     summary: {
@@ -12,10 +12,18 @@ interface ListFieldsProps {
     };
     category: string;
     setLoading: (loading: boolean) => void;
+    setSelectedTopic: (topic: string) => void; // Add this
+    setSelectedField: (field: string) => void; // Add this
 }
 
 // Component to display each field's information
-export const ListFields = ({ summary, category, setLoading }: ListFieldsProps) => {
+export const ListFields = ({
+    summary,
+    category,
+    setLoading,
+    setSelectedTopic,
+    setSelectedField,
+}: ListFieldsProps) => {
     const { fieldName, description, useCases, topics } = summary;
 
     // State to manage which field's topics are open
@@ -38,9 +46,7 @@ export const ListFields = ({ summary, category, setLoading }: ListFieldsProps) =
                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                         Field
                     </span>
-                    <span className="mt-1 text-lg font-bold text-gray-900">
-                        {fieldName}
-                    </span>
+                    <span className="mt-1 text-lg font-bold text-gray-900">{fieldName}</span>
                 </div>
                 {/* Description Section */}
                 <div className="flex flex-col">
@@ -66,7 +72,14 @@ export const ListFields = ({ summary, category, setLoading }: ListFieldsProps) =
 
             {/* Topics Section - Accordion */}
             {openField === fieldName && (
-                <ListTopics category={category} field={fieldName} topics={topics} setLoading={setLoading} />
+                <ListTopics
+                    category={category}
+                    field={fieldName}
+                    topics={topics}
+                    setLoading={setLoading}
+                    setSelectedTopic={setSelectedTopic} // Pass setSelectedTopic
+                    setSelectedField={setSelectedField} // Pass setSelectedField
+                />
             )}
         </div>
     );
