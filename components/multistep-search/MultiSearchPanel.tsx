@@ -5,14 +5,11 @@ import { useRouter } from 'next/navigation';
 import { GiMaterialsScience, GiBigGear } from 'react-icons/gi';
 import { BiMath } from 'react-icons/bi';
 import { BackToTopButton } from '@/components/back-to-top';
-import { MultiStepOuput } from './multistep-ouput';
 import { EmptyMultistepScreen } from '@/components/multistep-search/empty-multistep-screen';
 import { mathFields, scienceFields, engineeringFields } from '@/lib/category-fields';
 import { ListFields } from './list-fields';
-import { useActions, useUIState } from 'ai/rsc';
-import { AI } from '@/lib/actions';
+import { useUIState } from 'ai/rsc';
 import { Loading } from '../loading';
-import { toast } from 'sonner';
 
 export interface MultiStepPanelProps {
     id?: string;
@@ -25,9 +22,7 @@ export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
     const [categoryClicked, setCategoryClicked] = React.useState<boolean>(false);
     const [loading, setLoading] = React.useState<boolean>(false);
     const router = useRouter();
-    const [messages, setMessages] = useUIState()
-
-
+    const [messages, setMessages] = useUIState();
 
     const categories = [
         { name: 'Math', icon: <BiMath /> },
@@ -59,7 +54,8 @@ export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-6">
                 <h1
-                    className={`mb-6 text-2xl sm:text-3xl lg:text-4xl font-semibold text-center ${categoryClicked ? 'text-gray-600 underline underline-offset-4 cursor-pointer hover:text-gray-800' : 'text-gray-800'}`}
+                    className={`mb-6 text-2xl sm:text-3xl lg:text-4xl font-semibold text-center ${categoryClicked ? 'text-gray-600 underline underline-offset-4 cursor-pointer hover:text-gray-800' : 'text-gray-800'
+                        }`}
                     onClick={() => {
                         router.refresh();
                         setTimeout(() => {
@@ -69,12 +65,15 @@ export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
                 >
                     {categoryClicked ? 'Choose Again' : 'Choose a Category'}
                 </h1>
+
                 {/* Three categories icon cards */}
-                <div className={`flex justify-center space-x-4 transition-all duration-500 ease-in-out`}>
+                <div className="flex justify-center space-x-4 transition-all duration-500 ease-in-out">
                     {categories.map((category) => (
                         <div
                             key={category.name}
-                            className={`flex items-center justify-center cursor-pointer transition-all duration-500 transform ${categoryClicked ? 'h-18 w-24' : 'h-32 w-40'} ${selectedCategory === category.name ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'} rounded-lg border border-gray-300 shadow-md ${categoryClicked && selectedCategory !== category.name ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`flex items-center justify-center cursor-pointer transition-all duration-500 transform ${categoryClicked ? 'h-18 w-24' : 'h-32 w-40'
+                                } ${selectedCategory === category.name ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'} rounded-lg border border-gray-300 shadow-md ${categoryClicked && selectedCategory !== category.name ? 'opacity-50 cursor-not-allowed' : ''
+                                }`}
                             onClick={() => !categoryClicked && handleCategorySelect(category.name)}
                         >
                             <div className="flex flex-col items-center justify-center transition-opacity duration-500">
@@ -92,14 +91,27 @@ export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
                 </div>
 
                 {/* Display list of fields of the selected category or output */}
-
-                {/* Default multistep-search UI */}
                 <div className="mx-auto sm:max-w-2xl sm:px-4 mt-6">
                     {/* Output of server response */}
-
-                    {messages && messages.length > 0 ? (
-                        <div>{messages}</div>
+                    {loading ? (
+                        <Loading isLoading={true} /> // Set isLoading to true to indicate loading
                     ) : (
+                        messages && messages.length > 0 && ( // Check if there are messages
+                            <div>
+                                {messages.map((message: any, index: any) => (
+                                    <div key={index} className="mb-4 p-4 bg-white rounded-lg shadow-md">
+                                        <h2 className="text-lg font-semibold mb-2">{message.name}</h2>
+                                        <p className="text-gray-700 mb-2">{message.description}</p>
+                                        <div className="p-4 bg-gray-100 rounded">
+                                            <code className="text-sm text-gray-900">{message.latexCode}</code>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )
+                    )}
+
+                    {!loading && messages.length === 0 && ( // Display fields only if not loading and no messages
                         <>
                             {categoryClicked ? (
                                 getFieldsForCategory().map((field) => (
@@ -107,10 +119,14 @@ export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
                                         key={field.id}
                                         summary={field}
                                         category={selectedCategory || ''}
+                                        setLoading={setLoading} // Pass setLoading to manage loading state
                                     />
                                 ))
-                            ) : (!categoryClicked && <EmptyMultistepScreen />)}
-                        </>)}
+                            ) : (
+                                <EmptyMultistepScreen />
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
             <BackToTopButton />

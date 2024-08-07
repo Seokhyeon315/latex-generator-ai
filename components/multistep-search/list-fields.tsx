@@ -1,13 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import ListTopics from '@/components/multistep-search/list-topics'; // Import the ListTopics component
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { ListTopics } from '@/components/multistep-search/list-topics'; // Import the ListTopics component
 
 interface ListFieldsProps {
     summary: {
@@ -17,27 +11,19 @@ interface ListFieldsProps {
         topics: string[];
     };
     category: string;
+    setLoading: (loading: boolean) => void;
 }
 
 // Component to display each field's information
-export const ListFields = ({ summary, category }: ListFieldsProps) => {
+export const ListFields = ({ summary, category, setLoading }: ListFieldsProps) => {
     const { fieldName, description, useCases, topics } = summary;
 
     // State to manage which field's topics are open
     const [openField, setOpenField] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false); // State to manage loading
 
     // Function to toggle the accordion
     const toggleAccordion = (fieldName: string) => {
-        // Set loading to true initially
-        setLoading(true);
         setOpenField((prevField) => (prevField === fieldName ? null : fieldName));
-
-        // Simulate a delay using setTimeout
-        setTimeout(() => {
-            // Set loading to false after the delay
-            setLoading(false);
-        }, 1000); // Adjust the delay time as needed
     };
 
     return (
@@ -78,37 +64,9 @@ export const ListFields = ({ summary, category }: ListFieldsProps) => {
                 </div>
             </div>
 
-            {/* Topics Section - Accordion with Loading Indicator */}
+            {/* Topics Section - Accordion */}
             {openField === fieldName && (
-                <div>
-                    {loading ? (
-                        <div className="flex justify-center items-center p-4">
-                            <svg
-                                className="animate-spin h-5 w-5 text-blue-600"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                ></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                                ></path>
-                            </svg>
-                            <span className="ml-2 text-gray-500">Loading topics...</span>
-                        </div>
-                    ) : (
-                        <ListTopics category={category} field={fieldName} topics={topics} />
-                    )}
-                </div>
+                <ListTopics category={category} field={fieldName} topics={topics} setLoading={setLoading} />
             )}
         </div>
     );

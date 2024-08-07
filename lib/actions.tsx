@@ -195,35 +195,34 @@ async function submitInputAction(content: string) {
         model: google('models/gemini-1.5-pro'),
         temperature: 0,
         system: `You are specialized in providing detailed information on equations or formulas or theorem in the fields of mathematics, engineering, and science.
-                When a user provides the name of an equation or formula, respond with the following:
-
+               
+                You must follow the instructions:
                 1. **Formula Name**: Provide the name of the formula or equation or theorem.
-                2. **Description**: Offer a detailed description of the formula or equation.
-                3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts. Ensure single backslashes for LaTeX commands.
-                4. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
-                5. **Explanation of Symbols**: Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds. Wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
+                2. **Description**: Offer a detailed description of the formula or equation or theorem.
+                3. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
                 
                 Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`,
         prompt: content, // passed from frontend
         schema: z.object({
             formulas: z.array(
                 z.object({
-                    name: z.string().describe('Name of a formula or equation based on selected topic, field, and category.'),
+                    name: z.string().describe('Name of a formula or equation or theorems based on selected topic, field, and category.'),
                     description: z.string().describe('Explanation of fomula or equation.'),
                     latexCode: z.string().describe('The LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.')
                 })
             ),
-            theorems: z.array(
-                z.object({
-                    name: z.string().describe('Name of a theorem based on selected topic, field, and category.'),
-                    description: z.string().describe('Explanation of theorem.'),
-                    latexCode: z.string().describe('The LaTeX code representation of the theorem wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.')
-                })
-            )
+            // theorems: z.array(
+            //     z.object({
+            //         name: z.string().describe('Name of a theorem based on selected topic, field, and category.'),
+            //         description: z.string().describe('Explanation of theorem.'),
+            //         latexCode: z.string().describe('The LaTeX code representation of the theorem wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.')
+            //     })
+            // )
 
         })
 
     })
+    console.log(object)
     return object
 }
 
