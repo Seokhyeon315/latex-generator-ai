@@ -47,10 +47,11 @@ export default function RootLayout({
         <Toaster position="top-center" />
 
         <div className="flex flex-col min-h-screen">
-
           <Navbar />
           <main className="flex flex-col flex-1">{children}</main>
         </div>
+
+
         <Footer />
       </body>
     </html>

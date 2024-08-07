@@ -2,7 +2,7 @@ import 'server-only'
 
 import * as React from 'react';
 import { google } from '@ai-sdk/google'
-import { CoreMessage, streamObject, streamText, ToolInvocation } from 'ai'
+import { CoreMessage, generateObject, streamObject, streamText, ToolInvocation } from 'ai'
 import {
     createAI,
     createStreamableUI,
@@ -12,6 +12,7 @@ import {
 } from 'ai/rsc'
 import { nanoid } from './utils';
 import { z } from 'zod';
+import { GoogleAIFileManager } from '@google/generative-ai/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { SpinnerMessage } from '@/components/ui/icons';
 import { Loading } from '@/components/loading';
@@ -49,6 +50,10 @@ export type UIState = {
 
 
 const genAI = new GoogleGenerativeAI(
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
+)
+
+const fileManager = new GoogleAIFileManager(
     process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
 )
 
@@ -124,113 +129,6 @@ async function directSearchAction(userInput: string) {
     return { object: objectStream.value };
 }
 
-
-
-async function submitInputAction(content: string) {
-    'use server';
-    const aiState = getMutableAIState()
-
-    aiState.update({
-        ...aiState.get(),
-        messages: [
-            ...aiState.get().messages,
-            {
-                id: nanoid(),
-                role: 'user',
-                content: `${aiState.get().interactions.join('\n\n')}\n\n${content}`
-            }
-        ]
-    })
-
-    const history = aiState.get().messages.map((message: { role: string; content: string; }) => ({
-        role: message.role,
-        content: message.content
-    }))
-    // console.log(history)
-
-    const textStream = createStreamableValue('')
-    const spinnerStream = createStreamableUI(<SpinnerMessage />)
-    const messageStream = createStreamableUI(null)
-    const uiStream = createStreamableUI()
-
-
-        ; (async () => {
-            try {
-                const result = await streamText({
-                    model: google('models/gemini-1.5-pro'),
-                    temperature: 0,
-                    tools: {
-
-                    },
-                    system: `You are an AI specialized in providing detailed information on equations or formulas or theorem in the fields of mathematics, engineering, and science.
-                When a user provides the name of an equation or formula, respond with the following:
-
-                1. **Formula Name**: Provide the name of the formula or equation or theorem.
-                2. **Description**: Offer a detailed description of the formula or equation.
-                3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts. Ensure single backslashes for LaTeX commands.
-                4. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
-                5. **Explanation of Symbols**: Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds. Wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
-                
-                Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`,
-                    messages: [...history]
-                })
-
-                let textContent = ''
-                spinnerStream.done(null)
-                for await (const delta of result.fullStream) {
-                    const { type } = delta
-                    if (type === 'text-delta') {
-                        const { textDelta } = delta
-
-                        textContent += textDelta
-                        messageStream.update(<BotMessage content={textContent} />)
-
-                        aiState.update({
-                            ...aiState.get(),
-                            messages: [
-                                ...aiState.get().messages,
-                                {
-                                    id: nanoid(),
-                                    role: 'assistant',
-                                    content: textContent
-                                }
-                            ]
-                        })
-                    } else if (type === 'tool-call-delta') {
-                        const { toolName } = delta
-
-                    }
-                }
-
-
-
-                uiStream.done()
-                textStream.done()
-                messageStream.done()
-            } catch (e) {
-                console.error(e)
-
-                const error = new Error(
-                    'The AI got rate limited, please try again later.'
-                )
-                uiStream.error(error)
-                textStream.error(error)
-                messageStream.error(error)
-                aiState.done(error)
-            }
-        })()
-    return {
-        id: nanoid(),
-        display: messageStream.value
-
-    }
-}
-
-
-
-
-
-
 // Convert Image to Latex code action
 async function imageToLatexAction(imageBase64: string) {
     'use server';
@@ -288,20 +186,53 @@ async function imageToLatexAction(imageBase64: string) {
 }
 
 
+
+async function submitInputAction(content: string) {
+    'use server';
+
+
+    const { object } = await generateObject({
+        model: google('models/gemini-1.5-pro'),
+        temperature: 0,
+        system: `You are specialized in providing detailed information on equations or formulas or theorem in the fields of mathematics, engineering, and science.
+                When a user provides the name of an equation or formula, respond with the following:
+
+                1. **Formula Name**: Provide the name of the formula or equation or theorem.
+                2. **Description**: Offer a detailed description of the formula or equation.
+                3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts. Ensure single backslashes for LaTeX commands.
+                4. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
+                5. **Explanation of Symbols**: Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds. Wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
+                
+                Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`,
+        prompt: content, // passed from frontend
+        schema: z.object({
+            formulas: z.array(
+                z.object({
+                    name: z.string().describe('Name of a formula or equation based on selected topic, field, and category.'),
+                    description: z.string().describe('Explanation of fomula or equation.'),
+                    latexCode: z.string().describe('The LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.')
+                })
+            ),
+            theorems: z.array(
+                z.object({
+                    name: z.string().describe('Name of a theorem based on selected topic, field, and category.'),
+                    description: z.string().describe('Explanation of theorem.'),
+                    latexCode: z.string().describe('The LaTeX code representation of the theorem wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.')
+                })
+            )
+
+        })
+
+    })
+    return object
+}
+
 export const AI = createAI<AIState, UIState>({
     actions: {
         directSearchAction,
         imageToLatexAction,
+        submitInputAction,
     },
     initialUIState: [],
     initialAIState: { interactions: [], messages: [] },
 })
-
-
-// export const getUIStateFromAIState = (aiState: Chat) => {
-//     return aiState.messages.filter(message => message.role !== 'system').map((message, index) => ({
-//         display: message.role === 'assistant' ? (): ()
-
-//     }))
-
-// }

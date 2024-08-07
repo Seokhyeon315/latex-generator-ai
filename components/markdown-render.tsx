@@ -8,7 +8,7 @@ import { StreamableValue } from 'ai/rsc';
 import { useStreamableText } from '@/lib/hooks/use-streamable-text';
 import rehypeKatex from 'rehype-katex';
 
-export default function MarkdownRender({ content }: { content: string | StreamableValue<string> }) {
+export default function MarkdownRender({ content }: { content: string }) {
     // Use the useStreamableText hook to process the content
     const text = useStreamableText(content);
 

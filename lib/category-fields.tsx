@@ -7,7 +7,15 @@ const mathFields = [
             'Computer graphics and animation',
             'Machine learning algorithms',
             'Quantum computing advancements',
-        ]
+        ],
+        topics: [
+            'Vector Spaces',
+            'Matrix Theory',
+            'Linear Transformations',
+            'Eigenvalues and Eigenvectors',
+            'Diagonalization',
+            'Orthogonality and Least Squares',
+        ],
     },
     {
         id: 2,
@@ -17,7 +25,15 @@ const mathFields = [
             'Modeling physical phenomena in physics',
             'Optimizing engineering designs',
             'Financial market predictions',
-        ]
+        ],
+        topics: [
+            'Limits and Continuity',
+            'Differentiation Techniques',
+            'Applications of Derivatives',
+            'Integration Techniques',
+            'Multivariable Calculus',
+            'Differential Equations',
+        ],
     },
     {
         id: 3,
@@ -27,7 +43,15 @@ const mathFields = [
             'Data-driven decision making in business',
             'Predictive analytics in healthcare',
             'Machine learning model evaluation',
-        ]
+        ],
+        topics: [
+            'Descriptive Statistics',
+            'Probability Distributions',
+            'Statistical Inference',
+            'Regression Analysis',
+            'Bayesian Statistics',
+            'Time Series Analysis',
+        ],
     },
     {
         id: 4,
@@ -37,7 +61,15 @@ const mathFields = [
             '3D modeling in computer graphics',
             'Acoustic engineering and sound design',
             'Satellite navigation systems',
-        ]
+        ],
+        topics: [
+            'Trigonometric Functions',
+            'Graphs of Trigonometric Functions',
+            'Trigonometric Identities and Equations',
+            'Inverse Trigonometric Functions',
+            'Applications of Trigonometry',
+            'Spherical Trigonometry',
+        ],
     },
     {
         id: 5,
@@ -47,7 +79,15 @@ const mathFields = [
             'Predicting disease spread in epidemiology',
             'Modeling electrical circuits',
             'Simulating natural processes in climate science',
-        ]
+        ],
+        topics: [
+            'First-Order Differential Equations',
+            'Second-Order Differential Equations',
+            'Partial Differential Equations',
+            'Laplace Transforms',
+            'Fourier Series and Transforms',
+            'Nonlinear Differential Equations',
+        ],
     },
     {
         id: 6,
@@ -57,7 +97,15 @@ const mathFields = [
             'Signal processing in telecommunications',
             'Understanding fluid flows in aerodynamics',
             'Quantum mechanics and field theory',
-        ]
+        ],
+        topics: [
+            'Complex Numbers and Functions',
+            'Analytic Functions',
+            'Complex Integration',
+            'Residue Theory',
+            'Conformal Mapping',
+            'Applications in Physics and Engineering',
+        ],
     },
     {
         id: 7,
@@ -67,7 +115,15 @@ const mathFields = [
             'Analyzing electromagnetic fields',
             'Simulating airflow over wings',
             'Modeling forces in mechanical systems',
-        ]
+        ],
+        topics: [
+            'Vector Fields',
+            'Gradient, Divergence, and Curl',
+            'Line and Surface Integrals',
+            'Green’s, Stokes’, and Divergence Theorems',
+            'Applications in Fluid Dynamics',
+            'Applications in Electromagnetism',
+        ],
     },
     {
         id: 8,
@@ -77,7 +133,15 @@ const mathFields = [
             'Designing auction algorithms in economics',
             'Modeling competitive strategies in business',
             'Optimizing network security protocols',
-        ]
+        ],
+        topics: [
+            'Introduction to Game Theory',
+            'Nash Equilibrium',
+            'Cooperative Games',
+            'Non-Cooperative Games',
+            'Evolutionary Game Theory',
+            'Applications in Economics and Politics',
+        ],
     },
 ];
 
@@ -90,7 +154,15 @@ const scienceFields = [
             'Developing renewable energy technologies',
             'Advancements in quantum computing',
             'Medical technologies like MRI and PET scans',
-        ]
+        ],
+        topics: [
+            'Classical Mechanics',
+            'Electromagnetism',
+            'Thermodynamics',
+            'Quantum Mechanics',
+            'Relativity',
+            'Astrophysics',
+        ],
     },
     {
         id: 2,
@@ -100,7 +172,15 @@ const scienceFields = [
             'Development of sustainable materials',
             'Pharmaceutical drug design',
             'Nanotechnology and materials science',
-        ]
+        ],
+        topics: [
+            'Organic Chemistry',
+            'Inorganic Chemistry',
+            'Physical Chemistry',
+            'Analytical Chemistry',
+            'Biochemistry',
+            'Chemical Engineering',
+        ],
     },
     {
         id: 3,
@@ -110,7 +190,15 @@ const scienceFields = [
             'Genomic research and personalized medicine',
             'Biotechnology and synthetic biology',
             'Conservation efforts and biodiversity studies',
-        ]
+        ],
+        topics: [
+            'Cell Biology',
+            'Genetics',
+            'Evolutionary Biology',
+            'Ecology',
+            'Molecular Biology',
+            'Neuroscience',
+        ],
     },
     {
         id: 4,
@@ -120,7 +208,15 @@ const scienceFields = [
             'Detection of exoplanets and astrobiology',
             'Cosmology and the study of dark matter',
             'Development of space exploration technologies',
-        ]
+        ],
+        topics: [
+            'Observational Astronomy',
+            'Stellar Astronomy',
+            'Galactic Astronomy',
+            'Cosmology',
+            'Astrobiology',
+            'Exoplanet Research',
+        ],
     },
     {
         id: 5,
@@ -130,7 +226,15 @@ const scienceFields = [
             'Climate change modeling and analysis',
             'Natural disaster prediction and management',
             'Resource exploration and sustainable mining',
-        ]
+        ],
+        topics: [
+            'Geology',
+            'Meteorology',
+            'Oceanography',
+            'Seismology',
+            'Volcanology',
+            'Environmental Geoscience',
+        ],
     },
     {
         id: 6,
@@ -140,7 +244,15 @@ const scienceFields = [
             'Sustainable agriculture and food systems',
             'Renewable energy and waste management',
             'Conservation and ecosystem restoration',
-        ]
+        ],
+        topics: [
+            'Ecology and Biodiversity',
+            'Environmental Chemistry',
+            'Climate Science',
+            'Pollution Control',
+            'Sustainable Development',
+            'Environmental Policy and Management',
+        ],
     },
     {
         id: 7,
@@ -150,7 +262,15 @@ const scienceFields = [
             'Development of advanced composites',
             'Biocompatible materials for medical use',
             'Innovative materials for electronics',
-        ]
+        ],
+        topics: [
+            'Solid State Physics',
+            'Nanomaterials',
+            'Metallurgy',
+            'Polymers',
+            'Ceramics',
+            'Electronic Materials',
+        ],
     },
 ];
 
@@ -163,7 +283,15 @@ const engineeringFields = [
             'Robotics and automation systems',
             'Renewable energy technologies',
             'Advanced manufacturing processes',
-        ]
+        ],
+        topics: [
+            'Thermodynamics',
+            'Fluid Mechanics',
+            'Materials Science',
+            'Control Systems',
+            'Robotics',
+            'Manufacturing Processes',
+        ],
     },
     {
         id: 2,
@@ -173,7 +301,15 @@ const engineeringFields = [
             'Designing next-generation aircraft',
             'Satellite technology and space exploration',
             'Development of hypersonic vehicles',
-        ]
+        ],
+        topics: [
+            'Aerodynamics',
+            'Propulsion Systems',
+            'Flight Mechanics',
+            'Spacecraft Design',
+            'Avionics',
+            'Aerospace Materials',
+        ],
     },
     {
         id: 3,
@@ -183,7 +319,15 @@ const engineeringFields = [
             'Development of smart grid technologies',
             'Design of integrated circuits and chips',
             'Advancements in wireless communication',
-        ]
+        ],
+        topics: [
+            'Circuit Analysis',
+            'Electromagnetism',
+            'Control Systems',
+            'Digital Electronics',
+            'Power Systems',
+            'Signal Processing',
+        ],
     },
     {
         id: 4,
@@ -193,7 +337,15 @@ const engineeringFields = [
             'Artificial intelligence and machine learning',
             'Blockchain and distributed systems',
             'Cybersecurity and data protection',
-        ]
+        ],
+        topics: [
+            'Algorithms and Data Structures',
+            'Operating Systems',
+            'Database Systems',
+            'Computer Networks',
+            'Machine Learning',
+            'Software Engineering',
+        ],
     },
     {
         id: 5,
@@ -203,7 +355,15 @@ const engineeringFields = [
             'Sustainable urban planning and development',
             'Smart city infrastructure and IoT integration',
             'Disaster-resilient building design',
-        ]
+        ],
+        topics: [
+            'Structural Analysis',
+            'Geotechnical Engineering',
+            'Transportation Engineering',
+            'Water Resources Engineering',
+            'Environmental Engineering',
+            'Construction Management',
+        ],
     },
     {
         id: 6,
@@ -213,7 +373,15 @@ const engineeringFields = [
             'Renewable energy solutions',
             'Biochemical process development',
             'Advanced materials manufacturing',
-        ]
+        ],
+        topics: [
+            'Chemical Reaction Engineering',
+            'Process Design and Control',
+            'Thermodynamics',
+            'Materials Science',
+            'Biochemical Engineering',
+            'Environmental Engineering',
+        ],
     },
     {
         id: 7,
@@ -223,7 +391,15 @@ const engineeringFields = [
             'Development of wearable health monitors',
             'Tissue engineering and regenerative medicine',
             'Design of advanced prosthetics',
-        ]
+        ],
+        topics: [
+            'Biomaterials',
+            'Medical Imaging',
+            'Biomechanics',
+            'Tissue Engineering',
+            'Biomedical Instrumentation',
+            'Rehabilitation Engineering',
+        ],
     },
     {
         id: 8,
@@ -233,7 +409,15 @@ const engineeringFields = [
             'Efficiency improvement in manufacturing',
             'Supply chain optimization',
             'Process automation and robotics',
-        ]
+        ],
+        topics: [
+            'Operations Research',
+            'Quality Control',
+            'Supply Chain Management',
+            'Human Factors Engineering',
+            'Manufacturing Systems',
+            'Production Planning',
+        ],
     },
     {
         id: 9,
@@ -243,7 +427,15 @@ const engineeringFields = [
             'Development of fusion energy technology',
             'Nuclear waste management solutions',
             'Radiation therapy advancements in medicine',
-        ]
+        ],
+        topics: [
+            'Nuclear Reactor Physics',
+            'Radiation Protection',
+            'Nuclear Fuel Cycle',
+            'Radioactive Waste Management',
+            'Nuclear Materials',
+            'Medical Physics',
+        ],
     },
     {
         id: 10,
@@ -253,8 +445,16 @@ const engineeringFields = [
             'Design of embedded systems for IoT',
             'Development of computer hardware',
             'Artificial intelligence hardware solutions',
-        ]
-    }
+        ],
+        topics: [
+            'Embedded Systems',
+            'Microprocessor Design',
+            'Digital Signal Processing',
+            'Computer Architecture',
+            'VLSI Design',
+            'Network Security',
+        ],
+    },
 ];
 
 export { mathFields, scienceFields, engineeringFields };

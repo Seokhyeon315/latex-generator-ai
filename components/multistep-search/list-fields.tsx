@@ -1,61 +1,50 @@
 'use client';
 
-import { useActions, useUIState } from 'ai/rsc';
-import { nanoid } from 'nanoid';
-import React from 'react';
-import { readStreamableValue } from 'ai/rsc';
-import { toast } from 'sonner';
-import { AI, UIState } from '@/lib/actions';
+import React, { useState } from 'react';
+import ListTopics from '@/components/multistep-search/list-topics'; // Import the ListTopics component
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface ListFieldsProps {
     summary: {
         fieldName: string;
         description: string;
         useCases: string[];
+        topics: string[];
     };
     category: string;
-    setLoading: (loading: boolean) => void;
-    setSelectedField: (field: string | null) => void;
 }
 
 // Component to display each field's information
-export const ListFields = ({ summary, category, setLoading, setSelectedField }: ListFieldsProps) => {
-    const { fieldName, description, useCases } = summary;
-    const [messages, setMessages] = useUIState<typeof AI>(); // Ensure correct typing
-    const { multiStepSearchAction } = useActions();
+export const ListFields = ({ summary, category }: ListFieldsProps) => {
+    const { fieldName, description, useCases, topics } = summary;
 
-    // Handle button clicks
-    const handleButtonClick = async (action: 'formulas' | 'theorems') => {
-        setLoading(true); // Start loading
-        setSelectedField(fieldName); // Set selected field
+    // State to manage which field's topics are open
+    const [openField, setOpenField] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false); // State to manage loading
 
-        const prompt = action === 'formulas'
-            ? `Give me the list of 10 formulas or equations of ${fieldName} in ${category}`
-            : `Give me the list of 10 laws or theorems of ${fieldName} in ${category}`;
+    // Function to toggle the accordion
+    const toggleAccordion = (fieldName: string) => {
+        // Set loading to true initially
+        setLoading(true);
+        setOpenField((prevField) => (prevField === fieldName ? null : fieldName));
 
-        const { output } = await multiStepSearchAction(prompt);
-
-        // Process the output stream
-        let fullMessage = '';
-        for await (const delta of readStreamableValue(output)) {
-            fullMessage += delta;
-        }
-
-        // Update messages with the new content
-        // setMessages((currentMessages) => [
-        //     ...currentMessages,
-        //     {
-        //         id: nanoid(),
-        //         role: 'assistant',
-        //         content: fullMessage,
-        //     },
-        // ]);
-
-        setLoading(false); // Stop loading
+        // Simulate a delay using setTimeout
+        setTimeout(() => {
+            // Set loading to false after the delay
+            setLoading(false);
+        }, 1000); // Adjust the delay time as needed
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6 transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in ">
+        <div
+            className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6 transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in cursor-pointer relative"
+            onClick={() => toggleAccordion(fieldName)}
+        >
             {/* Responsive grid: stack on small screens, columns on large */}
             <div className="grid gap-6 lg:grid-cols-3 flex-col lg:flex-row">
                 {/* Field Section */}
@@ -72,9 +61,7 @@ export const ListFields = ({ summary, category, setLoading, setSelectedField }: 
                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                         Description
                     </span>
-                    <span className="mt-1 text-base text-gray-700">
-                        {description}
-                    </span>
+                    <span className="mt-1 text-base text-gray-700">{description}</span>
                 </div>
                 {/* Applications Section */}
                 <div className="flex flex-col">
@@ -84,20 +71,6 @@ export const ListFields = ({ summary, category, setLoading, setSelectedField }: 
                     <ul className="mt-1 text-base text-gray-700 list-disc pl-5 space-y-1">
                         {useCases.map((useCase, index) => (
                             <li key={index} className="flex items-start">
-                                <svg
-                                    className="w-5 h-5 mr-2 text-gray-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M5 13l4 4L19 7"
-                                    ></path>
-                                </svg>
                                 {useCase}
                             </li>
                         ))}
@@ -105,24 +78,38 @@ export const ListFields = ({ summary, category, setLoading, setSelectedField }: 
                 </div>
             </div>
 
-            {/* Horizontal line */}
-            <hr className="my-4" />
-
-            {/* Options at the footer */}
-            <div className="flex justify-center space-x-2 mt-4">
-                <button
-                    className="w-full sm:w-auto bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-800 hover:shadow-lg hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 active:scale-95"
-                    onClick={() => handleButtonClick('formulas')}
-                >
-                    Show Formulas
-                </button>
-                <button
-                    className="w-full sm:w-auto bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-800 hover:shadow-lg hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 active:scale-95"
-                    onClick={() => handleButtonClick('theorems')}
-                >
-                    Show Theorems
-                </button>
-            </div>
+            {/* Topics Section - Accordion with Loading Indicator */}
+            {openField === fieldName && (
+                <div>
+                    {loading ? (
+                        <div className="flex justify-center items-center p-4">
+                            <svg
+                                className="animate-spin h-5 w-5 text-blue-600"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                ></circle>
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                                ></path>
+                            </svg>
+                            <span className="ml-2 text-gray-500">Loading topics...</span>
+                        </div>
+                    ) : (
+                        <ListTopics category={category} field={fieldName} topics={topics} />
+                    )}
+                </div>
+            )}
         </div>
     );
 };

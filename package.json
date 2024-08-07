@@ -19,6 +19,7 @@
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-tooltip": "^1.1.2",
     "@tailwindcss/typography": "^0.5.13",
     "ai": "^3.3.0",
     "browser-image-compression": "^2.0.2",
