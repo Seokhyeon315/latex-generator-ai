@@ -52,7 +52,7 @@ export default function HeroSection() {
                     <Card className="p-6 text-center bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                         <Link href="/search/multistep-search">
                             <ComponentIcon className="w-12 h-12 mx-auto text-pink-500" />
-                            <h3 className="mt-4 text-xl font-semibold text-gray-900">Don't know the name of formula or theorem?</h3>
+                            <h3 className="mt-4 text-xl font-semibold text-gray-900">Don&apos;t know the name of formula or theorem?</h3>
                             <p className="mt-2 text-gray-500">
                                 Use Multistep Search feature to narrow down what you are looking for.
                             </p>
