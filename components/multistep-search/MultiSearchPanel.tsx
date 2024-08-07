@@ -15,8 +15,6 @@ import { Output } from './output'; // Import the Output component
 
 export interface MultiStepPanelProps {
     id?: string;
-    input: string;
-    setInput: (value: string) => void;
 }
 
 export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
@@ -56,89 +54,88 @@ export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
     };
 
     return (
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col gap-6">
-                <h1
-                    className={`mb-6 text-2xl sm:text-3xl lg:text-4xl font-semibold text-center ${categoryClicked ? 'text-gray-600 underline underline-offset-4 cursor-pointer hover:text-gray-800' : 'text-gray-800'
-                        }`}
-                    onClick={() => {
-                        router.refresh();
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 100);
-                    }}
-                >
-                    {categoryClicked ? 'Choose Again' : 'Choose a Category'}
-                </h1>
+        <div className="w-full px-4 sm:px-6 lg:px-8">
+            <h1
+                className={`mb-6 text-2xl sm:text-3xl lg:text-4xl font-semibold text-center ${categoryClicked ? 'text-gray-600 underline underline-offset-4 cursor-pointer hover:text-gray-800' : 'text-gray-800'
+                    }`}
+                onClick={() => {
+                    router.refresh();
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+                }}
+            >
+                {categoryClicked ? 'Choose Again' : 'Choose a Category'}
+            </h1>
 
-                {/* Three categories icon cards */}
-                <div className="flex justify-center space-x-4 transition-all duration-500 ease-in-out">
-                    {categories.map((category) => (
-                        <div
-                            key={category.name}
-                            className={`flex items-center justify-center cursor-pointer transition-all duration-500 transform ${categoryClicked ? 'h-18 w-24' : 'h-32 w-40'
-                                } ${selectedCategory === category.name ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'} rounded-lg border border-gray-300 shadow-md ${categoryClicked && selectedCategory !== category.name ? 'opacity-50 cursor-not-allowed' : ''
-                                }`}
-                            onClick={() => !categoryClicked && handleCategorySelect(category.name)}
-                        >
-                            <div className="flex flex-col items-center justify-center transition-opacity duration-500">
-                                {!categoryClicked && (
-                                    <div className="text-4xl sm:text-5xl mb-2">
-                                        {category.icon}
-                                    </div>
-                                )}
-                                <div className={`text-md sm:text-lg font-medium ${categoryClicked ? 'text-lg' : ''}`}>
-                                    {category.name}
+            {/* Three categories icon cards */}
+            <div className="flex justify-center space-x-4 transition-all duration-500 ease-in-out">
+                {categories.map((category) => (
+                    <div
+                        key={category.name}
+                        className={`flex items-center justify-center cursor-pointer transition-all duration-500 transform ${categoryClicked ? 'h-18 w-24' : 'h-32 w-40'
+                            } ${selectedCategory === category.name ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'} rounded-lg border border-gray-300 shadow-md ${categoryClicked && selectedCategory !== category.name ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
+                        onClick={() => !categoryClicked && handleCategorySelect(category.name)}
+                    >
+                        <div className="flex flex-col items-center justify-center transition-opacity duration-500">
+                            {!categoryClicked && (
+                                <div className="text-4xl sm:text-5xl mb-2">
+                                    {category.icon}
                                 </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Display list of fields of the selected category or output */}
-                <div className="mx-auto sm:max-w-2xl sm:px-4 mt-6">
-                    {/* Output of server response */}
-                    {loading ? (
-                        <div className='h-screen items-center justify-center pb-6'>
-                            <Loading isLoading={loading} />
-                        </div>
-
-                    ) : (
-                        messages && messages.length > 0 && selectedTopic && selectedField && (
-                            <div className='flex h-fit items-center justify-center mt-4 pb-6'>
-                                <div className=''>
-                                    <Output
-                                        messages={messages}
-                                        topic={selectedTopic}
-                                        fieldName={selectedField}
-                                    />
-                                </div>
-
-                            </div>
-
-                        )
-                    )}
-
-                    {!loading && messages.length === 0 && ( // Display fields only if not loading and no messages
-                        <>
-                            {categoryClicked ? (
-                                getFieldsForCategory().map((field) => (
-                                    <ListFields
-                                        key={field.id}
-                                        summary={field}
-                                        category={selectedCategory || ''}
-                                        setLoading={setLoading} // Pass setLoading to manage loading state
-                                        setSelectedTopic={setSelectedTopic} // Pass setSelectedTopic
-                                        setSelectedField={setSelectedField} // Pass setSelectedField
-                                    />
-                                ))
-                            ) : (
-                                <EmptyMultistepScreen />
                             )}
-                        </>
-                    )}
-                </div>
+                            <div className={`text-md sm:text-lg font-medium ${categoryClicked ? 'text-lg' : ''}`}>
+                                {category.name}
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
+
+            {/* Display list of fields of the selected category or output */}
+            <div className="mx-auto sm:max-w-2xl sm:px-4 mt-6">
+                {/* Output of server response */}
+                {loading ? (
+                    <div className='flex h-screen items-center justify-center pb-6'>
+                        <Loading isLoading={loading} />
+                    </div>
+
+                ) : (
+                    messages && messages.length > 0 && selectedTopic && selectedField && (
+                        <div className='flex h-fit items-center justify-center mt-4 pb-6'>
+                            <div className=''>
+                                <Output
+                                    messages={messages}
+                                    topic={selectedTopic}
+                                    fieldName={selectedField}
+                                />
+                            </div>
+
+                        </div>
+
+                    )
+                )}
+
+                {!loading && messages.length === 0 && ( // Display fields only if not loading and no messages
+                    <>
+                        {categoryClicked ? (
+                            getFieldsForCategory().map((field) => (
+                                <ListFields
+                                    key={field.id}
+                                    summary={field}
+                                    category={selectedCategory || ''}
+                                    setLoading={setLoading} // Pass setLoading to manage loading state
+                                    setSelectedTopic={setSelectedTopic} // Pass setSelectedTopic
+                                    setSelectedField={setSelectedField} // Pass setSelectedField
+                                />
+                            ))
+                        ) : (
+                            <EmptyMultistepScreen />
+                        )}
+                    </>
+                )}
+            </div>
+
             <BackToTopButton />
         </div>
     );

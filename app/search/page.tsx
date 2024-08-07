@@ -1,5 +1,3 @@
-// Server component for the search page
-import { AI } from "@/lib/actions";
 import { Search } from '@/components/search'
 import { nanoid } from "@/lib/utils";
 import React from "react";
