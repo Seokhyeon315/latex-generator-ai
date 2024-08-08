@@ -1,7 +1,16 @@
 'use client'
 
+import * as React from 'react'
 import Link from "next/link";
 import { MobileNav } from '@/components/mobile-nav'
+import { Badge } from "@/components/ui/badge"
+
+
+interface menuItemProps {
+    label: string;
+    path: string;
+    badge?: React.ReactNode;
+}[]
 
 const menuitems = [
     {
@@ -19,6 +28,8 @@ const menuitems = [
     {
         label: "Convert",
         path: "/convert",
+        badge: <Badge className="text-[10px]">Experimental</Badge>
+
     },
 ];
 
@@ -41,8 +52,9 @@ export function Navbar() {
                             <li key={index}>
                                 <Link
                                     href={item.path}
-                                    className="flex lg:px-3 py-2 items-center text-base font-semibold text-gray-900">
-                                    <span className="hover:underline hover:underline-offset-2"> {item.label}</span>
+                                    className="flex lg:px-3 py-2 items-center font-semibold text-gray-900">
+                                    <span className="hover:underline hover:underline-offset-2 text-lg"> {item.label}</span>
+                                    <div className="ml-2 text-xs">{item.badge}</div>
                                 </Link>
                             </li>
                         ))
