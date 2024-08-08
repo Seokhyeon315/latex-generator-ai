@@ -4,12 +4,14 @@ import React from 'react';
 import { CopyToClipboard } from '../copy-to-clipboard';
 import MarkdownRender from '@/components/markdown-render';
 
+interface Formula {
+    name: string;
+    description: string;
+    latexCode: string;
+}
+
 interface OutputProps {
-    messages: {
-        name: string;
-        description: string;
-        latexCode: string;
-    }[];
+    messages: Formula[];
     topic: string; // Add topic as a prop
     fieldName?: string; // Add fieldName as a prop
 }
@@ -21,7 +23,8 @@ export const Output: React.FC<OutputProps> = ({ messages, topic, fieldName }) =>
             <div className="bg-gray-900 text-cyan-300 p-4 rounded-md shadow-lg">
                 <p className="text-lg font-medium text-center">
                     Here are the results based on your selection:{' '}
-                    <span className="font-semibold underline">{topic}</span>{' '}
+                    <span className=" underline">{topic}</span>{' '} in{' '}
+                    <span className='underline'>{fieldName}</span>
 
                 </p>
             </div>
@@ -42,7 +45,7 @@ export const Output: React.FC<OutputProps> = ({ messages, topic, fieldName }) =>
 
                     {/* Description */}
                     <p className="text-gray-600 mt-3">
-                        < MarkdownRender content={message.description} /></p>
+                        <MarkdownRender content={message.description} /></p>
 
                     {/* LaTeX Code and Copy to Clipboard */}
                     <div className="mt-4 p-4 bg-gray-100 rounded-md w-full flex items-center justify-between">

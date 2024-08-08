@@ -78,7 +78,7 @@ export function DirectSearchPanel() {
             <div className="mx-auto sm:max-w-2xl sm:px-4">
                 {/* Output Display */}
                 {isLoading ? (
-                    <div className="flex h-screen items-center justify-center text-xl mt-2 pb-6">
+                    <div className="flex h-fit items-center justify-center text-xl mt-2 pb-6">
                         <Loading isLoading={isLoading} />
                     </div>
                 ) : error ? (

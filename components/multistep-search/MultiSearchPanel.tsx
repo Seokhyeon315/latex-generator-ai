@@ -96,20 +96,19 @@ export function MultiStepSearchPanel({ id }: MultiStepPanelProps) {
             <div className="mx-auto sm:max-w-2xl sm:px-4 mt-6">
                 {/* Output of server response */}
                 {loading ? (
-                    <div className='flex h-screen items-center justify-center pb-6'>
+                    <div className='flex h-fit items-center justify-center pb-6'>
                         <Loading isLoading={loading} />
                     </div>
 
                 ) : (
                     messages && messages.length > 0 && selectedTopic && selectedField && (
                         <div className='flex h-fit items-center justify-center mt-4 pb-6'>
-                            <div className=''>
-                                <Output
-                                    messages={messages}
-                                    topic={selectedTopic}
-                                    fieldName={selectedField}
-                                />
-                            </div>
+
+                            <Output
+                                messages={messages}
+                                topic={selectedTopic}
+                                fieldName={selectedField}
+                            />
 
                         </div>
 

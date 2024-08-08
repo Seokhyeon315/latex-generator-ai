@@ -1,6 +1,5 @@
-'use client';
+'use client'
 
-import React from 'react';
 import { useUIState, useActions } from 'ai/rsc';
 import { toast } from 'sonner';
 
@@ -21,7 +20,7 @@ export const ListTopics: React.FC<ListTopicsProps> = ({
     setSelectedTopic,
     setSelectedField,
 }) => {
-    const submitInputAction = useActions().submitInputAction;
+    const { submitInputAction } = useActions();
     const [_, setMessages] = useUIState();
 
     const handleTopicClick = async (topic: string) => {
@@ -40,11 +39,11 @@ export const ListTopics: React.FC<ListTopicsProps> = ({
                     name: formula.name,
                     description: formula.description,
                     latexCode: formula.latexCode,
-                })),
+                }))
             ]);
         } catch (error) {
             console.log(error);
-            toast.error('There was an error on multi-step search. Please try again')
+            toast.error('There was an error on multi-step search. Please try again');
         } finally {
             setLoading(false);
         }
