@@ -11,7 +11,7 @@ interface OutputProps {
         latexCode: string;
     }[];
     topic: string; // Add topic as a prop
-    fieldName: string; // Add fieldName as a prop
+    fieldName?: string; // Add fieldName as a prop
 }
 
 export const Output: React.FC<OutputProps> = ({ messages, topic, fieldName }) => {

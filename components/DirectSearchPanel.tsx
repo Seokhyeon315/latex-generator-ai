@@ -129,7 +129,7 @@ export function DirectSearchPanel() {
                         </div>
                     </div>
                 ) : (
-                    <div className='flex h-screen items-center justify-center mt-4 pb-6'>
+                    <div className='flex h-[80vh] pb-6 lg:justify-center lg:items-center'>
                         <EmptyDirectScreen />
                     </div>
                 )}

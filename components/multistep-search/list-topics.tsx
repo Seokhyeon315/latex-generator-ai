@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useUIState, useActions } from 'ai/rsc';
+import { toast } from 'sonner';
 
 interface ListTopicsProps {
     category: string;
@@ -43,6 +44,7 @@ export const ListTopics: React.FC<ListTopicsProps> = ({
             ]);
         } catch (error) {
             console.log(error);
+            toast.error('There was an error on multi-step search. Please try again')
         } finally {
             setLoading(false);
         }
