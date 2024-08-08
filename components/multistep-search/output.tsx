@@ -50,9 +50,9 @@ export const Output: React.FC<OutputProps> = ({ messages, topic, fieldName }) =>
                     {/* LaTeX Code and Copy to Clipboard */}
                     <div className="mt-4 p-4 bg-gray-100 rounded-md w-full flex items-center justify-between">
                         <code className="block text-sm text-gray-900 whitespace-pre-wrap overflow-auto">
-                            {message.latexCode.replace(/\\n/g, '\n').replace(/\\\\/g, '\\')}
+                            {message.latexCode.replace(/\\\\/g, '\\')}
                         </code>
-                        <CopyToClipboard text={message.latexCode.replace(/\\n/g, '\n').replace(/\\\\/g, '\\')} />
+                        <CopyToClipboard text={message.latexCode.replace(/\\\\/g, '\\')} />
                     </div>
                 </div>
             ))}

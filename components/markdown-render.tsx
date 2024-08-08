@@ -1,10 +1,8 @@
-// components/MarkdownRender.tsx
 import React from 'react';
 import { MemoizedReactMarkdown } from '@/components/markdown';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
-import remarkBreaks from 'remark-breaks'; // Import the remark-breaks plugin
-import { StreamableValue } from 'ai/rsc';
+import remarkBreaks from 'remark-breaks';
 import { useStreamableText } from '@/lib/hooks/use-streamable-text';
 import rehypeKatex from 'rehype-katex';
 
@@ -13,7 +11,7 @@ export default function MarkdownRender({ content }: { content: string }) {
     const text = useStreamableText(content);
 
     // Replace newline characters and double backslashes in the text
-    const formattedText = text.replace(/\\n/g, '\n').replace(/\\\\/g, '\\');
+    const formattedText = text.replace(/\\\\/g, '\\');
 
     return (
         <MemoizedReactMarkdown

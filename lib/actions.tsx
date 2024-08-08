@@ -190,19 +190,20 @@ async function submitInputAction(content: string) {
         mode: 'tool',
         system: `You are an AI specialized in providing detailed information on equations or formulas or theorem based on user's query.
         You must follow the instructions:
-            1. **name**: Provide the name of the formula, equation or theorem.
-            2. **description**: Provide a detailed description of the formula or equation or theorem in Markdown syntax.
-            3. **latexCode**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode, with single backslashes for LaTeX commands.
+            1. Provide the name of the formula, equation or theorem.
+            2. Provide a detailed description of the formula or equation or theorem in Markdown syntax.
+            3. Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode, with single backslashes for LaTeX commands.
             4. Don't include any HTML tags in your response. 
             5. If there are no equations or formulas with respect to the user's query, then show laws or theory or any professional relevant information.
-            6. Include only fact-based professional results. `,
+            6. Include only fact-based professional results. 
+            7. For latexCode, you don't have to include explanation of symbols.`,
 
         schema: z.object({
             formulas: z.array(
                 z.object({
                     name: z.string().describe(`Name of a formula, equation or theorems based on user's query.`),
                     description: z.string().describe('Specific detailed explanation of formula, equation, or theorem.'),
-                    latexCode: z.string().describe('The LaTeX code representation of the formula, equation or theorem, wrapped in $$ for display math mode with ONLY single backslash.')
+                    latexCode: z.string().describe('The LaTeX code representation of the formula, equation or theorem, wrapped in $$ for display math mode.')
                 })
             )
         }),
