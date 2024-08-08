@@ -188,14 +188,15 @@ async function submitInputAction(content: string) {
         model: google('models/gemini-1.5-pro'),
         temperature: 0,
         prompt: content,
-        mode: 'auto',
+        mode: 'tool',
         system: `You are an AI specialized in providing detailed information on equations or formulas or theorem based on user's query.
         You must follow the instructions:
             1. **name**: Provide the name of the formula, equation or theorem.
             2. **description**: Provide a detailed description of the formula or equation or theorem in Markdown syntax.
             3. **latexCode**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode, with single backslashes for LaTeX commands.
             4. Don't include any HTML tags in your response. 
-            5. If there are no equations or formulas with respect to the user's query, then show laws or theory or any professional relevant information.`,
+            5. If there are no equations or formulas with respect to the user's query, then show laws or theory or any professional relevant information.
+            6. Include only fact-based professional results.`,
         schema: z.object({
             formulas: z.array(
                 z.object({
@@ -204,13 +205,17 @@ async function submitInputAction(content: string) {
                     latexCode: z.string().describe('The LaTeX code representation of the formula, equation or theorem, wrapped in $$ for display math mode with ONLY single backslash.')
                 })
             )
-        })
+        }),
+        maxRetries: 10,
+        // maxTokens: 5000,
     });
+
 
     if (object) {
         history.update(object);
     }
     console.log(object);
+
     return object;
 }
 
