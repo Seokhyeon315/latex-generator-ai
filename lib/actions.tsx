@@ -161,10 +161,9 @@ async function imageToLatexAction(imageBase64: string) {
 
         // Parse and return the response text
         const text = result.response.text();
-        console.log(text);
+        console.log(result);
 
         return {
-            id: nanoid(),
             display: text
         };
     } catch (error) {
@@ -196,7 +195,8 @@ async function submitInputAction(content: string) {
             3. **latexCode**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode, with single backslashes for LaTeX commands.
             4. Don't include any HTML tags in your response. 
             5. If there are no equations or formulas with respect to the user's query, then show laws or theory or any professional relevant information.
-            6. Include only fact-based professional results.`,
+            6. Include only fact-based professional results. `,
+
         schema: z.object({
             formulas: z.array(
                 z.object({
@@ -206,8 +206,7 @@ async function submitInputAction(content: string) {
                 })
             )
         }),
-        maxRetries: 10,
-        // maxTokens: 5000,
+        maxRetries: 20,
     });
 
 
