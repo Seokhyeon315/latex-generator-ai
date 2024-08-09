@@ -1,24 +1,7 @@
 const mathFields = [
+
     {
         id: 1,
-        fieldName: 'Linear Algebra',
-        description: 'Studies vectors, matrices, and linear transformations.',
-        useCases: [
-            'Computer graphics and animation',
-            'Machine learning algorithms',
-            'Quantum computing advancements',
-        ],
-        topics: [
-            'Vector Spaces',
-            'Matrix Theory',
-            'Linear Transformations',
-            'Eigenvalues and Eigenvectors',
-            'Diagonalization',
-            'Orthogonality and Least Squares',
-        ],
-    },
-    {
-        id: 2,
         fieldName: 'Calculus',
         description: 'Focuses on derivatives and integrals for change analysis.',
         useCases: [
@@ -36,25 +19,7 @@ const mathFields = [
         ],
     },
     {
-        id: 3,
-        fieldName: 'Statistics',
-        description: 'Involves data collection, analysis, and interpretation.',
-        useCases: [
-            'Data-driven decision making in business',
-            'Predictive analytics in healthcare',
-            'Machine learning model evaluation',
-        ],
-        topics: [
-            'Descriptive Statistics',
-            'Probability Distributions',
-            'Statistical Inference',
-            'Regression Analysis',
-            'Bayesian Statistics',
-            'Time Series Analysis',
-        ],
-    },
-    {
-        id: 4,
+        id: 2,
         fieldName: 'Trigonometry',
         description: 'Studies relationships between triangle angles and sides.',
         useCases: [
@@ -72,7 +37,7 @@ const mathFields = [
         ],
     },
     {
-        id: 5,
+        id: 3,
         fieldName: 'Differential Equations',
         description: 'Models change with functions and derivatives.',
         useCases: [
@@ -87,6 +52,43 @@ const mathFields = [
             'Laplace Transforms',
             'Fourier Series and Transforms',
             'Nonlinear Differential Equations',
+        ],
+    },
+    {
+        id: 4,
+        fieldName: 'Statistics',
+        description: 'Involves data collection, analysis, and interpretation.',
+        useCases: [
+            'Data-driven decision making in business',
+            'Predictive analytics in healthcare',
+            'Machine learning model evaluation',
+        ],
+        topics: [
+            'Descriptive Statistics',
+            'Probability Distributions',
+            'Statistical Inference',
+            'Regression Analysis',
+            'Bayesian Statistics',
+            'Time Series Analysis',
+        ],
+    },
+
+    {
+        id: 5,
+        fieldName: 'Linear Algebra',
+        description: 'Studies vectors, matrices, and linear transformations.',
+        useCases: [
+            'Computer graphics and animation',
+            'Machine learning algorithms',
+            'Quantum computing advancements',
+        ],
+        topics: [
+            'Vector Spaces',
+            'Matrix Theory',
+            'Linear Transformations',
+            'Eigenvalues and Eigenvectors',
+            'Diagonalization',
+            'Orthogonality and Least Squares',
         ],
     },
     {
@@ -120,7 +122,6 @@ const mathFields = [
             'Vector Fields',
             'Gradient, Divergence, and Curl',
             'Line and Surface Integrals',
-            // 'Green’s, Stokes’, and Divergence Theorems',
             'Applications in Fluid Dynamics',
             'Applications in Electromagnetism',
         ],

@@ -4,7 +4,6 @@ import { Metadata } from 'next';
 import React from "react";
 
 
-
 export const metadata: Metadata = {
     title: "Multi-Step Search",
     description: "Multi-step search page is for people who don't know or remember the name of the formula, equation, or theorem. It provides the rendered version, explanation, and LaTeX code for students and researchers.",

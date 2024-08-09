@@ -34,7 +34,7 @@ export const ListTopics: React.FC<ListTopicsProps> = ({
         setSelectedField(field); // Set the selected field
         try {
             const { formulas } = await submitInputAction(
-                `Give me the list of 5 formulas, equations, or theorems based on "${topic}" of "${field} in the category of ${category}.`
+                `Give me the list of 5 formulas, equations, or theorems based on "${topic}" topics of "${field}" field in the category of ${category}.`
             );
 
             // Add received formulas to the message state

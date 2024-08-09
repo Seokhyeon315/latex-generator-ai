@@ -197,7 +197,8 @@ async function submitInputAction(content: string) {
                     5. If there are no equations or formulas with respect to the user's query, then show laws or theory or any professional relevant information.
                     6. Include only fact-based professional results in terms of user's query. 
                     7. For latexCode, you don't have to include explanation of symbols.
-                    8. Include with exclusive, non-identical equations, formulas, or theorems.`,
+                    8. Include with exclusive, non-identical equations, formulas, or theorems.
+                    9. If there is no mathematical equation to make latexCode, return it as empty string.`,
 
             schema: z.object({
                 formulas: z.array(
