@@ -20,14 +20,13 @@ export function Search({ id }: SearchProps) {
                         Find a formula and get its LaTeX code quickly!
                     </p>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 items-center lg:mt-4">
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-2 items-center lg:mt-4 lg:gap-4">
                     <Link href="/search/direct-search">
                         <Card className="flex cursor-pointer flex-col items-center gap-4 rounded-xl p-4 bg-white shadow hover:shadow-lg transition-shadow">
                             <h2 className="text-2xl font-bold">Direct Search</h2>
                             <p className="text-gray-600">
                                 For those who already know the name of the formula.
                             </p>
-
                         </Card>
                     </Link>
                     <div className="text-3xl font-extrabold text-gray-700">

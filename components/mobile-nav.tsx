@@ -55,14 +55,14 @@ export const MobileNav = () => {
                     <MobileLink
                         onOpenChange={setOpen}
                         href="/convert"
-                        className="flex items-center hover:underline"
+                        className="flex flex-row items-center hover:underline"
                     >
                         Convert
-                        <div className="pl-2">
-                        <Badge className="text-sm">Experimental</Badge>
+                        <div className="pl-2 text-sm">
+                            <Badge className="">Experimental</Badge>
                         </div>
 
-                        
+
                     </MobileLink>
 
                 </div>

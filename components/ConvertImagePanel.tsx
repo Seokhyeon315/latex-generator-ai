@@ -105,7 +105,7 @@ export default function ConvertPagePanel() {
                         </div>
                         <p className="text-sm text-gray-500 italic">
                             Tip: For the best result, ensure the image contains neat handwriting. The only supported image format is png, jpg, and jpeg.
-                            <span className='text-red-500 pl-2'>Current version of this feature has some limitations. For example, screenshot or image of handwritten equations on paper might cause error. </span>
+                            <span className='text-red-500 pl-2'>The current iteration of this feature has certain limitations. For instance, processing screenshots or images of handwritten equations on paper may result in errors. </span>
                         </p>
                         <Button
                             variant="default"
