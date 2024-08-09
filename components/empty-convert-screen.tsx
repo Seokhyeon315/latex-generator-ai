@@ -18,7 +18,7 @@ export function EmptyConvertScreen() {
                             <li>Ensure that the handwritten note is clear and legible.</li>
                             <li>Take a screenshot of the note.</li>
                             <li>Upload the screenshot image.</li>
-                            <li>Click the "Convert" button to quickly digitize your handwritten note.</li>
+                            <li>Click the &quot;Convert&quot; button to quickly digitize your handwritten note.</li>
                         </ol>
                     </div>
                 </div>
