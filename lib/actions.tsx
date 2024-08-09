@@ -184,16 +184,16 @@ async function submitInputAction(content: string) {
 
     try {
         const { object } = await generateObject({
-            model: google('models/gemini-1.5-pro'),
+            model: google('models/gemini-1.5-pro-latest'),
             temperature: 0,
             prompt: content,
-            mode: 'tool',
+            mode: 'auto',
             system: `You are an AI specialized in providing detailed information on equations or formulas or theorem based on user's query.
                 You must follow the instructions:
                     1. Provide the name of the formula, equation or theorem.
                     2. Provide a detailed description of the formula or equation or theorem in Markdown syntax. Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds.
-                    3. Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode, with single backslashes for LaTeX commands.
-                    4. Don't include any HTML tags in your response. 
+                    3. Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode, with single backslash for LaTeX commands.
+                    4. Don't include any HTML tags and line break in your response. 
                     5. If there are no equations or formulas with respect to the user's query, then show laws or theory or any professional relevant information.
                     6. Include only fact-based professional results in terms of user's query. 
                     7. For latexCode, you don't have to include explanation of symbols.

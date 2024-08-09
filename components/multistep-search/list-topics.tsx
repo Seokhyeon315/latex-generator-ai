@@ -1,7 +1,12 @@
-'use client'
-
+import React from 'react';
 import { useUIState, useActions } from 'ai/rsc';
 import { toast } from 'sonner';
+
+interface Formula {
+    name: string;
+    description: string;
+    latexCode?: string; // latexCode is optional
+}
 
 interface ListTopicsProps {
     category: string;
@@ -33,9 +38,9 @@ export const ListTopics: React.FC<ListTopicsProps> = ({
             );
 
             // Add received formulas to the message state
-            setMessages((currentMessages: any) => [
+            setMessages((currentMessages: Formula[]) => [
                 ...currentMessages,
-                ...formulas.map((formula: any) => ({
+                ...formulas.map((formula: Formula) => ({
                     name: formula.name,
                     description: formula.description,
                     latexCode: formula.latexCode,

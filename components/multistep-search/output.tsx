@@ -23,8 +23,8 @@ export const Output: React.FC<OutputProps> = ({ messages, topic, fieldName }) =>
             <div className="bg-gray-900 text-cyan-300 p-4 rounded-md shadow-lg">
                 <p className="text-lg font-medium text-center">
                     Here are the results based on your selection:{' '}
-                    <span className="underline">{topic}</span> in{' '}
-                    <span className='underline'>{fieldName}</span>
+                    <span className="lowercase">{topic}</span> in{' '}
+                    <span className='lowercase'>{fieldName} field.</span>
                 </p>
             </div>
 
