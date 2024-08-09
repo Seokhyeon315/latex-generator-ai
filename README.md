@@ -1,5 +1,7 @@
 # Pro Formula Project
 
+This project is an entry for the [2024 Gemini API Developer Competition](https://ai.google.dev/competition).
+
 ## Tech Stacks
 
 - NextJS 14
@@ -15,15 +17,18 @@
 2. **Multi-step Search**: Following the implementation of the Direct Search feature, I recognized that users might not always remember or know the exact names of the equations or theorems they seek. To address this, I developed the Multi-step Search feature, which provides users with a series of options to refine their search within STEM fields, helping them locate the desired information more effectively.
 3. **Convert**: This feature allows users to convert images of handwritten equations into a digital format suitable for journals and research articles. Initially, this functionality was not part of the original plan. However, based on my personal experience as an undergraduate aerospace engineering student, I realized the importance of including this feature to assist in the preparation of academic papers that often require precise mathematical equations to explain scientific concepts.
 
-## Future plans and Potentials
+### Future Project Plans
 
-1.
+1. **Enhance Multistep Search Functionality:** Add a "Request More" button at the bottom of the output display in the Multistep Search feature, allowing users to retrieve additional theorems or formulas that may not have been included in the initial results.
+
+2. **Integrate User Formula Management:** Implement DrizzleORM, Turso, and Lucia Auth (or an alternative authentication system) to enable users to save formulas or theorems they search for or select in both Direct Search and Multistep Search. These saved items will be stored in a personalized formula space within the user dashboard, allowing users to curate their own custom formula sheets.
 
 ## How to run this project in local environment?
 
-1. Since this project is using `pnpm`, you need to install dependencies by running `pnpm add`.
-2. To use AI feature, create an `.env` file on root directory of this project, and add API Key wih `GOOGLE_GENERATIVE_AI_API_KEY="YOUR_API_KEY"`. You can refer `.env.example`.
-3. To run on local developement server, `pnpm run dev`.
+1. Git clone the repository.
+2. Since this project is using `pnpm`, you need to install dependencies by running `pnpm add`.
+3. To use AI feature, create an `.env` file on root directory of this project, and add API Key wih `GOOGLE_GENERATIVE_AI_API_KEY="YOUR_API_KEY"`. You can refer `.env.example`.
+4. To run on local developement server, `pnpm run dev`.
 
 ### Technical Challenges
 

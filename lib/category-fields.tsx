@@ -120,7 +120,7 @@ const mathFields = [
             'Vector Fields',
             'Gradient, Divergence, and Curl',
             'Line and Surface Integrals',
-            'Green’s, Stokes’, and Divergence Theorems',
+            // 'Green’s, Stokes’, and Divergence Theorems',
             'Applications in Fluid Dynamics',
             'Applications in Electromagnetism',
         ],

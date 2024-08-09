@@ -9,6 +9,7 @@ import MarkdownRender from '@/components/markdown-render';
 import { CopyToClipboard } from '@/components/copy-to-clipboard';
 import { Loading } from './loading';
 import { AI } from '@/lib/actions';
+import { EmptyConvertScreen } from './empty-convert-screen';
 
 export default function ConvertPagePanel() {
     // State declarations
@@ -103,10 +104,7 @@ export default function ConvertPagePanel() {
                                 {fileName ? `File "${fileName}" is attached.` : 'Click the icon to attach the image'}
                             </span>
                         </div>
-                        <p className="text-sm text-gray-500 italic">
-                            Tip: For the best result, ensure the image contains neat handwriting. The only supported image format is png, jpg, and jpeg.
-                            <span className='text-red-500 pl-2'>The current iteration of this feature has certain limitations. For instance, processing screenshots or images of handwritten equations on paper may result in errors. </span>
-                        </p>
+
                         <Button
                             variant="default"
                             onClick={handleConvert}
@@ -135,7 +133,7 @@ export default function ConvertPagePanel() {
                                 </pre>
                             </div>
                         </div>
-                    ) : null}
+                    ) : (<EmptyConvertScreen />)}
                 </div>
             </div>
         </div>
