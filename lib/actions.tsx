@@ -208,7 +208,7 @@ async function submitInputAction(content: string) {
                     })
                 )
             }),
-            maxRetries: 30,
+            maxRetries: 20,
         });
 
         if (!object || !object.formulas) {
