@@ -20,42 +20,24 @@ This project is an entry for the [2024 Gemini API Developer Competition](https:/
 ### Future Project Plans
 
 1. **Enhance Multistep Search Functionality:** Add a "Request More" button at the bottom of the output display in the Multistep Search feature, allowing users to retrieve additional theorems or formulas that may not have been included in the initial results.
-
 2. **Integrate User Formula Management:** Implement DrizzleORM, Turso, and Lucia Auth (or an alternative authentication system) to enable users to save formulas or theorems they search for or select in both Direct Search and Multistep Search. These saved items will be stored in a personalized formula space within the user dashboard, allowing users to curate their own custom formula sheets.
+3. **Integrate Google Scholar Links:** Enhance both the Direct Search and Multistep Search features by providing relevant journal articles or research papers linked to the search results. By integrating Google Scholar links with SERPAPI, users can easily access academic resources that correspond to the formulas or theorems they searched for, offering deeper insights and further reading.
+4. **Leverage Google DeepMind Technologies:** Integrate cutting-edge technologies from Google's 'AlphaProof' and 'AlphaGeometry2' projects to transform the platform into a leading-edge research tool in STEM fields. This collaboration will provide unparalleled support for complex scientific and mathematical research, making the tool indispensable for researchers.
 
 ## How to run this project in local environment?
 
-1. Git clone the repository.
-2. Since this project is using `pnpm`, you need to install dependencies by running `pnpm add`.
-3. To use AI feature, create an `.env` file on root directory of this project, and add API Key wih `GOOGLE_GENERATIVE_AI_API_KEY="YOUR_API_KEY"`. You can refer `.env.example`.
+1. Clone the repository: `git clone https://github.com/Seokhyeon315/latex-generator-ai.git
+`
+2. Install dependencies by running `pnpm install`.
+3. To use AI features, create an `.env` file on root directory of this project, and add API Key wih `GOOGLE_GENERATIVE_AI_API_KEY="YOUR_API_KEY"`. You can refer `.env.example`.
 4. To run on local developement server, `pnpm run dev`.
 
 ### Technical Challenges
 
 1. The primary challenge lies in managing the LaTeX code response from the Gemini API. Frequently, the Gemini API returns responses with an excessive number of backslashes. To address this, I have developed distinct rendering functions for markdown, LaTeX code, and rendered mathematical equations. While this usually works well, issues arise with certain responses, such as `$$H = - \\nsum_{i=1}^n (p_i * log_2(p_i))$$`. In this example, the `\n` should be removed to correctly render the sigma symbol. However, using a global replacement like `replace(/\\n/g, '\n')` inadvertently affects other formulas, resulting in rendering issues. Therefore, a more nuanced solution is needed to handle such cases without compromising the overall quality of the rendered output.
-2. In the multi-step search functionality, I have incorporated three elements into the `generateObject()` function provided by the Vercel AI SDK: `mode: auto`, `getMutableAIState()`, and `maxRetries`. Generally, this setup works well. However, issues arise when the Gemini API returns data in an incompatible format, leading to errors. To mitigate the impact on user experience, I have implemented a frontend error notification using `toast.error('There was an error on multi-step search. Please try again')`. Despite this, further improvements are necessary to enhance the robustness and reliability of the system.
+2. I initially chose to deploy it on Vercel using their Free plan. This seemed like a suitable option for production at first. However, I soon encountered a significant limitation: the Free plan enforces a 10-second timeout on serverless functions. Given that the multi-step search process often requires more than 10 seconds to retrieve and return the necessary data, this timeout led to frequent failures in production. To handle these errors, I implemented a frontend error notification using toast.error('There was an error on multi-step search. Please try again'), which alerts users when the search fails due to the timeout. Interestingly, when running the project locally, the multi-step search completed without any issues, as there were no such time constraints. Realizing that the timeout issue on Vercel was a significant roadblock, I decided to switch the deployment to Railway. Although Railway is not a free service, it offers more flexibility and does not impose the same strict timeout limits on serverless functions, allowing the multi-step search functionality to work smoothly in a production environment.
 
-   ```zsh
-   AI_APICallError: Invalid JSON response
-       at async $$ACTION_2 (./lib/actions.tsx:158:24)
-   digest: "82194289"
-   Cause: TypeValidationError [AI_TypeValidationError]: Type validation failed: Value: {"candidates":[{"finishReason":"RECITATION","index":0}],"usageMetadata":{"promptTokenCount":178,"totalTokenCount":178}}.
-   Error message: [
-   {
-       "code": "invalid_type",
-       "expected": "object",
-       "received": "undefined",
-       "path": [
-       "candidates",
-       0,
-       "content"
-       ],
-       "message": "Required"
-   },
-   ```
-
-3. Currently, I have added an 'experimental' badge next to the Convert navigation menu due to certain limitations. First, when an image is directly taken from an iPhone, it is usually in HEIC format and tends to be large because of Apple's resolution enhancement system. Initially, I attempted to implement an image conversion function to convert HEIC or other formats to PNG and reduce the image size for compatibility with the Gemini Vision API. However, I found that this additional function was redundant and negatively impacted the user experience, leading to its removal. Additionally, I explored using the GoogleAIFileManager, but due to my limited expertise, it disrupted the entire image conversion functionality.
-4. Currently, the system performs optimally when handwritten equations are written on an iPad, successfully converting them to a digital format. This indicates strong potential, but there are still issues to address. When users attach images of handwritten equations on paper, errors occur, likely due to the images being too blurry or too large in size. For example, a common error is:
+3. Currently, I have added an 'experimental' badge next to the Convert navigation menu due to certain limitations. First, when an image is directly taken from an iPhone, it is usually in HEIC format and tends to be large because of Apple's resolution enhancement system. Initially, I attempted to implement an image conversion function to convert HEIC or other formats to PNG and reduce the image size for compatibility with the Gemini Vision API. However, I found that this additional function was redundant and negatively impacted the user experience, leading to its removal. Additionally, I explored using the GoogleAIFileManager, but due to my limited expertise, it disrupted the entire image conversion functionality. The system performs optimally when handwritten equations are written on an iPad, successfully converting them to a digital format. This indicates strong potential, but there are still issues to address. When users attach images of handwritten equations on paper, errors occur, likely due to the images being too blurry or too large in size. For example, a common error is:
 
    ```zsh
    ⨯ SyntaxError: Unterminated string in JSON at position 1048576
