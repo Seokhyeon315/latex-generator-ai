@@ -1,4 +1,11 @@
 import { FileSpreadsheet, SearchCheck, SquareSigma } from "lucide-react";
+import type { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+    title: "About",
+    description: "About page explains the vision and potential of this project and three main features.",
+};
 
 export default function AboutPage() {
     return (
@@ -44,7 +51,7 @@ export default function AboutPage() {
                                 <FileSpreadsheet className="flex-shrink-0 mt-2 h-6 w-6" />
                                 <div className="ms-5 sm:ms-8">
                                     <h3 className="text-base sm:text-lg font-semibold">
-                                        Convert handwritten formulas to Latex format
+                                        Convert handwritten formulas to Latex & Markdown format
                                     </h3>
                                     <p className="mt-1 text-muted-foreground">
                                         Just attach the image of the handwritten formula, and you will get the LATEX format of the formula quickly. The image you attach won&apos;t be stored in the server.

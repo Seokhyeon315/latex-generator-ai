@@ -22,14 +22,19 @@ const fontBody = Nunito({
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://latex-generator-ai-production.up.railway.app/'),
   title: "Pro Formula",
   description: "Pro Formula is a tool that helps you to find the formula of any equation. You can search the equation name or upload an image of your formula with Latex form quickly. All the provided features are powered by Google Gemini API.",
+  openGraph: {
+    title: 'Title webtsite',
+    description: 'this is the desciption',
+    images: 'url/opengraph-img.png'
+  },
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon-16x16.png',
     apple: '/apple-touch-icon.png'
   },
-
 };
 
 export default function RootLayout({

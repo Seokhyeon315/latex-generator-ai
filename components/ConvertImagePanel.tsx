@@ -97,6 +97,7 @@ export default function ConvertPagePanel() {
                                 size="icon"
                                 onClick={() => fileRef.current?.click()}
                                 className="hover:bg-gray-200"
+                                name='Image attach button'
                             >
                                 <Paperclip />
                             </Button>
