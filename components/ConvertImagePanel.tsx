@@ -8,7 +8,6 @@ import { useActions, useUIState } from 'ai/rsc';
 import MarkdownRender from '@/components/markdown-render';
 import { CopyToClipboard } from '@/components/copy-to-clipboard';
 import { Loading } from './loading';
-import { AI } from '@/lib/actions';
 import { EmptyConvertScreen } from './empty-convert-screen';
 
 export default function ConvertPagePanel() {

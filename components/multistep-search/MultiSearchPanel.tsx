@@ -10,7 +10,7 @@ import { mathFields, scienceFields, engineeringFields } from '@/lib/category-fie
 import { ListFields } from './list-fields';
 import { useUIState } from 'ai/rsc';
 import { Loading } from '../loading';
-import { Output } from './output'; // Import the Output component
+import { Output } from './output';
 
 
 export interface MultiStepPanelProps {

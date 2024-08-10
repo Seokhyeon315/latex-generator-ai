@@ -19,7 +19,7 @@ export function EmptyDirectScreen() {
                         </ol>
                     </div>
                     <p className="mt-4 text-gray-600 italic">
-                        Note: Ensure you have a specific formula name for the best results. General queries may not return accurate results.
+                        Note: Ensure you have a specific formula name for the best results.
                     </p>
                 </div>
             </div>

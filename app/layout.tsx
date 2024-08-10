@@ -24,10 +24,10 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   metadataBase: new URL('https://latex-generator-ai-production.up.railway.app/'),
   title: "Pro Formula",
-  description: "Pro Formula is a tool that helps you to find the formula of any equation. You can search the equation name or upload an image of your formula with Latex form quickly. All the provided features are powered by Google Gemini API.",
+  description: "Pro Formula is a tool that helps you to find the formula or any equation. You can search the equation name or upload an image of your formula with Latex form quickly. All the provided features are powered by Google Gemini API.",
   openGraph: {
-    title: 'Title webtsite',
-    description: 'this is the desciption',
+    title: 'Pro Formula',
+    description: 'Pro Formula is a tool that helps you to find the formula, equation or theorems with LaTeX. All the provided features are powered by Google Gemini API.',
     images: 'url/opengraph-img.png'
   },
   icons: {
