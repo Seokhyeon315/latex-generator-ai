@@ -5,10 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Paperclip } from "lucide-react";
 import { toast } from 'sonner';
 import { useActions, useUIState } from 'ai/rsc';
-import MarkdownRender from '@/components/markdown-render';
 import { CopyToClipboard } from '@/components/copy-to-clipboard';
 import { Loading } from './loading';
-import { EmptyConvertScreen } from './empty-convert-screen';
+import { validateAndCompressImage, convertToBase64, ACCEPTED_IMAGE_TYPES } from '@/lib/utils/image-handler';
+import Image from 'next/image';
+import { ERROR_MESSAGES, LOADING_MESSAGES, SUCCESS_MESSAGES } from '@/lib/constants/errors';
+import dynamic from 'next/dynamic';
+
+const MarkdownRender = dynamic(() => import('@/components/markdown-render'), {
+    loading: () => <Loading isLoading={true} />,
+    ssr: false
+});
+
+const DynamicEmptyScreen = dynamic(() => import('./empty-convert-screen').then(mod => ({
+    default: mod.EmptyConvertScreen
+})), {
+    loading: () => <Loading isLoading={true} />,
+    ssr: false
+});
 
 export default function ConvertPagePanel() {
     // State declarations
@@ -17,6 +31,8 @@ export default function ConvertPagePanel() {
     const [error, setError] = React.useState<string | null>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [base64String, setBase64String] = React.useState<string>();
+    const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+    const [processingStep, setProcessingStep] = React.useState<string>('');
 
     // References
     const fileRef = React.useRef<HTMLInputElement>(null);
@@ -27,31 +43,59 @@ export default function ConvertPagePanel() {
     // Handle file change event
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files || event.target.files.length === 0) {
-            toast.error('No file selected');
+            toast.error(ERROR_MESSAGES.IMAGE.NO_FILE);
             return;
         }
 
         const file = event.target.files[0];
         setFileName(file.name);
 
-        // Check if the file type is an image
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
+        try {
+            setProcessingStep(LOADING_MESSAGES.PROCESSING);
 
-            reader.onloadend = () => {
-                setBase64String(reader.result as string)
-            };
+            // Validate and compress image
+            const validationResult = await validateAndCompressImage(file);
 
-        } else {
-            toast.error('Invalid file type. Please attach an image file.');
+            if (!validationResult.isValid) {
+                toast.error(validationResult.error);
+                return;
+            }
+
+            const processedFile = validationResult.compressedFile!;
+            if (validationResult.wasCompressed) {
+                toast.success(SUCCESS_MESSAGES.COMPRESSION);
+            }
+
+            // Create preview URL
+            const previewUrl = URL.createObjectURL(processedFile);
+            setPreviewUrl(previewUrl);
+
+            setProcessingStep(LOADING_MESSAGES.CONVERTING);
+            // Convert to base64
+            const base64 = await convertToBase64(processedFile);
+            setBase64String(base64);
+
+        } catch (error) {
+            console.error('Image processing error:', error);
+            toast.error(ERROR_MESSAGES.IMAGE.PROCESSING_ERROR);
+        } finally {
+            setProcessingStep('');
         }
     };
+
+    // Cleanup preview URL on unmount
+    React.useEffect(() => {
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
 
     // Handle convert button click
     const handleConvert = async () => {
         if (!base64String) {
-            toast.error('No image attached.');
+            toast.error(ERROR_MESSAGES.IMAGE.NO_IMAGE);
             return;
         }
 
@@ -60,9 +104,19 @@ export default function ConvertPagePanel() {
 
         try {
             const response = await imageToLatexAction(base64String);
+            if (!response || !response.display) {
+                throw new Error('Invalid response');
+            }
             setResults(response.display);
+            toast.success(SUCCESS_MESSAGES.CONVERSION);
         } catch (e) {
-            setError('An unexpected error occurred. Please try again.');
+            console.error('Conversion error:', e);
+            setError(
+                e instanceof Error && e.message === 'Network Error'
+                    ? ERROR_MESSAGES.IMAGE.NETWORK_ERROR
+                    : ERROR_MESSAGES.IMAGE.CONVERSION_ERROR
+            );
+            toast.error(error || ERROR_MESSAGES.IMAGE.CONVERSION_ERROR);
         } finally {
             setIsLoading(false);
         }
@@ -89,6 +143,7 @@ export default function ConvertPagePanel() {
                             id="file"
                             ref={fileRef}
                             onChange={handleFileChange}
+                            accept={Object.keys(ACCEPTED_IMAGE_TYPES).join(',')}
                         />
                         <div className="flex items-center gap-4 bg-gray-100 px-4 py-3 rounded-lg">
                             <Button
@@ -105,6 +160,17 @@ export default function ConvertPagePanel() {
                             </span>
                         </div>
 
+                        {previewUrl && (
+                            <div className="mt-4 relative w-full aspect-video">
+                                <Image
+                                    src={previewUrl}
+                                    alt="Preview"
+                                    fill
+                                    className="object-contain rounded-lg"
+                                />
+                            </div>
+                        )}
+
                         <Button
                             variant="default"
                             onClick={handleConvert}
@@ -114,6 +180,15 @@ export default function ConvertPagePanel() {
                             {isLoading ? 'Converting...' : 'Convert'}
                         </Button>
                     </form>
+
+                    {processingStep && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
+                            <div className="text-white flex flex-col items-center gap-2">
+                                <Loading isLoading={true} />
+                                <p>{processingStep}</p>
+                            </div>
+                        </div>
+                    )}
 
                     {isLoading ? (
                         <div className="flex items-center justify-center mt-2">
@@ -133,7 +208,7 @@ export default function ConvertPagePanel() {
                                 </pre>
                             </div>
                         </div>
-                    ) : (<EmptyConvertScreen />)}
+                    ) : (<DynamicEmptyScreen />)}
                 </div>
             </div>
         </div>
