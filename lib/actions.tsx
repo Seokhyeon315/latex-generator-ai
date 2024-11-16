@@ -64,58 +64,101 @@ const formulaSchema = z.object({
 async function directSearchAction(userInput: string) {
     'use server';
 
-    let streamClosed = false;
     const objectStream = createStreamableValue();
-    (async () => {
-        try {
-            const { partialObjectStream } = await streamObject({
-                model: google('models/gemini-1.5-pro'),
-                temperature: 0,
-                system: `You are an AI specialized in providing detailed information on equations or formulas or theorem in the fields of mathematics, engineering, and science.
-                When a user provides the name of an equation or formula, respond with the following:
-                1. **Formula Name**: Provide the name of the formula or equation or theorem.
-                2. **Description**: Offer a detailed description of the formula or equation.
-                3. **Usage**: Describe the applications or usage of the formula or equation. Ensure the response is complete and specific to various contexts. Ensure single backslashes for LaTeX commands.
-                4. **LaTeX Code**: Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
-                5. **Explanation of Symbols**: Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds. Wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.
-                
-                Only respond to queries that are relevant to these fields. If the user input is not a formula name, respond with "Invalid input. Please try again. Make sure to type the name of a formula."`,
-                prompt: userInput,
-                schema: formulaSchema,
-            });
-            let foundValidData = false;
-            for await (const partialObject of partialObjectStream) {
-                if (formulaSchema.safeParse(partialObject).success) {
-                    // Ensure LaTeX code is formatted correctly
-                    if (partialObject.formulas) {
-                        partialObject.formulas.forEach(formula => {
-                            if (formula && formula.latexCode) {
-                                formula.latexCode = formula.latexCode.replace(/\\\\/g, '\\');
-                            }
-                        });
-                    }
-                    foundValidData = true;
-                    if (!streamClosed) {
-                        objectStream.update(partialObject);
-                        console.log(partialObject);
-                    }
-                }
-            }
-            if (!foundValidData) {
-                objectStream.update({ error: 'Invalid input. Please try again. Make sure to type the name of a formula.' });
-            }
-        } catch (e) {
-            console.error(e);
-            objectStream.error(e);
-            objectStream.update({ error: 'An unexpected error occurred. Please try again.' });
-        } finally {
-            if (!streamClosed) {
-                objectStream.done();
-                streamClosed = true;
-            }
-        }
-    })();
+    let streamClosed = false;
 
+    try {
+        const model = genAI.getGenerativeModel({
+            model: 'gemini-1.5-pro',
+            generationConfig: {
+                temperature: 0.3,
+                topK: 1,
+                topP: 0.8,
+                maxOutputTokens: 2048,
+            }
+        });
+
+        const promptText = `Provide information about the mathematical formula, equation, or theorem: "${userInput}".
+
+Respond with a JSON object (without any markdown formatting or code block syntax) in this exact structure:
+{
+    "formulas": [{
+        "formulaName": "The exact name of the formula/equation/theorem",
+        "description": "A clear, concise description",
+        "usage": "Practical applications and use cases",
+        "explanation": "Detailed explanation of each symbol and component",
+        "latexCode": "The complete LaTeX code wrapped in $$"
+    }]
+}
+
+Do not include any markdown formatting, code block markers, or additional text. Return only the JSON object.`;
+
+        const result = await model.generateContent([promptText]);
+
+        if (!result.response) {
+            throw new Error('No response from model');
+        }
+
+        const text = result.response.text();
+        console.log('Raw response:', text); // For debugging
+
+        try {
+            // Clean up the response text by removing markdown code block syntax
+            const cleanedText = text
+                .replace(/^```json\s*/, '')  // Remove opening code block
+                .replace(/```\s*$/, '')      // Remove closing code block
+                .trim();                     // Remove extra whitespace
+
+            const jsonResponse = JSON.parse(cleanedText);
+            const validationResult = formulaSchema.safeParse(jsonResponse);
+
+            if (validationResult.success) {
+                if (validationResult.data.formulas && validationResult.data.formulas.length > 0) {
+                    // Clean and format the LaTeX code
+                    validationResult.data.formulas = validationResult.data.formulas.map(formula => ({
+                        ...formula,
+                        latexCode: formula.latexCode
+                            ? formula.latexCode.trim().replace(/\\\\/g, '\\')
+                            : ''
+                    }));
+
+                    objectStream.update(validationResult.data);
+                } else {
+                    throw new Error('No formula data in response');
+                }
+            } else {
+                console.error('Validation error:', validationResult.error);
+                throw new Error('Invalid response format');
+            }
+        } catch (parseError) {
+            console.error('Parse error:', parseError);
+            objectStream.update({
+                formulas: [{
+                    formulaName: 'Input Error',
+                    description: 'Please enter a valid mathematical formula, equation, or theorem name.',
+                    usage: 'Example inputs: "Pythagorean Theorem", "Quadratic Formula", "Einstein Mass-Energy Equation"',
+                    explanation: 'Make sure to use standard mathematical terminology.',
+                    latexCode: ''
+                }]
+            });
+        }
+    } catch (e) {
+        console.error('Action error:', e);
+        objectStream.update({
+            formulas: [{
+                formulaName: 'System Error',
+                description: e instanceof Error ? e.message : 'An unexpected error occurred.',
+                usage: 'Please try again with a different input.',
+                explanation: 'If the problem persists, try using more specific mathematical terminology.',
+                latexCode: ''
+            }]
+        });
+    } finally {
+        if (!streamClosed) {
+            objectStream.done();
+            streamClosed = true;
+        }
+    }
 
     return { object: objectStream.value };
 }
