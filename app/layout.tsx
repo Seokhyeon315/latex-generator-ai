@@ -5,7 +5,7 @@ import "@/styles/globals.css"
 import { cn } from "@/lib/utils"
 import { Navbar } from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster } from 'sonner';
 
 const fontHeading = Nunito({
   subsets: ['latin'],
@@ -49,7 +49,7 @@ export default function RootLayout({
         fontHeading.variable,
         fontBody.variable,
       )}>
-        <Toaster position="top-center" />
+        <Toaster />
 
         <div className="flex flex-col min-h-screen">
           <Navbar />

@@ -2,6 +2,7 @@ import { MultiStepSearchPanel } from '@/components/multistep-search/MultiSearchP
 import { AI } from "@/lib/actions";
 import { Metadata } from 'next';
 import React from "react";
+import { ErrorBoundary } from '@/components/error-boundary';
 
 
 export const metadata: Metadata = {
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
 export default function MultiStepSearchPage() {
     return (
         <AI >
-            <MultiStepSearchPanel />
+            <ErrorBoundary>
+                <MultiStepSearchPanel />
+            </ErrorBoundary>
         </AI >
     );
 }

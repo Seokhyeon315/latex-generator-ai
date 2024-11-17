@@ -12,75 +12,63 @@ interface ListFieldsProps {
     };
     category: string;
     setLoading: (loading: boolean) => void;
-    setSelectedTopic: (topic: string) => void; // Add this
-    setSelectedField: (field: string) => void; // Add this
+    setSelectedTopic: (topic: string) => void;
+    setSelectedField: (field: string) => void;
 }
 
-// Component to display each field's information
-export const ListFields = ({
+export const ListFields: React.FC<ListFieldsProps> = ({
     summary,
     category,
     setLoading,
     setSelectedTopic,
     setSelectedField,
-}: ListFieldsProps) => {
-    const { fieldName, description, useCases, topics } = summary;
+}) => {
+    const [isExpanded, setIsExpanded] = useState(false);
 
-    // State to manage which field's topics are open
-    const [openField, setOpenField] = useState<string | null>(null);
-
-    // Function to toggle the accordion
-    const toggleAccordion = (fieldName: string) => {
-        setOpenField((prevField) => (prevField === fieldName ? null : fieldName));
+    const handleFieldClick = () => {
+        try {
+            setIsExpanded(!isExpanded);
+            if (!isExpanded) {
+                setSelectedField(summary.fieldName);
+            }
+        } catch (error) {
+            console.error('Error handling field click:', error);
+        }
     };
 
     return (
-        <div
-            className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6 transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in cursor-pointer relative"
-            onClick={() => toggleAccordion(fieldName)}
-        >
-            {/* Responsive grid: stack on small screens, columns on large */}
-            <div className="grid gap-6 lg:grid-cols-3 flex-col lg:flex-row">
-                {/* Field Section */}
-                <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                        Field
-                    </span>
-                    <span className="mt-1 text-lg font-bold text-gray-900">{fieldName}</span>
-                </div>
-                {/* Description Section */}
-                <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                        Description
-                    </span>
-                    <span className="mt-1 text-base text-gray-700">{description}</span>
-                </div>
-                {/* Applications Section */}
-                <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                        Applications
-                    </span>
-                    <ul className="mt-1 text-base text-gray-700 list-disc pl-5 space-y-1">
-                        {useCases.map((useCase, index) => (
-                            <li key={index} className="flex items-start">
-                                {useCase}
-                            </li>
+        <div className="mb-4">
+            <div
+                className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={handleFieldClick}
+            >
+                <h3 className="text-xl font-semibold mb-2">{summary.fieldName}</h3>
+                <p className="text-gray-600 mb-4">{summary.description}</p>
+
+                {/* Use Cases */}
+                <div className="mb-4">
+                    <h4 className="font-medium text-gray-700 mb-2">Common Use Cases:</h4>
+                    <ul className="list-disc list-inside text-gray-600">
+                        {summary.useCases.map((useCase, index) => (
+                            <li key={index}>{useCase}</li>
                         ))}
                     </ul>
                 </div>
-            </div>
 
-            {/* Topics Section - Accordion */}
-            {openField === fieldName && (
-                <ListTopics
-                    category={category}
-                    field={fieldName}
-                    topics={topics}
-                    setLoading={setLoading}
-                    setSelectedTopic={setSelectedTopic} // Pass setSelectedTopic
-                    setSelectedField={setSelectedField} // Pass setSelectedField
-                />
-            )}
+                {/* Topics */}
+                {isExpanded && (
+                    <div className="mt-4 border-t pt-4">
+                        <ListTopics
+                            category={category}
+                            field={summary.fieldName}
+                            topics={summary.topics}
+                            setLoading={setLoading}
+                            setSelectedTopic={setSelectedTopic}
+                            setSelectedField={setSelectedField}
+                        />
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

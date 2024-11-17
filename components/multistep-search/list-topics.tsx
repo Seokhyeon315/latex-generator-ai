@@ -1,12 +1,7 @@
-import React from 'react';
-import { useUIState, useActions } from 'ai/rsc';
-import { toast } from 'sonner';
+'use client';
 
-interface Formula {
-    name: string;
-    description: string;
-    latexCode?: string; // latexCode is optional
-}
+import React from 'react';
+import { toast } from 'sonner';
 
 interface ListTopicsProps {
     category: string;
@@ -25,51 +20,27 @@ export const ListTopics: React.FC<ListTopicsProps> = ({
     setSelectedTopic,
     setSelectedField,
 }) => {
-    const { submitInputAction } = useActions();
-    const [_, setMessages] = useUIState();
-
     const handleTopicClick = async (topic: string) => {
-        setLoading(true);
-        setSelectedTopic(topic); // Set the selected topic
-        setSelectedField(field); // Set the selected field
         try {
-            const { formulas } = await submitInputAction(
-                `Give me the list of 5 formulas, equations, or theorems based on "${topic}" topics of "${field}" field in the category of ${category}.`
-            );
-
-            // Add received formulas to the message state
-            setMessages((currentMessages: Formula[]) => [
-                ...currentMessages,
-                ...formulas.map((formula: Formula) => ({
-                    name: formula.name,
-                    description: formula.description,
-                    latexCode: formula.latexCode,
-                }))
-            ]);
+            setSelectedTopic(topic);
+            setSelectedField(field);
         } catch (error) {
-            console.log(error);
-            toast.error('There was an error on multi-step search. Please try again');
-        } finally {
-            setLoading(false);
+            console.error('Error selecting topic:', error);
+            toast.error('Failed to select topic. Please try again.');
         }
     };
 
     return (
-        <div className="mt-4 transition-all duration-300 ease-in-out">
-            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                Topics
-            </span>
-            <div className="mt-2 space-y-2">
-                {topics.map((topic, index) => (
-                    <div
-                        onClick={() => handleTopicClick(topic)}
-                        key={index}
-                        className="bg-gray-50 border border-gray-200 rounded-lg shadow-md p-4 transition-transform duration-200 hover:shadow-lg hover:scale-105"
-                    >
-                        <span className="text-gray-800 font-medium">{topic}</span>
-                    </div>
-                ))}
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {topics.map((topic, index) => (
+                <div
+                    key={index}
+                    onClick={() => handleTopicClick(topic)}
+                    className="p-3 bg-gray-50 rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
+                >
+                    <span className="text-gray-700">{topic}</span>
+                </div>
+            ))}
         </div>
     );
 };

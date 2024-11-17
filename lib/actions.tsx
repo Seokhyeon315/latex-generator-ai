@@ -1,15 +1,10 @@
-import 'server-only'
+'use server'
 
-import * as React from 'react';
-import { google } from '@ai-sdk/google'
-import { generateObject, streamObject, TypeValidationError, } from 'ai'
-import { createAI, createStreamableValue, getMutableAIState } from 'ai/rsc'
-import { nanoid } from './utils';
-import { z } from 'zod';
-import { GoogleAIFileManager } from '@google/generative-ai/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
-
-
+import { createAI } from 'ai/rsc';
+import { directSearchAction } from './server-actions/direct-search';
+import { imageToLatexAction } from './server-actions/image-to-latex';
+import { submitInputAction } from './server-actions/submit-input';
+import { getMoreFormulas } from './server-actions/multistep-search';
 
 export type Message = {
     role: 'user' | 'assistant' | 'system' | 'function' | 'data' | 'tool'
@@ -22,8 +17,6 @@ export type Message = {
     }
 }
 
-
-// Define the AI state and UI state types
 export type AIState = {
     id?: string;
     interactions?: string[];
@@ -31,261 +24,21 @@ export type AIState = {
     messages: Message[]
 };
 
-// Define the UIState type similarly
 export type UIState = {
     id?: string;
-    // content: string; 
     display: React.ReactNode;
-    // toolInvocations?: ToolInvocation[];
 }[];
 
-
-const genAI = new GoogleGenerativeAI(
-    process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
-)
-
-const fileManager = new GoogleAIFileManager(
-    process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
-)
-
-const formulaSchema = z.object({
-    formulas: z.array(
-        z.object({
-            formulaName: z.string().describe('The name of the formula or equation or theorem.'),
-            description: z.string().describe('A detailed description of the formula or equation.'),
-            usage: z.string().describe('The usage or application of the formula or equation. Ensure completeness and specificity.'),
-            explanation: z.string().describe(`Provide a detailed explanation of each symbol in the latex code, including both LHS (Left-hand-side) and RHS (Right-hand-side). Ensure single backslashes`),
-            latexCode: z.string().describe('The LaTeX code representation of the formula or equation, wrapped in $$ for display math mode. Ensure single backslashes for LaTeX commands.'),
-        })
-    ),
-});
-
-// Use the streamObject function to get the formula or equation
-async function directSearchAction(userInput: string) {
-    'use server';
-
-    const objectStream = createStreamableValue();
-    let streamClosed = false;
-
-    try {
-        const model = genAI.getGenerativeModel({
-            model: 'gemini-1.5-pro',
-            generationConfig: {
-                temperature: 0.3,
-                topK: 1,
-                topP: 0.8,
-                maxOutputTokens: 2048,
-            }
-        });
-
-        const promptText = `Provide information about the mathematical formula, equation, or theorem: "${userInput}".
-
-Respond with a JSON object (without any markdown formatting or code block syntax) in this exact structure:
-{
-    "formulas": [{
-        "formulaName": "The exact name of the formula/equation/theorem",
-        "description": "A clear, concise description",
-        "usage": "Practical applications and use cases",
-        "explanation": "Detailed explanation of each symbol and component",
-        "latexCode": "The complete LaTeX code wrapped in $$"
-    }]
-}
-
-Do not include any markdown formatting, code block markers, or additional text. Return only the JSON object.`;
-
-        const result = await model.generateContent([promptText]);
-
-        if (!result.response) {
-            throw new Error('No response from model');
-        }
-
-        const text = result.response.text();
-        console.log('Raw response:', text); // For debugging
-
-        try {
-            // Clean up the response text by removing markdown code block syntax
-            const cleanedText = text
-                .replace(/^```json\s*/, '')  // Remove opening code block
-                .replace(/```\s*$/, '')      // Remove closing code block
-                .trim();                     // Remove extra whitespace
-
-            const jsonResponse = JSON.parse(cleanedText);
-            const validationResult = formulaSchema.safeParse(jsonResponse);
-
-            if (validationResult.success) {
-                if (validationResult.data.formulas && validationResult.data.formulas.length > 0) {
-                    // Clean and format the LaTeX code
-                    validationResult.data.formulas = validationResult.data.formulas.map(formula => ({
-                        ...formula,
-                        latexCode: formula.latexCode
-                            ? formula.latexCode.trim().replace(/\\\\/g, '\\')
-                            : ''
-                    }));
-
-                    objectStream.update(validationResult.data);
-                } else {
-                    throw new Error('No formula data in response');
-                }
-            } else {
-                console.error('Validation error:', validationResult.error);
-                throw new Error('Invalid response format');
-            }
-        } catch (parseError) {
-            console.error('Parse error:', parseError);
-            objectStream.update({
-                formulas: [{
-                    formulaName: 'Input Error',
-                    description: 'Please enter a valid mathematical formula, equation, or theorem name.',
-                    usage: 'Example inputs: "Pythagorean Theorem", "Quadratic Formula", "Einstein Mass-Energy Equation"',
-                    explanation: 'Make sure to use standard mathematical terminology.',
-                    latexCode: ''
-                }]
-            });
-        }
-    } catch (e) {
-        console.error('Action error:', e);
-        objectStream.update({
-            formulas: [{
-                formulaName: 'System Error',
-                description: e instanceof Error ? e.message : 'An unexpected error occurred.',
-                usage: 'Please try again with a different input.',
-                explanation: 'If the problem persists, try using more specific mathematical terminology.',
-                latexCode: ''
-            }]
-        });
-    } finally {
-        if (!streamClosed) {
-            objectStream.done();
-            streamClosed = true;
-        }
-    }
-
-    return { object: objectStream.value };
-}
-
-// Convert Image to Latex code action
-async function imageToLatexAction(imageBase64: string) {
-    'use server';
-
-    try {
-        // Extract the base64 image data
-        const imageData = imageBase64.split(',')[1];
-
-        // Get the generative model with the specified configuration
-        const model = genAI.getGenerativeModel({
-            model: 'gemini-1.5-pro',
-            generationConfig: {
-                temperature: 0,
-            },
-            systemInstruction: `You are an AI assitant specialized in digitalizing handwritten paper, especially in mathematical, science, and engineering. 
-    
-                You must follow the instructions:
-                1. When you scan the image, scan direction is from top left to right bottom.
-                2. If the image includes the text, convert them with Markdown syntax.
-                3. If the image includes the mathematical equations or formulas, convert them with LaTeX syntax and wrapped each equation in $$.
-                4. If there is underline wave or line describing symbol, ignore them.
-                5. If there is a geometrical shape of figure, ignore them.
-                6. For the output, don't include many space or extra tab bewteen markdown text. 
-                7. Output should be aligned vertically and aligned horizontally.
-                `
-        });
-
-        // Define the prompt and image structure
-        const prompt = 'Convert the handwritten text and mathematical equations or formulas in the image to digitalized format.';
-        const image = {
-            inlineData: {
-                data: imageData,
-                mimeType: 'image/png',
-            }
-        };
-
-        // Generate content using the model with prompt and image
-        const result = await model.generateContent([prompt, image]);
-
-        // Parse and return the response text
-        const text = result.response.text();
-        console.log(result);
-
-        return {
-            display: text
-        };
-    } catch (error) {
-        console.error('Error processing image:', error);
-        return {
-            id: nanoid(),
-            display: 'An error occurred while processing the image.'
-        };
-    }
-}
-
-
-
-async function submitInputAction(content: string) {
-    'use server';
-
-    const history = getMutableAIState();
-
-    try {
-        const { object } = await generateObject({
-            model: google('models/gemini-1.5-pro-latest'),
-            temperature: 0,
-            prompt: content,
-            mode: 'auto',
-            system: `You are an AI specialized in providing detailed information on equations or formulas or theorem based on user's query.
-                You must follow the instructions:
-                    1. Provide the name of the formula, equation or theorem.
-                    2. Provide a detailed description of the formula or equation or theorem in Markdown syntax. Provide the human-readable renderd version of symbols or variables. This should include subscripts for any integral bounds.
-                    3. Provide the LaTeX code representation of the formula or equation, wrapped in $$ for display math mode, with single backslash for LaTeX commands.
-                    4. Don't include any HTML tags and line break in your response. 
-                    5. If there are no equations or formulas with respect to the user's query, then show laws or theory or any professional relevant information.
-                    6. Include only fact-based professional results in terms of user's query. 
-                    7. For latexCode, you don't have to include explanation of symbols.
-                    8. Include with exclusive, non-identical equations, formulas, or theorems.
-                    9. If there is no mathematical equation to make latexCode, return it as empty string.`,
-
-            schema: z.object({
-                formulas: z.array(
-                    z.object({
-                        name: z.string().describe(`Name of a formula, equation or theorems based on user's query.`),
-                        description: z.string().describe('Specific detailed explanation of formula, equation, or theorem. '),
-                        latexCode: z.string().describe('The LaTeX code representation of the formula, equation or theorem, wrapped in $$ for display math mode.')
-                    })
-                )
-            }),
-            maxRetries: 20,
-        });
-
-        if (!object || !object.formulas) {
-            throw new Error('Invalid response: Missing or malformed object.');
-        }
-
-        // Update history with the new object
-        history.update(object);
-
-        console.log('Generated object:', object);
-        return object;
-    } catch (error) {
-        console.error('Error during object generation:', error);
-
-        // Handle specific errors, e.g., validation issues
-        if (error instanceof TypeValidationError) {
-            console.error('Validation failed:', error.message);
-        } else {
-            console.error('An unexpected error occurred');
-        }
-
-        return {
-            display: 'An error occurred while processing the input. Please try again.'
-        };
-    }
-}
+// Export the server actions directly
+export { directSearchAction, imageToLatexAction, submitInputAction, getMoreFormulas };
 
 export const AI = createAI<AIState, UIState>({
     actions: {
         directSearchAction,
         imageToLatexAction,
         submitInputAction,
+        getMoreFormulas,
     },
     initialUIState: [],
     initialAIState: { interactions: [], messages: [] },
-})
+});
