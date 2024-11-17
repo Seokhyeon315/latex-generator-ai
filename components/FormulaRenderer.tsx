@@ -25,14 +25,17 @@ export const FormulaRenderer = ({ formula, className }: FormulaRendererProps) =>
             // Fix braces
             .replace(/\}\}/g, '}')
             .replace(/\{\{/g, '{')
+            // Fix text commands - handle text content more carefully
+            .replace(/\\text\{([^}]*)\}/g, (match, content) => {
+                // Replace parentheses in text with escaped versions
+                return `\\text{${content.replace(/[()]/g, '\\$&')}}`;
+            })
             // Fix vectors
             .replace(/\\vec{([^}]*)}/g, '\\mathbf{$1}')
             // Fix dots
             .replace(/\\dot{([^}]*)}/g, '\\dot{$1}')
             // Fix fractions
             .replace(/\\frac(?!\{)/g, '\\frac{')
-            // Fix text commands
-            .replace(/\\text{([^}]*)}/g, '\\text{$1}')
             // Fix matrices
             .replace(/\\begin{([^}]*)}/g, '\\begin{$1}')
             .replace(/\\end{([^}]*)}/g, '\\end{$1}')
@@ -48,51 +51,52 @@ export const FormulaRenderer = ({ formula, className }: FormulaRendererProps) =>
             .replace(/\s+/g, ' ')
             .trim();
 
-        return `$$${cleaned}$$`;
+        // Ensure formula is wrapped in $$
+        return cleaned.startsWith('$$') ? cleaned : `$$${cleaned}$$`;
     };
 
-    let sanitizedHtml;
-    try {
-        const cleanedFormula = cleanLatex(formula);
-        const sanitizedText = DOMPurify.sanitize(cleanedFormula);
+    const renderFormula = (tex: string) => {
+        try {
+            const cleanedFormula = cleanLatex(tex);
+            const sanitizedText = DOMPurify.sanitize(cleanedFormula);
 
-        sanitizedHtml = (
-            <ReactMarkdown
-                remarkPlugins={[remarkMath]}
-                rehypePlugins={[
-                    [rehypeKatex, {
-                        strict: false,
-                        trust: true,
-                        throwOnError: false,
-                        errorColor: '#ff0000',
-                        macros: {
-                            "\\vec": "\\mathbf",
-                            "\\f": "f(#1)",
-                            "\\dot": "\\dot{#1}",
-                            "\\text": "\\text{#1}",
-                            "\\matrix": "\\begin{matrix}#1\\end{matrix}",
-                            "\\pmatrix": "\\begin{pmatrix}#1\\end{pmatrix}"
-                        }
-                    }],
-                    rehypeRaw
-                ]}
-            >
-                {sanitizedText}
-            </ReactMarkdown>
-        );
-    } catch (error) {
-        console.error('Error rendering LaTeX formula:', error);
-        // Return just the LaTeX code if rendering fails
-        sanitizedHtml = (
-            <div className="font-mono text-sm p-2 bg-gray-50 rounded">
-                <code>{formula.replace(/\$\$/g, '')}</code>
-            </div>
-        );
-    }
+            return (
+                <ReactMarkdown
+                    remarkPlugins={[remarkMath]}
+                    rehypePlugins={[
+                        [rehypeKatex, {
+                            strict: false,
+                            trust: true,
+                            throwOnError: false,
+                            errorColor: '#ff0000',
+                            macros: {
+                                "\\vec": "\\mathbf",
+                                "\\f": "f(#1)",
+                                "\\dot": "\\dot{#1}",
+                                "\\text": "\\text{#1}",
+                                "\\matrix": "\\begin{matrix}#1\\end{matrix}",
+                                "\\pmatrix": "\\begin{pmatrix}#1\\end{pmatrix}"
+                            }
+                        }],
+                        rehypeRaw
+                    ]}
+                >
+                    {sanitizedText}
+                </ReactMarkdown>
+            );
+        } catch (error) {
+            console.error('Error rendering LaTeX:', error);
+            return (
+                <div className="font-mono text-sm p-2 bg-gray-50 rounded">
+                    <code>{formula.replace(/\$\$/g, '')}</code>
+                </div>
+            );
+        }
+    };
 
     return (
         <div className={cn('text-lg text-center overflow-x-auto', className)}>
-            {sanitizedHtml}
+            {renderFormula(formula)}
         </div>
     );
 };

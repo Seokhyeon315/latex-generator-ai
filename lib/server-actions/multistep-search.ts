@@ -12,6 +12,20 @@ const cleanLatexCode = (latex: string) => {
     return `$$${latex}$$`;
 };
 
+// Add a function to check for duplicates
+const isDuplicateFormula = (newFormula: Formula, existingFormulas: Formula[]): boolean => {
+    return existingFormulas.some(existing => {
+        // Check for exact name match
+        const nameMatch = existing.formulaName.toLowerCase() === newFormula.formulaName.toLowerCase();
+        
+        // Check for similar LaTeX code (ignoring whitespace and formatting)
+        const cleanLatex = (latex: string) => latex.replace(/\s+/g, '').replace(/\\\\/g, '\\');
+        const latexMatch = cleanLatex(existing.latexCode) === cleanLatex(newFormula.latexCode);
+        
+        return nameMatch || latexMatch;
+    });
+};
+
 export async function getMoreFormulas({
     category,
     field,
@@ -43,7 +57,11 @@ export async function getMoreFormulas({
             }
         });
 
+        // Modify the prompt to exclude existing formulas
+        const existingNames = existingFormulas.map(f => f.formulaName).join(', ');
         const prompt = `Generate 5 mathematical formulas for ${topic} in ${field}.
+        ${existingNames ? `IMPORTANT: Do NOT generate these already existing formulas: ${existingNames}` : ''}
+        
         Return a JSON array with this exact structure (no markdown or code blocks):
         [
             {
@@ -57,7 +75,7 @@ export async function getMoreFormulas({
         Rules:
         1. Use standard LaTeX math notation
         2. Use DOUBLE backslashes for LaTeX commands (e.g., \\sin instead of \sin)
-        3. Each formula must be unique
+        3. Each formula must be unique and NOT in the list of existing formulas
         4. Focus on fundamental formulas
         5. Keep LaTeX simple`;
 
@@ -67,17 +85,15 @@ export async function getMoreFormulas({
 
         // Clean and parse the response
         const cleanedText = text
-            .replace(/```[a-z]*\n?/g, '')  // Remove code block markers
+            .replace(/```[a-z]*\n?/g, '')
             .replace(/```/g, '')
             .trim();
 
         try {
-            // Try to parse as a direct array first
             let formulas;
             try {
                 formulas = JSON.parse(cleanedText);
             } catch {
-                // If direct array parse fails, try parsing as an object with formulas property
                 const parsed = JSON.parse(cleanedText);
                 formulas = parsed.formulas || [];
             }
@@ -87,6 +103,7 @@ export async function getMoreFormulas({
                 return [];
             }
 
+            // Filter out duplicates
             const validatedFormulas = formulas
                 .filter((formula: any) => {
                     const isValid = formula && 
@@ -97,8 +114,17 @@ export async function getMoreFormulas({
                     
                     if (!isValid) {
                         console.log('Invalid formula object:', formula);
+                        return false;
                     }
-                    return isValid;
+
+                    // Check for duplicates
+                    const isDuplicate = isDuplicateFormula(formula, existingFormulas);
+                    if (isDuplicate) {
+                        console.log('Duplicate formula found:', formula.formulaName);
+                        return false;
+                    }
+
+                    return true;
                 })
                 .map((formula: any) => ({
                     formulaName: String(formula.formulaName),

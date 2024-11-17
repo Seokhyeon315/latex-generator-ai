@@ -11,6 +11,7 @@ import { CopyToClipboard } from '@/components/copy-to-clipboard';
 import MarkdownRender from '@/components/markdown-render';
 import { Loading } from '@/components/loading';
 import { EmptyDirectScreen } from '@/components/empty-direct-screen';
+import { PaperReferences } from './PaperReferences';
 
 interface PartialObject {
     formulas: {
@@ -20,6 +21,12 @@ interface PartialObject {
         renderedFormula: string;
         explanation: string;
         latexCode: string;
+        academicReferences?: {
+            title: string;
+            authors: string;
+            year: string;
+            significance: string;
+        }[];
     }[];
 }
 
@@ -124,6 +131,18 @@ export function DirectSearchPanel() {
                                             <CopyToClipboard text={line.formulas[0].latexCode} />
                                         </div>
                                     </div>
+
+                                    {line.formulas[0].academicReferences && line.formulas[0].academicReferences.length > 0 && (
+                                        <PaperReferences
+                                            papers={line.formulas[0].academicReferences.map(ref => ({
+                                                title: ref.title,
+                                                authors: ref.authors.split(', '),
+                                                year: parseInt(ref.year),
+                                                significance: ref.significance,
+                                                link: `https://scholar.google.com/scholar?q=${encodeURIComponent(ref.title)}`
+                                            }))}
+                                        />
+                                    )}
                                 </div>
                             ))}
                         </div>

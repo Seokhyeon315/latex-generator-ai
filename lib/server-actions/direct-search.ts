@@ -16,6 +16,14 @@ const formulaSchema = z.object({
             usage: z.string(),
             explanation: z.string(),
             latexCode: z.string(),
+            academicReferences: z.array(
+                z.object({
+                    title: z.string(),
+                    authors: z.string(),
+                    year: z.string(),
+                    significance: z.string()
+                })
+            ).optional()
         })
     ),
 });
@@ -62,6 +70,35 @@ const cleanLatexCode = (latex: string) => {
     return `$$${cleaned}$$`;
 };
 
+interface ArxivPaper {
+    title: string;
+    authors: string[];
+    link: string;
+    summary: string;
+    published: string;
+}
+
+async function getRelatedPapers(formulaName: string): Promise<ArxivPaper[]> {
+    const query = encodeURIComponent(`"${formulaName}" OR "${formulaName} equation"`);
+    const url = `http://export.arxiv.org/api/query?search_query=${query}&start=0&max_results=5&sortBy=relevance`;
+    
+    try {
+        const response = await fetch(url);
+        const xmlData = await response.text();
+        // For now, return empty array until we implement XML parsing
+        return [];
+    } catch (error) {
+        console.error('Error fetching arXiv papers:', error);
+        return [];
+    }
+}
+
+async function getOpenAccessPapers(doi: string) {
+    const email = process.env.UNPAYWALL_EMAIL;
+    const url = `https://api.unpaywall.org/v2/${doi}?email=${email}`;
+    // Implementation here
+}
+
 export async function directSearchAction(userInput: string) {
     const objectStream = createStreamableValue();
     let streamClosed = false;
@@ -78,32 +115,45 @@ export async function directSearchAction(userInput: string) {
         });
 
         const promptText = `Provide information about the mathematical formula, equation, or theorem: "${userInput}".
+Include key academic papers or original publications where this formula was first introduced or significantly developed.
 
-        Return a JSON object with this exact structure (no markdown or code blocks):
-        {
-            "formulas": [{
-                "formulaName": "The exact name of the formula/equation/theorem",
-                "description": "A clear, concise description",
-                "usage": "Practical applications and use cases",
-                "explanation": "Detailed explanation of each symbol and component",
-                "latexCode": "The complete LaTeX code with double backslashes"
-            }]
-        }`;
+Return a JSON object with this exact structure (no markdown or code blocks):
+{
+    "formulas": [{
+        "formulaName": "The exact name of the formula/equation/theorem",
+        "description": "A clear, concise description",
+        "usage": "Practical applications and use cases",
+        "explanation": "Detailed explanation of each symbol and component",
+        "latexCode": "The complete LaTeX code with double backslashes",
+        "academicReferences": [
+            {
+                "title": "Original publication or foundational paper title",
+                "authors": "Author names (prioritize original discoverers/developers)",
+                "year": "Publication year (historical context)",
+                "significance": "Explain how this paper introduced or advanced the understanding of the formula",
+                "field": "Primary field of study (e.g., Physics, Mathematics, Engineering)",
+                "subfield": "Specific branch (e.g., Fluid Dynamics, Calculus, Mechanics)"
+            }
+        ]
+    }]
+}
+
+Important rules for academic references:
+1. Prioritize original publications where the formula was first introduced
+2. Include seminal papers that significantly advanced the understanding
+3. Focus on mathematical and theoretical foundations rather than applications
+4. Ensure references are historically accurate and relevant to the formula's development
+5. Include papers from the primary field where the formula originated`;
 
         const result = await model.generateContent(promptText);
         const response = result.response;
         const text = response.text();
 
-        console.log('Raw API response:', text); // Debug log
-
         try {
-            // Clean up the response text
             const cleanedText = text
-                .replace(/```[a-z]*\n?/g, '')  // Remove code block markers
+                .replace(/```[a-z]*\n?/g, '')
                 .replace(/```/g, '')
                 .trim();
-
-            console.log('Cleaned text:', cleanedText); // Debug log
 
             let jsonResponse;
             try {
@@ -140,7 +190,8 @@ export async function directSearchAction(userInput: string) {
                     description: 'Please enter a valid mathematical formula, equation, or theorem name.',
                     usage: 'Example inputs: "Pythagorean Theorem", "Quadratic Formula", "Einstein Mass-Energy Equation"',
                     explanation: 'Make sure to use standard mathematical terminology.',
-                    latexCode: ''
+                    latexCode: '',
+                    academicReferences: []
                 }]
             });
         }
@@ -152,7 +203,8 @@ export async function directSearchAction(userInput: string) {
                 description: e instanceof Error ? e.message : 'An unexpected error occurred.',
                 usage: 'Please try again with a different input.',
                 explanation: 'If the problem persists, try using more specific mathematical terminology.',
-                latexCode: ''
+                latexCode: '',
+                academicReferences: []
             }]
         });
     } finally {
