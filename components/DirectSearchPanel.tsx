@@ -12,6 +12,7 @@ import MarkdownRender from '@/components/markdown-render';
 import { Loading } from '@/components/loading';
 import { EmptyDirectScreen } from '@/components/empty-direct-screen';
 import { PaperReferences } from './PaperReferences';
+import { ErrorState } from './error-state';
 
 interface PartialObject {
     formulas: {
@@ -38,6 +39,7 @@ export function DirectSearchPanel() {
     const [error, setError] = React.useState<string | null>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const { directSearchAction } = useActions();
+    const [lastInput, setLastInput] = React.useState<string>('');
 
     React.useEffect(() => {
         if (inputRef.current) {
@@ -47,19 +49,23 @@ export function DirectSearchPanel() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         const value = input.trim();
+        setLastInput(value);
+        await performSearch(value);
+    };
+
+    const performSearch = async (value: string) => {
         setInput('');
         setResponse([]);
         setError(null);
 
         if (!value) return;
-        setIsLoading(true); // Set loading state to true when form submission starts
+        setIsLoading(true);
 
         try {
-            const { object } = await directSearchAction(input);
-
+            const { object } = await directSearchAction(value);
             let foundValidData = false;
+
             for await (const partialObject of readStreamableValue<PartialObject>(object)) {
                 if (partialObject && partialObject.formulas && partialObject.formulas.length > 0) {
                     foundValidData = true;
@@ -69,34 +75,38 @@ export function DirectSearchPanel() {
                     ]);
                 }
             }
+
             if (!foundValidData) {
-                setError('Invalid input. Please try again. Make sure to type the name of a formula.');
+                setError('Formula not found');
             }
         } catch (e) {
-            // console.log(e);
-            setError('An unexpected error occurred. Please try again.');
+            setError(e instanceof Error ? e.message : 'An unexpected error occurred');
         } finally {
-            setIsLoading(false); // Set loading state to false when form submission completes
+            setIsLoading(false);
         }
+    };
+
+    const handleRetry = () => {
+        window.location.reload();
     };
 
     return (
         <div className='fixed inset-x-0 bg-white/90 bottom-1 w-full duration-300 ease-in-out'>
             <div className="mx-auto sm:max-w-2xl sm:px-4">
-                {/* Output Display */}
                 {isLoading ? (
                     <div className="flex h-screen items-center justify-center text-xl mt-2 pb-6">
                         <Loading isLoading={isLoading} />
                     </div>
-                ) : error ? (
-                    <div className="flex h-fit items-center justify-center mt-4 pb-6 text-red-500">
-                        {error}
+                ) : error || (response.length > 0 && response[0].formulas[0].formulaName === 'Error') ? (
+                    <div className="flex h-[80vh] items-center justify-center">
+                        <div className="flex flex-col items-center gap-4">
+                            <p className="text-gray-600 text-lg">Something went wrong</p>
+                            <ErrorState onRetry={handleRetry} />
+                        </div>
                     </div>
                 ) : response.length > 0 ? (
                     <div className="flex h-fit items-center justify-center mt-4 pb-6">
                         <div className="space-x-2 mt-4 max-h-[75vh] lg:max-h-[80vh] w-full overflow-y-auto">
-
-
                             {response.map((line, i) => (
                                 <div key={i} className="bg-white p-6 rounded-lg shadow-md mb-4">
                                     <div className="mb-4">
@@ -182,8 +192,6 @@ export function DirectSearchPanel() {
                     </form>
                 </div>
             </div>
-
         </div>
-
     );
 }

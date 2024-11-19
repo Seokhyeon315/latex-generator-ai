@@ -1,73 +1,52 @@
 'use server';
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, SafetySetting } from '@google/generative-ai';
 import { z } from 'zod';
 import { createStreamableValue } from 'ai/rsc';
+import { LRUCache } from 'lru-cache';
 
 const genAI = new GoogleGenerativeAI(
     process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
 );
 
+const GEMINI_ERRORS = {
+    RECITATION: 'RECITATION',
+    SAFETY: 'SAFETY',
+    INVALID_RESPONSE: 'INVALID_RESPONSE'
+} as const;
+
 const formulaSchema = z.object({
     formulas: z.array(
         z.object({
-            formulaName: z.string(),
-            description: z.string(),
-            usage: z.string(),
-            explanation: z.string(),
+            formulaName: z.string().min(1),
+            description: z.string().min(1),
+            usage: z.string().min(1),
+            explanation: z.string().min(1),
             latexCode: z.string(),
             academicReferences: z.array(
                 z.object({
-                    title: z.string(),
-                    authors: z.string(),
-                    year: z.string(),
-                    significance: z.string()
+                    title: z.string().min(1),
+                    authors: z.string().min(1),
+                    year: z.union([
+                        z.string(),
+                        z.number()
+                    ]).transform(val => {
+                        const yearStr = String(val);
+                        const yearMatch = yearStr.match(/\d{4}/);
+                        return yearMatch ? yearMatch[0] : '2024';
+                    }),
+                    significance: z.string().min(1),
+                    field: z.string().optional(),
+                    subfield: z.string().optional()
                 })
-            ).optional()
+            ).optional().default([])
         })
-    ),
+    ).min(1),
 });
 
 const cleanLatexCode = (latex: string) => {
     if (!latex) return '$$$$';
-    
-    // Remove any existing $$ and whitespace
-    let cleaned = latex.replace(/^\$\$|\$\$$/g, '').trim();
-
-    // Fix common LaTeX issues
-    cleaned = cleaned
-        // Fix backslashes
-        .replace(/\\\\/g, '\\')
-        // Fix braces
-        .replace(/\}\}/g, '}')
-        .replace(/\{\{/g, '{')
-        // Fix text commands - handle text content more carefully
-        .replace(/\\text\{([^}]*)\}/g, (match, content) => {
-            // Replace parentheses in text with escaped versions
-            return `\\text{${content.replace(/[()]/g, '\\$&')}}`;
-        })
-        // Fix vectors
-        .replace(/\\vec{([^}]*)}/g, '\\mathbf{$1}')
-        // Fix dots
-        .replace(/\\dot{([^}]*)}/g, '\\dot{$1}')
-        // Fix fractions
-        .replace(/\\frac(?!\{)/g, '\\frac{')
-        // Fix matrices
-        .replace(/\\begin{([^}]*)}/g, '\\begin{$1}')
-        .replace(/\\end{([^}]*)}/g, '\\end{$1}')
-        // Fix common commands
-        .replace(/\\left\(/g, '(')
-        .replace(/\\right\)/g, ')')
-        .replace(/\\left\{/g, '\\{')
-        .replace(/\\right\}/g, '\\}')
-        // Fix subscripts and superscripts
-        .replace(/([^\\])_([a-zA-Z0-9])(?![{])/g, '$1_{$2}')
-        .replace(/([^\\])\^([a-zA-Z0-9])(?![{])/g, '$1^{$2}')
-        // Fix spacing
-        .replace(/\s+/g, ' ')
-        .trim();
-
-    return `$$${cleaned}$$`;
+    return latex.includes('$$') ? latex : `$$${latex}$$`;
 };
 
 interface ArxivPaper {
@@ -99,11 +78,106 @@ async function getOpenAccessPapers(doi: string) {
     // Implementation here
 }
 
+// Define interfaces for type safety
+interface FormulaReference {
+    title: string;
+    authors: string;
+    year: string | number;
+    significance: string;
+    field?: string;
+    subfield?: string;
+}
+
+interface Formula {
+    formulaName: string;
+    description: string;
+    usage: string;
+    explanation: string;
+    latexCode: string;
+    academicReferences?: FormulaReference[];
+}
+
+interface JsonResponse {
+    formulas: Formula[];
+}
+
+// Add a more structured streaming approach
+const createProgressStream = (objectStream: any) => {
+    let closed = false;
+    return {
+        async update(data: any) {
+            if (closed) return;
+            try {
+                await objectStream.update(data);
+            } catch (error) {
+                console.error('Stream update error:', error);
+            }
+        },
+        
+        close() {
+            if (!closed) {
+                closed = true;
+                objectStream.done();
+            }
+        }
+    };
+};
+
+// Add error types
+type ErrorType = 'JSON_ERROR' | 'VALIDATION_ERROR' | 'API_ERROR' | 'RECITATION_ERROR';
+
+interface ErrorResponse {
+    type: ErrorType;
+    title: string;
+    message: string;
+    suggestion: string;
+}
+
+const getErrorResponse = (error: Error, type: ErrorType): ErrorResponse => {
+    const errorMap: Record<ErrorType, ErrorResponse> = {
+        JSON_ERROR: {
+            type: 'JSON_ERROR',
+            title: 'Formula Not Found',
+            message: 'We couldn\'t find information about this formula.',
+            suggestion: 'Try checking the spelling or use a more common name for the formula.'
+        },
+        VALIDATION_ERROR: {
+            type: 'VALIDATION_ERROR',
+            title: 'Invalid Response',
+            message: 'The formula information was incomplete.',
+            suggestion: 'Try searching for a different formula or use more specific terms.'
+        },
+        API_ERROR: {
+            type: 'API_ERROR',
+            title: 'Service Error',
+            message: 'Our service is having temporary issues.',
+            suggestion: 'Please try again in a few moments.'
+        },
+        RECITATION_ERROR: {
+            type: 'RECITATION_ERROR',
+            title: 'Content Generation Error',
+            message: 'We had trouble generating unique content.',
+            suggestion: 'Try searching for a different formula or rephrase your query.'
+        }
+    };
+
+    return errorMap[type];
+};
+
+const formulaCache = new LRUCache<string, any>({
+    max: 100, // Maximum number of items
+    ttl: 1000 * 60 * 60 * 24, // 24 hour time-to-live
+});
+
 export async function directSearchAction(userInput: string) {
     const objectStream = createStreamableValue();
     let streamClosed = false;
 
     try {
+        if (!userInput?.trim()) {
+            throw new Error('Please enter a search term');
+        }
+
         const model = genAI.getGenerativeModel({
             model: 'gemini-1.5-pro',
             generationConfig: {
@@ -111,98 +185,153 @@ export async function directSearchAction(userInput: string) {
                 topK: 1,
                 topP: 0.8,
                 maxOutputTokens: 2048,
-            }
+            },
+            safetySettings: [
+                {
+                    category: 'HARM_CATEGORY_HARASSMENT',
+                    threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+                }
+            ] as SafetySetting[]
         });
 
-        const promptText = `Provide information about the mathematical formula, equation, or theorem: "${userInput}".
-Include key academic papers or original publications where this formula was first introduced or significantly developed.
+        const promptText = `Explain the mathematical formula/equation/theorem: "${userInput}".
+Focus on:
+1. Core concepts
+2. Practical applications
+3. Key components
+4. Historical context
 
-Return a JSON object with this exact structure (no markdown or code blocks):
+Special handling for specific equations:
+- For Maxwell's Equations, include all four equations in aligned format:
+  \\begin{aligned}
+  \\nabla \\cdot \\mathbf{E} &= \\frac{\\rho}{\\epsilon_0} \\\\
+  \\nabla \\cdot \\mathbf{B} &= 0 \\\\
+  \\nabla \\times \\mathbf{E} &= -\\frac{\\partial \\mathbf{B}}{\\partial t} \\\\
+  \\nabla \\times \\mathbf{B} &= \\mu_0\\mathbf{J} + \\mu_0\\epsilon_0\\frac{\\partial \\mathbf{E}}{\\partial t}
+  \\end{aligned}
+
+LaTeX Rules:
+1. For basic formulas (like Pythagorean Theorem: a^2 + b^2 = c^2), use single-line format
+2. For equation sets (like Maxwell's Equations), use aligned environment with all equations
+3. NO formula names in LaTeX code
+4. Use $expression$ for inline math in explanations
+
+Return ONLY a valid JSON object in this exact format (no additional text):
 {
     "formulas": [{
-        "formulaName": "The exact name of the formula/equation/theorem",
-        "description": "A clear, concise description",
-        "usage": "Practical applications and use cases",
-        "explanation": "Detailed explanation of each symbol and component",
-        "latexCode": "The complete LaTeX code with double backslashes",
+        "formulaName": "Name (use full name, e.g., 'Maxwell's Equations' not just one part)",
+        "description": "Brief overview of the complete set of equations if applicable",
+        "usage": "Applications",
+        "explanation": "Component breakdown with $inline_math$",
+        "latexCode": "Complete set of equations if applicable",
         "academicReferences": [
             {
-                "title": "Original publication or foundational paper title",
-                "authors": "Author names (prioritize original discoverers/developers)",
-                "year": "Publication year (historical context)",
-                "significance": "Explain how this paper introduced or advanced the understanding of the formula",
-                "field": "Primary field of study (e.g., Physics, Mathematics, Engineering)",
-                "subfield": "Specific branch (e.g., Fluid Dynamics, Calculus, Mechanics)"
+                "title": "Paper title",
+                "authors": "Names",
+                "year": "YYYY",
+                "significance": "Impact"
             }
         ]
     }]
-}
+}`;
 
-Important rules for academic references:
-1. Prioritize original publications where the formula was first introduced
-2. Include seminal papers that significantly advanced the understanding
-3. Focus on mathematical and theoretical foundations rather than applications
-4. Ensure references are historically accurate and relevant to the formula's development
-5. Include papers from the primary field where the formula originated`;
-
-        const result = await model.generateContent(promptText);
-        const response = result.response;
-        const text = response.text();
-
-        try {
-            const cleanedText = text
-                .replace(/```[a-z]*\n?/g, '')
-                .replace(/```/g, '')
-                .trim();
-
-            let jsonResponse;
+        let attempts = 0;
+        const maxAttempts = 3;
+        
+        while (attempts < maxAttempts) {
             try {
-                jsonResponse = JSON.parse(cleanedText);
-            } catch (parseError) {
-                console.error('JSON parse error:', parseError);
-                throw new Error('Invalid JSON format');
-            }
+                const result = await model.generateContent(promptText);
+                const text = result.response.text();
+                
+                // Better JSON cleaning
+                const cleanedText = text
+                    .replace(/```json\s*/g, '')
+                    .replace(/```\s*/g, '')
+                    .replace(/\n/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
 
-            if (!jsonResponse || !jsonResponse.formulas || !Array.isArray(jsonResponse.formulas)) {
-                console.error('Invalid response structure:', jsonResponse);
-                throw new Error('Invalid response structure');
-            }
+                let jsonResponse: JsonResponse;
+                try {
+                    jsonResponse = JSON.parse(cleanedText);
+                } catch (parseError) {
+                    attempts++;
+                    if (attempts === maxAttempts) {
+                        await objectStream.update({
+                            formulas: [{
+                                formulaName: 'Error',
+                                description: '',
+                                usage: '',
+                                explanation: '',
+                                latexCode: '',
+                                academicReferences: []
+                            }]
+                        });
+                        break;
+                    }
+                    continue;
+                }
 
-            const validationResult = formulaSchema.safeParse(jsonResponse);
-
-            if (validationResult.success) {
-                const cleanedFormulas = {
-                    formulas: validationResult.data.formulas.map(formula => ({
+                const processedResponse = {
+                    formulas: jsonResponse.formulas?.map((formula: Formula) => ({
                         ...formula,
-                        latexCode: cleanLatexCode(formula.latexCode)
-                    }))
+                        formulaName: String(formula.formulaName || ''),
+                        description: String(formula.description || ''),
+                        usage: String(formula.usage || ''),
+                        explanation: String(formula.explanation || ''),
+                        latexCode: String(formula.latexCode || ''),
+                        academicReferences: formula.academicReferences?.map((ref: FormulaReference) => ({
+                            ...ref,
+                            title: String(ref.title || ''),
+                            authors: String(ref.authors || ''),
+                            year: String(ref.year || '2024'),
+                            significance: String(ref.significance || '')
+                        })) || []
+                    })) || []
                 };
-                objectStream.update(cleanedFormulas);
-            } else {
-                console.error('Validation error:', validationResult.error);
-                throw new Error('Invalid formula format');
+
+                const validationResult = formulaSchema.safeParse(processedResponse);
+
+                if (validationResult.success) {
+                    await objectStream.update({
+                        formulas: validationResult.data.formulas.map(formula => ({
+                            ...formula,
+                            latexCode: cleanLatexCode(formula.latexCode)
+                        }))
+                    });
+                    break;
+                }
+
+                attempts++;
+                if (attempts < maxAttempts) {
+                    model.generationConfig.temperature = Math.min(0.9, 0.3 + (attempts * 0.3));
+                    continue;
+                }
+            } catch (error) {
+                attempts++;
+                if (attempts === maxAttempts) {
+                    await objectStream.update({
+                        formulas: [{
+                            formulaName: 'Error',
+                            description: '',
+                            usage: '',
+                            explanation: '',
+                            latexCode: '',
+                            academicReferences: []
+                        }]
+                    });
+                    break;
+                }
+                continue;
             }
-        } catch (parseError) {
-            console.error('Processing error:', parseError);
-            objectStream.update({
-                formulas: [{
-                    formulaName: 'Input Error',
-                    description: 'Please enter a valid mathematical formula, equation, or theorem name.',
-                    usage: 'Example inputs: "Pythagorean Theorem", "Quadratic Formula", "Einstein Mass-Energy Equation"',
-                    explanation: 'Make sure to use standard mathematical terminology.',
-                    latexCode: '',
-                    academicReferences: []
-                }]
-            });
         }
     } catch (e) {
-        console.error('Action error:', e);
-        objectStream.update({
+        await objectStream.update({
             formulas: [{
-                formulaName: 'System Error',
-                description: e instanceof Error ? e.message : 'An unexpected error occurred.',
-                usage: 'Please try again with a different input.',
-                explanation: 'If the problem persists, try using more specific mathematical terminology.',
+                formulaName: 'Error',
+                description: '',
+                usage: '',
+                explanation: '',
                 latexCode: '',
                 academicReferences: []
             }]

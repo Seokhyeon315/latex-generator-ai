@@ -1,10 +1,7 @@
 'use client';
 
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
-import rehypeRaw from 'rehype-raw';
+import katex from 'katex';
 import DOMPurify from 'dompurify';
 import { cn } from '@/lib/utils';
 
@@ -15,8 +12,15 @@ interface FormulaRendererProps {
 
 export const FormulaRenderer = ({ formula, className }: FormulaRendererProps) => {
     const cleanLatex = (tex: string) => {
-        // Remove any existing $$ and whitespace
+        if (!tex) return tex;
+
+        // Remove outer $$ and whitespace
         let cleaned = tex.replace(/^\$\$|\$\$$/g, '').trim();
+
+        // Handle special cases
+        if (cleaned.includes('\\begin{aligned}')) {
+            return cleaned;
+        }
 
         // Fix common LaTeX issues
         cleaned = cleaned
@@ -25,11 +29,8 @@ export const FormulaRenderer = ({ formula, className }: FormulaRendererProps) =>
             // Fix braces
             .replace(/\}\}/g, '}')
             .replace(/\{\{/g, '{')
-            // Fix text commands - handle text content more carefully
-            .replace(/\\text\{([^}]*)\}/g, (match, content) => {
-                // Replace parentheses in text with escaped versions
-                return `\\text{${content.replace(/[()]/g, '\\$&')}}`;
-            })
+            // Fix text commands
+            .replace(/\\text\{([^}]*)\}/g, '\\text{$1}')
             // Fix vectors
             .replace(/\\vec{([^}]*)}/g, '\\mathbf{$1}')
             // Fix dots
@@ -51,52 +52,39 @@ export const FormulaRenderer = ({ formula, className }: FormulaRendererProps) =>
             .replace(/\s+/g, ' ')
             .trim();
 
-        // Ensure formula is wrapped in $$
-        return cleaned.startsWith('$$') ? cleaned : `$$${cleaned}$$`;
+        return cleaned;
     };
 
-    const renderFormula = (tex: string) => {
-        try {
-            const cleanedFormula = cleanLatex(tex);
-            const sanitizedText = DOMPurify.sanitize(cleanedFormula);
+    try {
+        const cleanedFormula = cleanLatex(formula);
+        const sanitizedText = DOMPurify.sanitize(cleanedFormula);
 
-            return (
-                <ReactMarkdown
-                    remarkPlugins={[remarkMath]}
-                    rehypePlugins={[
-                        [rehypeKatex, {
-                            strict: false,
-                            trust: true,
-                            throwOnError: false,
-                            errorColor: '#ff0000',
-                            macros: {
-                                "\\vec": "\\mathbf",
-                                "\\f": "f(#1)",
-                                "\\dot": "\\dot{#1}",
-                                "\\text": "\\text{#1}",
-                                "\\matrix": "\\begin{matrix}#1\\end{matrix}",
-                                "\\pmatrix": "\\begin{pmatrix}#1\\end{pmatrix}"
-                            }
-                        }],
-                        rehypeRaw
-                    ]}
-                >
-                    {sanitizedText}
-                </ReactMarkdown>
-            );
-        } catch (error) {
-            console.error('Error rendering LaTeX:', error);
-            return (
-                <div className="font-mono text-sm p-2 bg-gray-50 rounded">
-                    <code>{formula.replace(/\$\$/g, '')}</code>
-                </div>
-            );
-        }
-    };
+        const html = katex.renderToString(sanitizedText, {
+            displayMode: true,
+            throwOnError: false,
+            errorColor: '#ff0000',
+            trust: true,
+            strict: false,
+            macros: {
+                "\\vec": "\\mathbf",
+                "\\f": "f(#1)",
+                "\\dot": "\\dot{#1}",
+                "\\text": "\\text{#1}"
+            }
+        });
 
-    return (
-        <div className={cn('text-lg text-center overflow-x-auto', className)}>
-            {renderFormula(formula)}
-        </div>
-    );
+        return (
+            <div
+                className={cn("overflow-x-auto katex-display", className)}
+                dangerouslySetInnerHTML={{ __html: html }}
+            />
+        );
+    } catch (error) {
+        console.error('Error rendering LaTeX:', error);
+        return (
+            <div className="font-mono text-sm p-2 bg-gray-50 rounded">
+                <code>{formula}</code>
+            </div>
+        );
+    }
 };

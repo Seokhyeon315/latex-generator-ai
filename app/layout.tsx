@@ -43,20 +43,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={cn(
-        'antialiased',
-        fontHeading.variable,
-        fontBody.variable,
-      )}>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={cn(
+          'antialiased',
+          fontHeading.variable,
+          fontBody.variable,
+        )}
+        suppressHydrationWarning
+      >
         <Toaster />
-
         <div className="flex flex-col min-h-screen">
           <Navbar />
           <main className="flex flex-col flex-1">{children}</main>
         </div>
-
-
         <Footer />
       </body>
     </html>

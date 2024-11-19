@@ -107,6 +107,9 @@ dependencies:
   react-icons:
     specifier: ^5.2.1
     version: 5.2.1(react@18.3.1)
+  react-katex:
+    specifier: ^3.0.1
+    version: 3.0.1(prop-types@15.8.1)(react@18.3.1)
   react-lottie-loader:
     specifier: ^1.1.0
     version: 1.1.0(react-dom@18.3.1)(react@18.3.1)
@@ -6442,6 +6445,17 @@ packages:
 
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+
+  /react-katex@3.0.1(prop-types@15.8.1)(react@18.3.1):
+    resolution: {integrity: sha512-wIUW1fU5dHlkKvq4POfDkHruQsYp3fM8xNb/jnc8dnQ+nNCnaj0sx5pw7E6UyuEdLRyFKK0HZjmXBo+AtXXy0A==}
+    peerDependencies:
+      prop-types: ^15.8.1
+      react: '>=15.3.2 <=18'
+    dependencies:
+      katex: 0.16.11
+      prop-types: 15.8.1
+      react: 18.3.1
+    dev: false
 
   /react-lottie-loader@1.1.0(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-it4a5QrhhZhNOaAnBvgX/wCG1qR3ivBCd7QKBwxmHBzAa3Rz/F1tle4VdTBW5PNngS9NjC8lkGTeSNuRUkurmA==}
