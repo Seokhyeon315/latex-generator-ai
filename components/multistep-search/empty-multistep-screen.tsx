@@ -13,7 +13,7 @@ export function EmptyMultistepScreen() {
                 <div className="leading-relaxed text-gray-700">
                     <div className="bg-gray-50 p-5 rounded-lg mb-4">
                         <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3">
-                            How to Use:
+                            How to Use STEM Hub Search:
                         </h2>
                         <ol className="list-decimal list-inside space-y-2">
                             <li>

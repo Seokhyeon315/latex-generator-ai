@@ -1,17 +1,8 @@
-# Pro Formula Project
+# STEM Hub
 
-This project is an entry for the [2024 Gemini API Developer Competition](https://ai.google.dev/competition).
+A comprehensive STEM platform powered by advanced AI technologies, offering tools for formula search, LaTeX generation, proof assistance, and scientific computing.
 
-## Tech Stacks
-
-- NextJS 14
-- Typescript
-- TailwindCSS
-- Shadcn UI
-- Google Gemini API
-- Vercel AI SDK
-
-## Features
+## Current Features
 
 1. **Direct Search**: This feature is the application's foundational functionality. When a user types the name of a formula or theorem, the application returns a detailed description, a rendered version of the equation, its usage, and a copyable LaTeX code.
 2. **Multi-step Search**: Following the implementation of the Direct Search feature, I recognized that users might not always remember or know the exact names of the equations or theorems they seek. To address this, I developed the Multi-step Search feature, which provides users with a series of options to refine their search within STEM fields, helping them locate the desired information more effectively.
@@ -30,12 +21,36 @@ This project is an entry for the [2024 Gemini API Developer Competition](https:/
 
 4. Error Handling and User Experience: I've implemented a more robust error handling system with retry mechanisms and user-friendly error messages. The system now gracefully handles various error scenarios including invalid JSON responses and API timeouts, providing users with clear feedback and a simple "Try Again" option.
 
-### Future Project Plans
+## Planned Features & Improvements
 
-1. **Enhance Multistep Search Functionality:** Add a "Request More" button at the bottom of the output display in the Multistep Search feature, allowing users to retrieve additional theorems or formulas that may not have been included in the initial results.
-2. **Integrate User Formula Management:** Implement DrizzleORM, Turso, and Lucia Auth (or an alternative authentication system) to enable users to save formulas or theorems they search for or select in both Direct Search and Multistep Search. These saved items will be stored in a personalized formula space within the user dashboard, allowing users to curate their own custom formula sheets.
-3. **Integrate Google Scholar Links:** Enhance both the Direct Search and Multistep Search features by providing relevant journal articles or research papers linked to the search results. By integrating Google Scholar links with SERPAPI, users can easily access academic resources that correspond to the formulas or theorems they searched for, offering deeper insights and further reading.
-4. **Leverage Google DeepMind Technologies:** Integrate cutting-edge technologies from Google's 'AlphaProof' and 'AlphaGeometry2' projects to transform the platform into a leading-edge research tool in STEM fields. This collaboration will provide unparalleled support for complex scientific and mathematical research, making the tool indispensable for researchers.
+1. **Advanced AI Integration**
+
+   - Multiple AI model support beyond Gemini
+   - Specialized AI models for different STEM fields
+   - Enhanced accuracy and capabilities
+
+2. **Extended STEM Coverage**
+
+   - Comprehensive resources for all STEM fields
+   - Field-specific tools and calculators
+   - Interactive simulations and visualizations
+
+3. **Research Tools**
+
+   - Academic paper integration
+   - Citation management
+   - Research collaboration features
+
+4. **Educational Features**
+
+   - Interactive learning modules
+   - Problem-solving assistance
+   - Step-by-step explanations
+
+5. **Professional Tools**
+   - Advanced computation capabilities
+   - Data analysis and visualization
+   - Project management features
 
 ## How to run this project in local environment?
 

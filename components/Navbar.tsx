@@ -39,8 +39,7 @@ export function Navbar() {
             <div className="flex items-center">
                 <Link href="/" className="text-2xl pl-2 lg:pl-6"
                 >
-                    <span className="font-bold text-slate-800">Pro</span>
-                    <span className="pl-1 text-slate-500">Formula</span>
+                    <span className="font-bold text-slate-800">STEM Hub</span>
                 </Link>
             </div>
 

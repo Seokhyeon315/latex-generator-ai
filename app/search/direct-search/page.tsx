@@ -4,7 +4,7 @@ import { DirectSearchPanel } from '@/components/DirectSearchPanel';
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Direct Search",
+    title: "Direct Search | STEM Hub",
     description: "Direct search page is for people who already know the name of the formula, equation, or theorem. It provides the rendered version, explanation, usuage, and LaTeX code for students and researchers.",
 };
 

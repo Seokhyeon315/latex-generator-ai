@@ -12,10 +12,10 @@ export default function HeroSection() {
         <div className="py-20 lg:py-24 px-4 flex flex-col items-center justify-center min-h-screen bg-white">
             <section className="text-center w-full max-w-4xl">
                 <h1 className="text-4xl font-bold text-gray-900 md:text-5xl">
-                    AI-Powered Formula Search with LaTeX
+                    STEM Hub
                 </h1>
                 <p className="mt-4 text-lg text-gray-500">
-                    Professional tools for students and researchers in one place.
+                    Your comprehensive platform for STEM education and research.
                 </p>
                 <div className="mt-8 flex justify-center space-x-4">
                     <Link href="/search">
