@@ -16,9 +16,19 @@ import { toast } from 'sonner';
 import { Formula } from '@/lib/types';
 import { getMoreFormulas } from '@/lib/server-actions/multistep-search';
 import { SelectionPath } from './selection-path';
-import { FormulaRenderer } from '@/components/FormulaRenderer';
-import { CopyToClipboard } from '@/components/copy-to-clipboard';
 import { Badge } from "@/components/ui/badge";
+import dynamic from 'next/dynamic';
+
+// Dynamic imports for heavy components
+const FormulaRenderer = dynamic(() => import('@/components/FormulaRenderer').then(mod => ({ default: mod.FormulaRenderer })), {
+    loading: () => <div className="animate-pulse bg-gray-200 h-20 rounded"></div>,
+    ssr: false
+});
+
+const CopyToClipboard = dynamic(() => import('@/components/copy-to-clipboard').then(mod => ({ default: mod.CopyToClipboard })), {
+    loading: () => <div className="w-8 h-8 bg-gray-200 rounded animate-pulse"></div>,
+    ssr: false
+});
 
 export interface MultiStepPanelProps {
     id?: string;

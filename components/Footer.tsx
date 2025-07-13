@@ -1,33 +1,32 @@
 'use client'
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 
-
 export default function Footer() {
-    const [scrolled, setScrolled] = React.useState(false);
-    useEffect(() => {
-        const handleScroll = () => {
-            const isScrolled = window.scrollY > 0; // Adjust the value based on when you want the footer to appear
-            setScrolled(isScrolled);
-        };
+    const currentYear = new Date().getFullYear();
 
-        window.addEventListener('scroll', handleScroll);
-
-        // Cleanup the event listener when the component unmounts
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []); // Empty dependency array ensures the effect runs only once on mount
-
-
-    return (<>
-        <footer className={`flex flex-row p-4 ${scrolled ? 'visible' : 'hidden'}`}>
-            <div className="flex-1 text-center py-2">
-                <p className="text-sm">&copy; 2024. <Link href="https://www.seokhyeonbyun.com/" className='hover:underline' target="_blank"
-                >Seokhyeon Byun</Link>. All rights reserved.</p>
+    return (
+        <footer className="border-t bg-gray-50/80 backdrop-blur-sm">
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                <div className="flex flex-col items-center space-y-2 text-center">
+                    <p className="text-sm text-gray-600">
+                        © {currentYear} STEM Hub. All rights reserved.
+                    </p>
+                    <p className="text-sm text-gray-600">
+                        Designed and developed by{' '}
+                        <Link
+                            href="https://www.seokhyeonbyun.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-medium text-gray-900 hover:underline transition-colors"
+                        >
+                            Seokhyeon Byun
+                        </Link>
+                    </p>
+                </div>
             </div>
         </footer>
-    </>)
+    );
 }
 

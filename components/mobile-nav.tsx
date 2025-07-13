@@ -23,7 +23,7 @@ export const MobileNav = () => {
             <SheetTrigger asChild>
                 <Button variant="outline" className="w-10 px-0 lg:hidden" >
                     <Menu className="w-5 h-5" />
-                    <span className="sr-only">Toggle Theme</span>
+                    <span className="sr-only">Toggle navigation menu</span>
                 </Button>
             </SheetTrigger>
 

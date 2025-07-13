@@ -4,13 +4,12 @@ import * as React from 'react'
 import Link from "next/link";
 import { MobileNav } from '@/components/mobile-nav'
 
-
-interface menuItemProps {
+interface MenuItem {
     label: string;
     path: string;
-}[]
+}
 
-const menuitems = [
+const menuitems: MenuItem[] = [
     {
         label: "Home",
         path: "/",
@@ -27,10 +26,9 @@ const menuitems = [
 
 export function Navbar() {
     return (
-        <header className="sticky top-0 z-50 flex justify-between w-full h-16 px-4 lg:px-16 lg:mt-2 shrink-0 bg-gradient-to-b from-background/10 via-background/50 to-background/80 backdrop-blur-xl">
+        <header className="sticky top-0 z-50 flex justify-between w-full h-16 px-4 lg:px-16 lg:mt-2 shrink-0 bg-white/80 backdrop-blur-xl border-b">
             <div className="flex items-center">
-                <Link href="/" className="text-2xl pl-2 lg:pl-6"
-                >
+                <Link href="/" className="text-2xl pl-2 lg:pl-6">
                     <span className="font-bold text-slate-800">STEM Hub</span>
                 </Link>
             </div>
@@ -51,10 +49,9 @@ export function Navbar() {
                     }
                 </ul>
             </nav>
-            <div className="block mt-3 lg:hidden">
+            <div className="flex items-center gap-2 lg:hidden">
                 <MobileNav />
             </div>
         </header>
-
     )
 }

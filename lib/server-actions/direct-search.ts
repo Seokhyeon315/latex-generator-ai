@@ -5,9 +5,13 @@ import { z } from 'zod';
 import { createStreamableValue } from 'ai/rsc';
 import { LRUCache } from 'lru-cache';
 
-const genAI = new GoogleGenerativeAI(
-    process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
-);
+// Validate required environment variables
+const API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+if (!API_KEY) {
+    throw new Error('GOOGLE_GENERATIVE_AI_API_KEY environment variable is required');
+}
+
+const genAI = new GoogleGenerativeAI(API_KEY);
 
 const GEMINI_ERRORS = {
     RECITATION: 'RECITATION',

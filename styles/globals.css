@@ -1,85 +1,110 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-@layer base {
-  :root {
-    --font-heading-size: 16px;
-    --font-body-size: 14px;
+@theme {
+  --color-savory-white: hsl(0, 36%, 95%);
+  --color-muted-white: hsl(224, 16%, 54%);
+  --color-white-hover: hsl(0, 36%, 95%);
+  --color-pink-heading: hsl(279, 48%, 54%);
+  --color-pink-sub-heading: hsl(293, 43%, 55%);
+  --color-black-sub-heading: hsl(221, 39%, 11%);
+  --color-deep-blue-sub-heading: hsl(229, 38%, 40%);
 
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+  --font-navigation: 'Poppins', sans-serif;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+  --background-main: hsl(215, 45%, 14%);
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+  --animation-blob: blob 7s infinite;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+  --radius: 0.5rem;
+}
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
   }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* Improved responsive typography */
+  h1 {
+    @apply text-2xl font-bold sm:text-3xl md:text-4xl;
+  }
+
+  h2 {
+    @apply text-xl font-semibold sm:text-2xl md:text-3xl;
+  }
+
+  h3 {
+    @apply text-lg font-medium sm:text-xl md:text-2xl;
+  }
+
+  /* Improved code block handling for mobile */
+  pre {
+    @apply overflow-hidden break-words whitespace-pre-wrap;
+  }
+
+  /* Better mobile touch targets */
+  button,
+  a {
+    @apply flex min-h-[44px] items-center justify-center;
   }
 }
 
-h1,
-h2,
-h3 {
-  font-size: 20px;
+@layer components {
+  /* Prose styles for markdown content */
+  .prose {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    @apply font-semibold text-gray-900 dark:text-gray-100;
+  }
+
+  .prose p {
+    @apply mb-4 last:mb-0;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply mb-4 pl-6;
+  }
+
+  .prose li {
+    @apply mb-2;
+  }
+
+  .prose code {
+    @apply rounded bg-gray-100 px-1 py-0.5 text-sm dark:bg-gray-800;
+  }
+
+  .prose pre {
+    @apply overflow-x-auto rounded-lg bg-gray-100 p-4 dark:bg-gray-800;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-gray-300 pl-4 italic dark:border-gray-600;
+  }
 }

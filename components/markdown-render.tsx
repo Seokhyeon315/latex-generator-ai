@@ -5,28 +5,44 @@ import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import { useStreamableText } from '@/lib/hooks/use-streamable-text';
 import rehypeKatex from 'rehype-katex';
+import type { Components } from 'react-markdown';
 
-export default function MarkdownRender({ content }: { content: string }) {
+interface MarkdownRenderProps {
+    content: string;
+}
+
+const MarkdownRender = React.memo(({ content }: MarkdownRenderProps) => {
     // Use the useStreamableText hook to process the content
     const text = useStreamableText(content);
 
     // Replace newline characters and double backslashes in the text
-    const formattedText = text.replace(/\\\\/g, '\\');
+    const formattedText = React.useMemo(() => {
+        return text.replace(/\\\\/g, '\\');
+    }, [text]);
+
+    const remarkPlugins = React.useMemo(() => [remarkMath, remarkGfm, remarkBreaks], []);
+    const rehypePlugins = React.useMemo(() => [rehypeKatex], []);
+
+    const components = React.useMemo((): Components => ({
+        // Customize the rendering of paragraph elements
+        p: ({ children, ...props }) => {
+            return <p className="mb-2 last:mb-0" {...props}>{children}</p>;
+        },
+    }), []);
 
     return (
-        <MemoizedReactMarkdown
-            // Add remark-breaks to the list of remark plugins
-            remarkPlugins={[remarkMath, remarkGfm, remarkBreaks]}
-            rehypePlugins={[rehypeKatex]}
-            className="prose"
-            components={{
-                // Customize the rendering of paragraph elements
-                p({ children }) {
-                    return <p className="mb-2 last:mb-0">{children}</p>;
-                },
-            }}
-        >
-            {formattedText}
-        </MemoizedReactMarkdown>
+        <div className="prose">
+            <MemoizedReactMarkdown
+                remarkPlugins={remarkPlugins}
+                rehypePlugins={rehypePlugins}
+                components={components}
+            >
+                {formattedText}
+            </MemoizedReactMarkdown>
+        </div>
     );
-}
+});
+
+MarkdownRender.displayName = 'MarkdownRender';
+
+export default MarkdownRender;
