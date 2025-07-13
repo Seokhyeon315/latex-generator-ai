@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link, { LinkProps } from "next/link";
-import { Badge } from "@/components/ui/badge"
+
 
 interface MobileLinkProps extends LinkProps {
     children: React.ReactNode;
@@ -52,18 +52,7 @@ export const MobileNav = () => {
                     >
                         Search
                     </MobileLink>
-                    <MobileLink
-                        onOpenChange={setOpen}
-                        href="/convert"
-                        className="flex flex-row items-center hover:underline"
-                    >
-                        Convert
-                        <div className="pl-2 text-sm">
-                            <Badge className="">Experimental</Badge>
-                        </div>
 
-
-                    </MobileLink>
 
                 </div>
             </SheetContent>

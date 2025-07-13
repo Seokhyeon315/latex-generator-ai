@@ -1,4 +1,4 @@
-import { FileSpreadsheet, SearchCheck, SquareSigma } from "lucide-react";
+import { SearchCheck, SquareSigma } from "lucide-react";
 import type { Metadata } from "next";
 
 
@@ -42,19 +42,6 @@ export default function AboutPage() {
                                     </h3>
                                     <p className="mt-1 text-muted-foreground">
                                         You will save a lot of time to use this website instead of typing long equations in LATEX format manually.
-                                    </p>
-                                </div>
-                            </div>
-                            {/* End Icon Block */}
-                            {/* Icon Block */}
-                            <div className="flex">
-                                <FileSpreadsheet className="flex-shrink-0 mt-2 h-6 w-6" />
-                                <div className="ms-5 sm:ms-8">
-                                    <h3 className="text-base sm:text-lg font-semibold">
-                                        Convert handwritten formulas to Latex & Markdown format
-                                    </h3>
-                                    <p className="mt-1 text-muted-foreground">
-                                        Just attach the image of the handwritten formula, and you will get the LATEX format of the formula quickly. The image you attach won&apos;t be stored in the server.
                                     </p>
                                 </div>
                             </div>

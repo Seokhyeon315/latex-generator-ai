@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card"
 import Link from "next/link"
 import { SVGProps } from "react"
 import { Responsive, Search, Sparkle, UserIcon } from "./ui/icons"
-import { SiConvertio } from "react-icons/si";
 
 export default function HeroSection() {
     return (
@@ -57,14 +56,6 @@ export default function HeroSection() {
                                 Use Multistep Search feature to narrow down what you are looking for.
                             </p>
                         </Link>
-                    </Card>
-
-                    <Card className="p-6 text-center bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                        <SiConvertio className="w-12 h-12 mx-auto text-cyan-500" />
-                        <h3 className="mt-4 text-xl font-semibold text-gray-900">Automatic LaTeX Conversion</h3>
-                        <p className="mt-2 text-gray-500">
-                            Say goodbye to manually writing LaTeX. Just enter your formula, and let our service do the rest.
-                        </p>
                     </Card>
 
                     <Card className="p-6 text-center bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">

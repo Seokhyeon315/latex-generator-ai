@@ -6,7 +6,6 @@ A comprehensive STEM platform powered by advanced AI technologies, offering tool
 
 1. **Direct Search**: This feature is the application's foundational functionality. When a user types the name of a formula or theorem, the application returns a detailed description, a rendered version of the equation, its usage, and a copyable LaTeX code.
 2. **Multi-step Search**: Following the implementation of the Direct Search feature, I recognized that users might not always remember or know the exact names of the equations or theorems they seek. To address this, I developed the Multi-step Search feature, which provides users with a series of options to refine their search within STEM fields, helping them locate the desired information more effectively.
-3. **Convert**: This feature allows users to convert images of handwritten equations into a digital format suitable for journals and research articles. Initially, this functionality was not part of the original plan. However, based on my personal experience as an undergraduate aerospace engineering student, I realized the importance of including this feature to assist in the preparation of academic papers that often require precise mathematical equations to explain scientific concepts.
 
 ### Technical Challenges
 
@@ -14,12 +13,7 @@ A comprehensive STEM platform powered by advanced AI technologies, offering tool
 
 2. I successfully resolved the deployment challenge by migrating to Railway, which provides more flexible serverless function execution times. This has significantly improved the reliability of the multi-step search functionality in production.
 
-3. Currently, the Convert feature (marked as 'experimental') faces two main challenges:
-
-   - Image format compatibility: While the system works well with digital inputs (e.g., iPad drawings), it has limitations with certain image formats and sizes, particularly with HEIC format from iPhones.
-   - Processing large images: The system occasionally encounters JSON parsing errors when processing larger image files, indicating a need for better image preprocessing before sending to the Gemini Vision API.
-
-4. Error Handling and User Experience: I've implemented a more robust error handling system with retry mechanisms and user-friendly error messages. The system now gracefully handles various error scenarios including invalid JSON responses and API timeouts, providing users with clear feedback and a simple "Try Again" option.
+3. Error Handling and User Experience: I've implemented a more robust error handling system with retry mechanisms and user-friendly error messages. The system now gracefully handles various error scenarios including invalid JSON responses and API timeouts, providing users with clear feedback and a simple "Try Again" option.
 
 ## Planned Features & Improvements
 

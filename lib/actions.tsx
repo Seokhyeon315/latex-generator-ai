@@ -2,7 +2,6 @@
 
 import { createAI } from 'ai/rsc';
 import { directSearchAction } from './server-actions/direct-search';
-import { imageToLatexAction } from './server-actions/image-to-latex';
 import { submitInputAction } from './server-actions/submit-input';
 import { getMoreFormulas } from './server-actions/multistep-search';
 
@@ -30,12 +29,11 @@ export type UIState = {
 }[];
 
 // Export the server actions directly
-export { directSearchAction, imageToLatexAction, submitInputAction, getMoreFormulas };
+export { directSearchAction, submitInputAction, getMoreFormulas };
 
 export const AI = createAI<AIState, UIState>({
     actions: {
         directSearchAction,
-        imageToLatexAction,
         submitInputAction,
         getMoreFormulas,
     },
