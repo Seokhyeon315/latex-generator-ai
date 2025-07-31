@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { toast } from 'sonner';
 
 interface ListTopicsProps {
@@ -13,10 +12,10 @@ interface ListTopicsProps {
 }
 
 export const ListTopics: React.FC<ListTopicsProps> = ({
-    category,
+    category: _category,
     field,
     topics,
-    setLoading,
+    setLoading: _setLoading,
     setSelectedTopic,
     setSelectedField,
 }) => {
@@ -36,9 +35,15 @@ export const ListTopics: React.FC<ListTopicsProps> = ({
                 <div
                     key={index}
                     onClick={() => handleTopicClick(topic)}
-                    className="p-3 bg-gray-50 rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
+                    className="group glass-card p-4 cursor-pointer hover:shadow-medium transition-all duration-300 hover:scale-[1.02] animate-scale-in"
+                    style={{animationDelay: `${index * 0.05}s`}}
                 >
-                    <span className="text-gray-700">{topic}</span>
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-primary-400 rounded-full group-hover:scale-125 transition-transform duration-200"></div>
+                        <span className="text-primary-700 font-medium group-hover:text-accent-700 transition-colors duration-200">
+                            {topic}
+                        </span>
+                    </div>
                 </div>
             ))}
         </div>

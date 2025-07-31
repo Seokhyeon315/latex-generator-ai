@@ -22,20 +22,17 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     static getDerivedStateFromError(error: Error): State {
-        // Update state so the next render will show the fallback UI
         return { hasError: true, error };
     }
 
     override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-        // Log error to console in development
         console.error('ErrorBoundary caught an error:', error, errorInfo);
+        this.setState({ error, errorInfo });
 
-        // Update state with error info
-        this.setState({ errorInfo });
-
-        // In production, you might want to log this to an error reporting service
+        // Log to external error reporting service in production
         if (process.env.NODE_ENV === 'production') {
-            // Example: logErrorToService(error, errorInfo);
+            // Replace with your error reporting service
+            // Sentry.captureException(error, { extra: errorInfo });
         }
     }
 
@@ -45,52 +42,55 @@ export class ErrorBoundary extends Component<Props, State> {
 
     override render() {
         if (this.state.hasError) {
-            // Custom fallback UI
             if (this.props.fallback) {
                 return this.props.fallback;
             }
 
-            // Default fallback UI
             return (
-                <div className="min-h-[400px] flex items-center justify-center p-6">
-                    <div className="text-center max-w-md mx-auto">
-                        <div className="flex justify-center mb-4">
-                            <AlertTriangle className="h-16 w-16 text-red-500" />
-                        </div>
+                <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+                    <div className="max-w-md w-full">
+                        <div className="text-center">
+                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                                <AlertTriangle className="h-6 w-6 text-red-600" />
+                            </div>
 
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                            Something went wrong
-                        </h2>
+                            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                                Something went wrong
+                            </h2>
 
-                        <p className="text-gray-600 mb-6">
-                            We encountered an unexpected error. This has been logged and we'll look into it.
-                        </p>
+                            <p className="text-gray-600 mb-6">
+                                We encountered an unexpected error. This has been logged and we will look into it.
+                            </p>
 
-                        {process.env.NODE_ENV === 'development' && this.state.error && (
-                            <details className="mb-6 text-left bg-gray-100 p-4 rounded-lg">
-                                <summary className="cursor-pointer font-semibold mb-2">
-                                    Error Details (Development Only)
-                                </summary>
-                                <pre className="text-sm text-red-600 whitespace-pre-wrap">
-                                    {this.state.error.toString()}
-                                    {this.state.errorInfo?.componentStack}
-                                </pre>
-                            </details>
-                        )}
+                            {process.env.NODE_ENV === 'development' && this.state.error && (
+                                <details className="mb-6 text-left bg-gray-100 p-4 rounded-lg">
+                                    <summary className="font-semibold cursor-pointer mb-2">
+                                        Error Details (Development Only)
+                                    </summary>
+                                    <pre className="text-sm text-red-600 whitespace-pre-wrap overflow-auto">
+                                        {this.state.error.toString()}
+                                        {this.state.errorInfo?.componentStack}
+                                    </pre>
+                                </details>
+                            )}
 
-                        <div className="flex gap-4 justify-center">
-                            <Button onClick={this.handleReset} className="flex items-center gap-2">
-                                <RefreshCw className="h-4 w-4" />
-                                Try Again
-                            </Button>
+                            <div className="space-y-3">
+                                <Button
+                                    onClick={this.handleReset}
+                                    className="w-full flex items-center justify-center gap-2"
+                                >
+                                    <RefreshCw className="h-4 w-4" />
+                                    Try Again
+                                </Button>
 
-                            <Button
-                                variant="outline"
-                                onClick={() => window.location.reload()}
-                                className="flex items-center gap-2"
-                            >
-                                Reload Page
-                            </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => window.location.href = '/'}
+                                    className="w-full"
+                                >
+                                    Go to Homepage
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -103,13 +103,17 @@ export class ErrorBoundary extends Component<Props, State> {
 
 // Hook for functional components to handle errors
 export const useErrorHandler = () => {
-    return (error: Error, errorInfo?: ErrorInfo) => {
+    const handleError = React.useCallback((error: Error, errorInfo?: ErrorInfo) => {
         console.error('Error caught by useErrorHandler:', error, errorInfo);
-        // In a real app, you might want to trigger a state update or dispatch to a global error handler
-    };
+
+        // In a real app, you might want to report this to an error tracking service
+        // and possibly trigger a state update to show an error UI
+    }, []);
+
+    return handleError;
 };
 
-// Higher-order component for wrapping components with error boundary
+// HOC to wrap components with ErrorBoundary
 export const withErrorBoundary = <P extends object>(
     Component: React.ComponentType<P>,
     errorFallback?: ReactNode
@@ -121,6 +125,5 @@ export const withErrorBoundary = <P extends object>(
     );
 
     WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
-
     return WrappedComponent;
 }; 

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Card } from './ui/card';
 import { ExternalLink, BookOpen } from 'lucide-react';
 

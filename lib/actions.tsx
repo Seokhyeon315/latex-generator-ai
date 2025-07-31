@@ -2,7 +2,6 @@
 
 import { createAI } from 'ai/rsc';
 import { directSearchAction } from './server-actions/direct-search';
-import { submitInputAction } from './server-actions/submit-input';
 import { getMoreFormulas } from './server-actions/multistep-search';
 
 export type Message = {
@@ -29,12 +28,11 @@ export type UIState = {
 }[];
 
 // Export the server actions directly
-export { directSearchAction, submitInputAction, getMoreFormulas };
+export { directSearchAction, getMoreFormulas };
 
 export const AI = createAI<AIState, UIState>({
     actions: {
         directSearchAction,
-        submitInputAction,
         getMoreFormulas,
     },
     initialUIState: [],

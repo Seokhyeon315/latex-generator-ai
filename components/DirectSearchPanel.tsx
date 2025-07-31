@@ -53,7 +53,7 @@ export function DirectSearchPanel() {
     const [error, setError] = React.useState<string | null>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const { directSearchAction } = useActions();
-    const [lastInput, setLastInput] = React.useState<string>('');
+
 
     React.useEffect(() => {
         if (inputRef.current) {
@@ -64,7 +64,7 @@ export function DirectSearchPanel() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const value = input.trim();
-        setLastInput(value);
+
         await performSearch(value);
     };
 
@@ -105,7 +105,7 @@ export function DirectSearchPanel() {
     };
 
     return (
-        <div className='w-full min-h-screen bg-white/90 pb-safe'>
+        <div className='w-full min-h-screen bg-primary-50/30 pb-safe'>
             <div className="mx-auto sm:max-w-2xl sm:px-4 px-4">
                 {isLoading ? (
                     <div className="flex h-screen items-center justify-center text-xl mt-2 pb-6">
@@ -120,91 +120,122 @@ export function DirectSearchPanel() {
                     </div>
                 ) : response.length > 0 ? (
                     <div className="flex flex-col min-h-screen">
-                        <div className="flex-1 mt-4 pb-24">
-                            <div className="space-y-4 max-h-none w-full">
+                        <div className="flex-1 mt-4 pb-24 animate-fade-in">
+                            <div className="space-y-6 max-h-none w-full">
                                 {response.map((line, i) => (
-                                    <div key={i} className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4">
-                                        <div className="mb-4">
-                                            <h3 className="text-xl sm:text-2xl font-bold mb-1">{line.formulas[0].formulaName}</h3>
-                                        </div>
-                                        <div className="mb-4">
-                                            <div className="bg-gray-100 p-4 rounded-lg">
-                                                <FormulaRenderer formula={line.formulas[0].latexCode} />
+                                    <div key={i} className="card card-hover animate-slide-up" style={{animationDelay: `${i * 0.1}s`}}>
+                                        <div className="p-6 sm:p-8">
+                                            {/* Header Section */}
+                                            <div className="mb-6">
+                                                <h3 className="text-2xl sm:text-3xl font-bold text-primary-900 mb-2">{line.formulas[0].formulaName}</h3>
+                                                <p className="text-base sm:text-lg text-primary-600 leading-relaxed">{line.formulas[0].description}</p>
                                             </div>
-                                            <p className="pt-2 text-base sm:text-lg text-gray-700">{line.formulas[0].description}</p>
-                                        </div>
 
-                                        <div className="mb-4">
-                                            <div className="bg-gray-100 p-4 rounded-lg">
-                                                <h3 className="text-base sm:text-lg font-bold mb-1">Explanation</h3>
-                                                <MarkdownRender content={line.formulas[0].explanation} />
+                                            {/* Formula Display Section */}
+                                            <div className="mb-6">
+                                                <div className="glass-card p-6 text-center bg-primary-50/50">
+                                                    <FormulaRenderer formula={line.formulas[0].latexCode} />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="mb-4">
-                                            <div className="bg-gray-100 p-4 rounded-lg">
-                                                <h3 className="text-base sm:text-lg font-bold mb-1">Usage</h3>
-                                                <MarkdownRender content={line.formulas[0].usage} />
-                                            </div>
-                                        </div>
 
-                                        <div>
-                                            <h3 className="text-base sm:text-lg font-bold mb-1">LaTeX Code:</h3>
-                                            <div className="bg-gray-100 p-4 rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                                                <pre className="text-sm break-all whitespace-pre-wrap overflow-hidden flex-1">
-                                                    {line.formulas[0].latexCode}
-                                                </pre>
-                                                <CopyToClipboard text={line.formulas[0].latexCode} />
+                                            {/* Explanation Section */}
+                                            <div className="mb-6">
+                                                <div className="bg-primary-50 p-6 rounded-xl border border-primary-200">
+                                                    <h4 className="text-lg font-semibold text-primary-900 mb-3 flex items-center gap-2">
+                                                        <div className="w-2 h-2 bg-primary-400 rounded-full"></div>
+                                                        Explanation
+                                                    </h4>
+                                                    <div className="prose prose-sm sm:prose-base">
+                                                        <MarkdownRender content={line.formulas[0].explanation} />
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        {line.formulas[0].academicReferences && line.formulas[0].academicReferences.length > 0 && (
-                                            <PaperReferences
-                                                papers={line.formulas[0].academicReferences.map(ref => ({
-                                                    title: ref.title,
-                                                    authors: ref.authors.split(', '),
-                                                    year: parseInt(ref.year),
-                                                    significance: ref.significance,
-                                                    link: `https://scholar.google.com/scholar?q=${encodeURIComponent(ref.title)}`
-                                                }))}
-                                            />
-                                        )}
+                                            {/* Usage Section */}
+                                            <div className="mb-6">
+                                                <div className="bg-primary-100/50 p-6 rounded-xl border border-primary-200">
+                                                    <h4 className="text-lg font-semibold text-primary-900 mb-3 flex items-center gap-2">
+                                                        <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
+                                                        Usage
+                                                    </h4>
+                                                    <div className="prose prose-sm sm:prose-base">
+                                                        <MarkdownRender content={line.formulas[0].usage} />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* LaTeX Code Section */}
+                                            <div className="mb-6">
+                                                <h4 className="text-lg font-semibold text-primary-900 mb-3 flex items-center gap-2">
+                                                    <div className="w-2 h-2 bg-primary-600 rounded-full"></div>
+                                                    LaTeX Code
+                                                </h4>
+                                                <div className="relative group">
+                                                    <div className="bg-primary-900 p-6 rounded-xl border border-primary-700 relative overflow-hidden">
+                                                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                            <CopyToClipboard text={line.formulas[0].latexCode} />
+                                                        </div>
+                                                        <pre className="text-sm sm:text-base text-green-400 font-mono break-all whitespace-pre-wrap overflow-hidden pr-16">
+                                                            {line.formulas[0].latexCode}
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Academic References */}
+                                            {line.formulas[0].academicReferences && line.formulas[0].academicReferences.length > 0 && (
+                                                <div className="border-t border-primary-200 pt-6">
+                                                    <PaperReferences
+                                                        papers={line.formulas[0].academicReferences.map(ref => ({
+                                                            title: ref.title,
+                                                            authors: ref.authors.split(', '),
+                                                            year: parseInt(ref.year),
+                                                            significance: ref.significance,
+                                                            link: `https://scholar.google.com/scholar?q=${encodeURIComponent(ref.title)}`
+                                                        }))}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
                         {/* Fixed search bar at bottom */}
-                        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t p-4">
+                        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-primary-200 p-4 shadow-medium">
                             <div className="mx-auto sm:max-w-2xl">
                                 <form onSubmit={handleSubmit} ref={formRef}>
-                                    <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-zinc-100 px-4 sm:px-12 sm:rounded-full">
-                                        <Textarea
-                                            ref={inputRef}
-                                            name="search"
-                                            rows={1}
-                                            maxRows={1}
-                                            className="h-full w-full min-h-[60px] bg-transparent placeholder:text-zinc-900 resize-none px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
-                                            spellCheck={false}
-                                            autoComplete="off"
-                                            autoCorrect="off"
-                                            onKeyDown={onKeyDown}
-                                            value={input}
-                                            placeholder="Type the name of a formula or theorem."
-                                            onChange={e => setInput(e.target.value)}
-                                            disabled={isLoading}
-                                            aria-label="Search for formulas and theorems"
-                                            aria-describedby="search-instructions"
-                                        />
-                                        <div className="absolute right-4 top-[13px] sm:right-4">
-                                            <Button
-                                                size="icon"
-                                                type='submit'
-                                                disabled={input === ''}
-                                                aria-label="Submit search query"
-                                                className="min-h-[44px] min-w-[44px]"
-                                            >
-                                                <SearchIcon />
-                                            </Button>
+                                    <div className="relative">
+                                        <div className="glass-card border-2 border-primary-300 focus-within:border-accent-500 transition-all duration-300 overflow-hidden sm:rounded-full">
+                                            <Textarea
+                                                ref={inputRef}
+                                                name="search"
+                                                rows={1}
+                                                maxRows={1}
+                                                className="w-full min-h-[60px] bg-transparent placeholder:text-primary-500 resize-none px-6 py-[1.3rem] focus-within:outline-none text-primary-900 text-base sm:text-sm"
+                                                spellCheck={false}
+                                                autoComplete="off"
+                                                autoCorrect="off"
+                                                onKeyDown={onKeyDown}
+                                                value={input}
+                                                placeholder="Search for formulas, theorems, or equations..."
+                                                onChange={e => setInput(e.target.value)}
+                                                disabled={isLoading}
+                                                aria-label="Search for formulas and theorems"
+                                                aria-describedby="search-instructions"
+                                            />
+                                            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                                <Button
+                                                    size="icon"
+                                                    type='submit'
+                                                    disabled={input === ''}
+                                                    aria-label="Submit search query"
+                                                    className="btn-primary min-h-[44px] min-w-[44px] rounded-full shadow-medium hover:shadow-large transition-all duration-200 disabled:opacity-50"
+                                                >
+                                                    <SearchIcon className="w-5 h-5" />
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -216,39 +247,41 @@ export function DirectSearchPanel() {
                         <EmptyDirectScreen />
 
                         {/* Search form for empty state */}
-                        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t p-4">
+                        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-primary-200 p-4 shadow-medium">
                             <div className="mx-auto sm:max-w-2xl">
                                 <form onSubmit={handleSubmit} ref={formRef}>
-                                    <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-zinc-100 px-4 sm:px-12 sm:rounded-full">
-                                        <Textarea
-                                            ref={inputRef}
-                                            name="search"
-                                            rows={1}
-                                            maxRows={1}
-                                            className="h-full w-full min-h-[60px] bg-transparent placeholder:text-zinc-900 resize-none px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
-                                            spellCheck={false}
-                                            autoComplete="off"
-                                            autoCorrect="off"
-                                            autoFocus
-                                            required
-                                            onKeyDown={onKeyDown}
-                                            value={input}
-                                            placeholder="Type the name of a formula or theorem."
-                                            onChange={e => setInput(e.target.value)}
-                                            disabled={isLoading}
-                                            aria-label="Search for formulas and theorems"
-                                            aria-describedby="search-instructions"
-                                        />
-                                        <div className="absolute right-4 top-[13px] sm:right-4">
-                                            <Button
-                                                size="icon"
-                                                type='submit'
-                                                disabled={input === ''}
-                                                aria-label="Submit search query"
-                                                className="min-h-[44px] min-w-[44px]"
-                                            >
-                                                <SearchIcon />
-                                            </Button>
+                                    <div className="relative">
+                                        <div className="glass-card border-2 border-primary-300 focus-within:border-accent-500 transition-all duration-300 overflow-hidden sm:rounded-full">
+                                            <Textarea
+                                                ref={inputRef}
+                                                name="search"
+                                                rows={1}
+                                                maxRows={1}
+                                                className="w-full min-h-[60px] bg-transparent placeholder:text-primary-500 resize-none px-6 py-[1.3rem] focus-within:outline-none text-primary-900 text-base sm:text-sm"
+                                                spellCheck={false}
+                                                autoComplete="off"
+                                                autoCorrect="off"
+                                                autoFocus
+                                                required
+                                                onKeyDown={onKeyDown}
+                                                value={input}
+                                                placeholder="Search for formulas, theorems, or equations..."
+                                                onChange={e => setInput(e.target.value)}
+                                                disabled={isLoading}
+                                                aria-label="Search for formulas and theorems"
+                                                aria-describedby="search-instructions"
+                                            />
+                                            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                                <Button
+                                                    size="icon"
+                                                    type='submit'
+                                                    disabled={input === ''}
+                                                    aria-label="Submit search query"
+                                                    className="btn-primary min-h-[44px] min-w-[44px] rounded-full shadow-medium hover:shadow-large transition-all duration-200 disabled:opacity-50"
+                                                >
+                                                    <SearchIcon className="w-5 h-5" />
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>

@@ -1,18 +1,10 @@
-import { Formula } from '@/lib/types';
-import { PaperReferences } from '../PaperReferences';
-import { FormulaRenderer } from '../FormulaRenderer';
-import { CopyToClipboard } from '../copy-to-clipboard';
-
-interface AcademicReference {
-    title: string;
-    authors: string;
-    year: string;
-    significance: string;
-}
+import { Formula, AcademicReference } from '@/lib/types';
+import { FormulaRenderer } from '@/components/FormulaRenderer';
+import { CopyToClipboard } from '@/components/copy-to-clipboard';
+import { PaperReferences } from '@/components/PaperReferences';
 
 interface FormulaWithReferences extends Formula {
-    academicReferences?: AcademicReference[];
-    explanation?: string;
+    academicReferences: AcademicReference[];
 }
 
 export function Output({ formula }: { formula: FormulaWithReferences }) {
@@ -62,15 +54,23 @@ export function Output({ formula }: { formula: FormulaWithReferences }) {
 
             {/* Academic References */}
             {formula.academicReferences && formula.academicReferences.length > 0 && (
-                <PaperReferences
-                    papers={formula.academicReferences.map((ref: AcademicReference) => ({
-                        title: ref.title,
-                        authors: ref.authors.split(', '),
-                        year: parseInt(ref.year),
-                        significance: ref.significance,
-                        link: '#'
-                    }))}
-                />
+                <div>
+                    <h3 className="text-lg font-semibold mb-2">Academic References</h3>
+                    <PaperReferences
+                        papers={formula.academicReferences.map(ref => {
+                            const paper: any = {
+                                title: ref.title,
+                                authors: Array.isArray(ref.authors) ? ref.authors : [ref.authors],
+                                link: ref.link || '#',
+                                year: ref.year,
+                                significance: ref.significance,
+                            };
+                            if (ref.field) paper.field = ref.field;
+                            if (ref.subfield) paper.subfield = ref.subfield;
+                            return paper;
+                        })}
+                    />
+                </div>
             )}
         </div>
     );

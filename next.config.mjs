@@ -1,5 +1,3 @@
-// next.config.mjs
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config, { webpack }) => {

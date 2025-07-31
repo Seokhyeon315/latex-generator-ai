@@ -1,5 +1,4 @@
 import { AI } from "@/lib/actions";
-import React from "react";
 import { DirectSearchPanel } from '@/components/DirectSearchPanel';
 import type { Metadata } from "next";
 

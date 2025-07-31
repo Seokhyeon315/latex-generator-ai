@@ -1,7 +1,6 @@
 import { MultiStepSearchPanel } from '@/components/multistep-search/MultiSearchPanel';
 import { AI } from "@/lib/actions";
 import { Metadata } from 'next';
-import React from "react";
 import { ErrorBoundary } from '@/components/error-boundary';
 
 

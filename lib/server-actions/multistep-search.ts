@@ -30,14 +30,12 @@ export async function getMoreFormulas({
     category,
     field,
     topic,
-    page,
     existingFormulas = [],
     retryAttempt = false
 }: {
     category: string | null;
     field: string | null;
     topic: string | null;
-    page: number;
     existingFormulas?: Formula[];
     retryAttempt?: boolean;
 }): Promise<Formula[]> {
@@ -99,7 +97,7 @@ export async function getMoreFormulas({
             }
 
             if (!Array.isArray(formulas)) {
-                console.error('Invalid response structure:', formulas);
+                // Invalid response structure
                 return [];
             }
 
@@ -113,36 +111,48 @@ export async function getMoreFormulas({
                                   formula.latexCode;
                     
                     if (!isValid) {
-                        console.log('Invalid formula object:', formula);
+                        // Invalid formula object
                         return false;
                     }
 
                     // Check for duplicates
                     const isDuplicate = isDuplicateFormula(formula, existingFormulas);
                     if (isDuplicate) {
-                        console.log('Duplicate formula found:', formula.formulaName);
+                        // Duplicate formula found
                         return false;
                     }
 
                     return true;
                 })
                 .map((formula: any) => ({
+                    id: `generated-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
                     formulaName: String(formula.formulaName),
                     description: String(formula.description),
                     usage: String(formula.usage || 'No usage information available'),
-                    latexCode: cleanLatexCode(formula.latexCode)
+                    explanation: String(formula.explanation || formula.description || 'No explanation available'),
+                    latexCode: cleanLatexCode(formula.latexCode),
+                    domain: category as 'math' | 'physics' | 'aerospace',
+                    category: category,
+                    field: field || 'general',
+                    difficulty: 'intermediate' as const,
+                    applications: ['General application'],
+                    keywords: [formula.formulaName?.toLowerCase() || 'formula'],
+                    academicReferences: [],
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    version: '1.0.0',
+                    verified: false
                 }));
 
             return validatedFormulas;
 
         } catch (parseError) {
-            console.error('Parse error:', parseError);
-            console.error('Cleaned text:', cleanedText);
+            // Parse error occurred
             return [];
         }
 
     } catch (error) {
-        console.error('Error generating formulas:', error);
+        // Error generating formulas
         return [];
     }
 } 

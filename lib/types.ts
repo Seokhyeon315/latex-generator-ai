@@ -1,20 +1,43 @@
-// Enhanced type definitions for STEM Hub
+// Enhanced type definitions for STEM Hub - Refactored for curated database approach
 
 export interface Formula {
-  id?: string;
+  id: string; // Required unique identifier
   formulaName: string;
   description: string;
   usage: string;
   explanation: string;
   latexCode: string;
-  renderedFormula?: string;
-  category?: string;
-  field?: string;
-  difficulty?: 'beginner' | 'intermediate' | 'advanced';
-  academicReferences?: AcademicReference[];
-  tags?: string[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  renderedFormula?: string | undefined;
+  
+  // Enhanced categorization
+  domain: 'math' | 'physics' | 'aerospace'; // Primary STEM domain
+  category: string; // e.g., 'calculus', 'classical-mechanics', 'fluid-dynamics'
+  field: string; // e.g., 'derivatives', 'kinematics', 'thermodynamics'
+  topic?: string | undefined; // Specific subtopic
+  
+  // Educational metadata
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  prerequisites?: string[]; // Formula IDs that should be understood first
+  applications: string[]; // Real-world applications
+  keywords: string[]; // Searchable keywords for discovery
+  
+  // Academic and reference data
+  academicReferences: AcademicReference[];
+  derivation?: FormulaDerivation;
+  relatedFormulas?: string[]; // Formula IDs of related equations
+  
+  // MathJSON support for structured mathematical notation
+  mathJson?: MathJsonExpression;
+  
+  // Units and variables
+  variables?: Variable[];
+  units?: UnitSystem;
+  
+  // Metadata
+  createdAt: Date;
+  updatedAt: Date;
+  version: string; // For data versioning
+  verified: boolean; // Quality assurance flag
 }
 
 export interface AcademicReference {
@@ -25,8 +48,74 @@ export interface AcademicReference {
   link?: string;
   doi?: string;
   journal?: string;
+  isbn?: string;
   field?: string;
   subfield?: string;
+  citationCount?: number;
+}
+
+// New interfaces for enhanced functionality
+
+export interface Variable {
+  symbol: string;
+  name: string;
+  description: string;
+  unit?: string;
+  domain?: string; // e.g., "real numbers", "positive integers"
+  example?: number | string;
+}
+
+export interface UnitSystem {
+  primary: 'SI' | 'Imperial' | 'CGS' | 'Natural';
+  alternativeUnits?: { system: string; conversion: string }[];
+}
+
+export interface FormulaDerivation {
+  steps: DerivationStep[];
+  assumptions: string[];
+  startingFormulas?: string[]; // Formula IDs used as starting points
+}
+
+export interface DerivationStep {
+  step: number;
+  description: string;
+  equation: string; // LaTeX representation
+  reasoning: string;
+}
+
+// MathJSON type definitions for structured mathematical notation
+export interface MathJsonExpression {
+  [key: string]: any; // Flexible structure for MathJSON format
+}
+
+// Enhanced search and filtering interfaces
+export interface FormulaFilter {
+  domains?: ('math' | 'physics' | 'aerospace')[];
+  categories?: string[];
+  fields?: string[];
+  difficulties?: ('beginner' | 'intermediate' | 'advanced')[];
+  keywords?: string[];
+  hasDerivation?: boolean;
+  verified?: boolean;
+}
+
+export interface FormulaDatabase {
+  version: string;
+  lastUpdated: Date;
+  formulas: Formula[];
+  metadata: DatabaseMetadata;
+}
+
+export interface DatabaseMetadata {
+  totalFormulas: number;
+  formulasByDomain: Record<string, number>;
+  formulasByDifficulty: Record<string, number>;
+  contributors: string[];
+  verificationStatus: {
+    verified: number;
+    pending: number;
+    total: number;
+  };
 }
 
 export interface SearchResult {
@@ -35,16 +124,38 @@ export interface SearchResult {
   hasMore: boolean;
   searchQuery: string;
   searchTime: number;
+  filters?: FormulaFilter | undefined;
+  suggestions?: string[] | undefined; // Alternative search suggestions
 }
 
-export interface FieldCategory {
-  id: number;
-  fieldName: string;
+export interface STEMDomain {
+  id: string;
+  name: string;
   description: string;
-  useCases: string[];
-  topics: string[];
+  categories: STEMCategory[];
   icon?: string;
   color?: string;
+  formulaCount?: number;
+}
+
+export interface STEMCategory {
+  id: string;
+  name: string;
+  description: string;
+  domain: 'math' | 'physics' | 'aerospace';
+  fields: STEMField[];
+  useCases: string[];
+  formulaCount?: number;
+}
+
+export interface STEMField {
+  id: string;
+  name: string;
+  description: string;
+  topics: string[];
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  prerequisites?: string[]; // Field IDs
+  formulaCount?: number;
 }
 
 export interface ApiResponse<T = unknown> {

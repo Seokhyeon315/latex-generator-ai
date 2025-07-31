@@ -3,7 +3,7 @@
 import { GoogleGenerativeAI, SafetySetting } from '@google/generative-ai';
 import { z } from 'zod';
 import { createStreamableValue } from 'ai/rsc';
-import { LRUCache } from 'lru-cache';
+import { formulaDB } from '../services/formula-database';
 
 // Validate required environment variables
 const API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
@@ -12,12 +12,6 @@ if (!API_KEY) {
 }
 
 const genAI = new GoogleGenerativeAI(API_KEY);
-
-const GEMINI_ERRORS = {
-    RECITATION: 'RECITATION',
-    SAFETY: 'SAFETY',
-    INVALID_RESPONSE: 'INVALID_RESPONSE'
-} as const;
 
 const formulaSchema = z.object({
     formulas: z.array(
@@ -53,35 +47,6 @@ const cleanLatexCode = (latex: string) => {
     return latex.includes('$$') ? latex : `$$${latex}$$`;
 };
 
-interface ArxivPaper {
-    title: string;
-    authors: string[];
-    link: string;
-    summary: string;
-    published: string;
-}
-
-async function getRelatedPapers(formulaName: string): Promise<ArxivPaper[]> {
-    const query = encodeURIComponent(`"${formulaName}" OR "${formulaName} equation"`);
-    const url = `http://export.arxiv.org/api/query?search_query=${query}&start=0&max_results=5&sortBy=relevance`;
-    
-    try {
-        const response = await fetch(url);
-        const xmlData = await response.text();
-        // For now, return empty array until we implement XML parsing
-        return [];
-    } catch (error) {
-        console.error('Error fetching arXiv papers:', error);
-        return [];
-    }
-}
-
-async function getOpenAccessPapers(doi: string) {
-    const email = process.env.UNPAYWALL_EMAIL;
-    const url = `https://api.unpaywall.org/v2/${doi}?email=${email}`;
-    // Implementation here
-}
-
 // Define interfaces for type safety
 interface FormulaReference {
     title: string;
@@ -105,74 +70,10 @@ interface JsonResponse {
     formulas: Formula[];
 }
 
-// Add a more structured streaming approach
-const createProgressStream = (objectStream: any) => {
-    let closed = false;
-    return {
-        async update(data: any) {
-            if (closed) return;
-            try {
-                await objectStream.update(data);
-            } catch (error) {
-                console.error('Stream update error:', error);
-            }
-        },
-        
-        close() {
-            if (!closed) {
-                closed = true;
-                objectStream.done();
-            }
-        }
-    };
-};
-
-// Add error types
-type ErrorType = 'JSON_ERROR' | 'VALIDATION_ERROR' | 'API_ERROR' | 'RECITATION_ERROR';
-
-interface ErrorResponse {
-    type: ErrorType;
-    title: string;
-    message: string;
-    suggestion: string;
-}
-
-const getErrorResponse = (error: Error, type: ErrorType): ErrorResponse => {
-    const errorMap: Record<ErrorType, ErrorResponse> = {
-        JSON_ERROR: {
-            type: 'JSON_ERROR',
-            title: 'Formula Not Found',
-            message: 'We couldn\'t find information about this formula.',
-            suggestion: 'Try checking the spelling or use a more common name for the formula.'
-        },
-        VALIDATION_ERROR: {
-            type: 'VALIDATION_ERROR',
-            title: 'Invalid Response',
-            message: 'The formula information was incomplete.',
-            suggestion: 'Try searching for a different formula or use more specific terms.'
-        },
-        API_ERROR: {
-            type: 'API_ERROR',
-            title: 'Service Error',
-            message: 'Our service is having temporary issues.',
-            suggestion: 'Please try again in a few moments.'
-        },
-        RECITATION_ERROR: {
-            type: 'RECITATION_ERROR',
-            title: 'Content Generation Error',
-            message: 'We had trouble generating unique content.',
-            suggestion: 'Try searching for a different formula or rephrase your query.'
-        }
-    };
-
-    return errorMap[type];
-};
-
-const formulaCache = new LRUCache<string, any>({
-    max: 100, // Maximum number of items
-    ttl: 1000 * 60 * 60 * 24, // 24 hour time-to-live
-});
-
+/**
+ * Direct search action - Database-first approach with AI fallback
+ * Searches the curated formula database first, then falls back to AI if not found
+ */
 export async function directSearchAction(userInput: string) {
     const objectStream = createStreamableValue();
     let streamClosed = false;
@@ -182,6 +83,40 @@ export async function directSearchAction(userInput: string) {
             throw new Error('Please enter a search term');
         }
 
+        // Performing database search
+
+        // First, try database search
+        try {
+            const searchResult = await formulaDB.searchFormulas(userInput, undefined, 5, 0);
+            
+            if (searchResult.formulas.length > 0) {
+                // Found formulas in database
+                
+                // Convert to the expected format for the UI
+                const dbFormulas = searchResult.formulas.map(formula => ({
+                    formulaName: formula.formulaName,
+                    description: formula.description,
+                    usage: formula.usage,
+                    explanation: formula.explanation,
+                    latexCode: formula.latexCode,
+                    academicReferences: formula.academicReferences.map(ref => ({
+                        title: ref.title,
+                        authors: Array.isArray(ref.authors) ? ref.authors.join(', ') : ref.authors,
+                        year: ref.year.toString(),
+                        significance: ref.significance
+                    }))
+                }));
+
+                await objectStream.update({ formulas: dbFormulas });
+                return { object: objectStream.value };
+            }
+        } catch (dbError) {
+            // Database search failed, using AI fallback
+        }
+
+        // Fallback to AI generation if no results found in database
+        // Using AI generation as fallback
+        
         const model = genAI.getGenerativeModel({
             model: 'gemini-1.5-pro',
             generationConfig: {
@@ -199,41 +134,34 @@ export async function directSearchAction(userInput: string) {
         });
 
         const promptText = `Explain the mathematical formula/equation/theorem: "${userInput}".
+Focus on Math, Physics, Aerospace, or Mechanical Engineering domains only.
+
 Focus on:
-1. Core concepts
-2. Practical applications
-3. Key components
-4. Historical context
+1. Core concepts and mathematical foundation
+2. Practical applications in STEM fields
+3. Key components and variables
+4. Academic context and significance
 
-Special handling for specific equations:
-- For Maxwell's Equations, include all four equations in aligned format:
-  \\begin{aligned}
-  \\nabla \\cdot \\mathbf{E} &= \\frac{\\rho}{\\epsilon_0} \\\\
-  \\nabla \\cdot \\mathbf{B} &= 0 \\\\
-  \\nabla \\times \\mathbf{E} &= -\\frac{\\partial \\mathbf{B}}{\\partial t} \\\\
-  \\nabla \\times \\mathbf{B} &= \\mu_0\\mathbf{J} + \\mu_0\\epsilon_0\\frac{\\partial \\mathbf{E}}{\\partial t}
-  \\end{aligned}
+LaTeX formatting rules:
+1. Use proper LaTeX math delimiters ($$...$$)
+2. Use standard mathematical notation
+3. For equation sets, use aligned environment
+4. No formula names in LaTeX code itself
 
-LaTeX Rules:
-1. For basic formulas (like Pythagorean Theorem: a^2 + b^2 = c^2), use single-line format
-2. For equation sets (like Maxwell's Equations), use aligned environment with all equations
-3. NO formula names in LaTeX code
-4. Use $expression$ for inline math in explanations
-
-Return ONLY a valid JSON object in this exact format (no additional text):
+Return ONLY a valid JSON object in this exact format:
 {
     "formulas": [{
-        "formulaName": "Name (use full name, e.g., 'Maxwell's Equations' not just one part)",
-        "description": "Brief overview of the complete set of equations if applicable",
-        "usage": "Applications",
-        "explanation": "Component breakdown with $inline_math$",
-        "latexCode": "Complete set of equations if applicable",
+        "formulaName": "Complete formula name",
+        "description": "Comprehensive description focusing on STEM applications",
+        "usage": "Specific applications in target domains",
+        "explanation": "Detailed explanation of components and significance",
+        "latexCode": "Properly formatted LaTeX with $$...$$",
         "academicReferences": [
             {
-                "title": "Paper title",
-                "authors": "Names",
+                "title": "Academic paper or textbook title",
+                "authors": "Author names",
                 "year": "YYYY",
-                "significance": "Impact"
+                "significance": "Why this reference is important"
             }
         ]
     }]
@@ -247,7 +175,7 @@ Return ONLY a valid JSON object in this exact format (no additional text):
                 const result = await model.generateContent(promptText);
                 const text = result.response.text();
                 
-                // Better JSON cleaning
+                // Clean and parse JSON response
                 const cleanedText = text
                     .replace(/```json\s*/g, '')
                     .replace(/```\s*/g, '')
@@ -261,17 +189,7 @@ Return ONLY a valid JSON object in this exact format (no additional text):
                 } catch (parseError) {
                     attempts++;
                     if (attempts === maxAttempts) {
-                        await objectStream.update({
-                            formulas: [{
-                                formulaName: 'Error',
-                                description: '',
-                                usage: '',
-                                explanation: '',
-                                latexCode: '',
-                                academicReferences: []
-                            }]
-                        });
-                        break;
+                        throw new Error('Failed to parse AI response after multiple attempts');
                     }
                     continue;
                 }
@@ -283,7 +201,7 @@ Return ONLY a valid JSON object in this exact format (no additional text):
                         description: String(formula.description || ''),
                         usage: String(formula.usage || ''),
                         explanation: String(formula.explanation || ''),
-                        latexCode: String(formula.latexCode || ''),
+                        latexCode: cleanLatexCode(String(formula.latexCode || '')),
                         academicReferences: formula.academicReferences?.map((ref: FormulaReference) => ({
                             ...ref,
                             title: String(ref.title || ''),
@@ -297,46 +215,36 @@ Return ONLY a valid JSON object in this exact format (no additional text):
                 const validationResult = formulaSchema.safeParse(processedResponse);
 
                 if (validationResult.success) {
-                    await objectStream.update({
-                        formulas: validationResult.data.formulas.map(formula => ({
-                            ...formula,
-                            latexCode: cleanLatexCode(formula.latexCode)
-                        }))
-                    });
+                    // AI generation successful
+                    await objectStream.update({ formulas: validationResult.data.formulas });
                     break;
-                }
-
-                attempts++;
-                if (attempts < maxAttempts) {
-                    model.generationConfig.temperature = Math.min(0.9, 0.3 + (attempts * 0.3));
-                    continue;
+                } else {
+                    // AI response validation failed
+                    attempts++;
+                    if (attempts < maxAttempts) {
+                        model.generationConfig.temperature = Math.min(0.9, 0.3 + (attempts * 0.3));
+                        continue;
+                    }
+                    throw new Error('AI response validation failed');
                 }
             } catch (error) {
                 attempts++;
                 if (attempts === maxAttempts) {
-                    await objectStream.update({
-                        formulas: [{
-                            formulaName: 'Error',
-                            description: '',
-                            usage: '',
-                            explanation: '',
-                            latexCode: '',
-                            academicReferences: []
-                        }]
-                    });
-                    break;
+                    throw error;
                 }
+                // AI attempt failed, retrying
                 continue;
             }
         }
     } catch (e) {
+        // Search operation failed
         await objectStream.update({
             formulas: [{
-                formulaName: 'Error',
-                description: '',
-                usage: '',
-                explanation: '',
-                latexCode: '',
+                formulaName: 'Search Error',
+                description: 'Unable to find or generate formula information',
+                usage: 'Please try a different search term or check your spelling',
+                explanation: 'This may be due to network issues or the formula not being available in our database',
+                latexCode: '$$\\text{Formula not found}$$',
                 academicReferences: []
             }]
         });

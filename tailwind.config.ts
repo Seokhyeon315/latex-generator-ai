@@ -7,10 +7,6 @@ const config: Config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
 };
 
 export default config;

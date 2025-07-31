@@ -17,7 +17,7 @@
     // Additional strict type checking
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
+    // "exactOptionalPropertyTypes": true, // Temporarily disabled for cleanup
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,

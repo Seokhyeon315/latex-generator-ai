@@ -3,7 +3,6 @@ import { MemoizedReactMarkdown } from '@/components/markdown';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
-import { useStreamableText } from '@/lib/hooks/use-streamable-text';
 import rehypeKatex from 'rehype-katex';
 import type { Components } from 'react-markdown';
 
@@ -12,13 +11,10 @@ interface MarkdownRenderProps {
 }
 
 const MarkdownRender = React.memo(({ content }: MarkdownRenderProps) => {
-    // Use the useStreamableText hook to process the content
-    const text = useStreamableText(content);
-
-    // Replace newline characters and double backslashes in the text
+    // Replace newline characters and double backslashes in the content
     const formattedText = React.useMemo(() => {
-        return text.replace(/\\\\/g, '\\');
-    }, [text]);
+        return content.replace(/\\\\/g, '\\');
+    }, [content]);
 
     const remarkPlugins = React.useMemo(() => [remarkMath, remarkGfm, remarkBreaks], []);
     const rehypePlugins = React.useMemo(() => [rehypeKatex], []);

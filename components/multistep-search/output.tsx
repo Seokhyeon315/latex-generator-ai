@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { CopyToClipboard } from '../copy-to-clipboard';
 import MarkdownRender from '@/components/markdown-render';
 
